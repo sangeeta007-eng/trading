@@ -122,7 +122,7 @@ function formatOutcome(e, i) {
 └${'─'.repeat(60)}`;
 }
 
-function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
+function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target }) {
   const recommendationBlock = newCampaigns.length
     ? newCampaigns.map((c, i) => formatRecommendation(c, i)).join('\n')
     : '  No new recommendations this session.';
@@ -162,7 +162,13 @@ only (9:30am-4pm ET weekdays) — outside that it reports closed, not a guess.
 
 This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
-
+${weeklyDrawdownHalted ? `
+⛔ NEW RECOMMENDATIONS PAUSED THIS WEEK
+   Hypothetical weekly drawdown is ${(weeklyDrawdownPct * 100).toFixed(1)}% (real: $${Math.abs(weeklyPnL).toFixed(2)}
+   in realized losses this week) — at or past the 5% circuit breaker. Any
+   real setup this session, bullish or bearish, gets blocked here to stop
+   new risk during an already-losing week. Resets Monday.
+` : ''}
 📊 MARKET REGIME
    ${regimeLine}
 
@@ -383,7 +389,17 @@ function buildMacroBlock(macro) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
+function buildDrawdownHaltBanner(weeklyDrawdownPct, weeklyPnL) {
+  return `
+  <div style="margin-bottom:16px; background:#fdf1e8; border:2px solid ${COLOR.hot}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:15px; font-weight:700; color:${COLOR.hot}; margin-bottom:6px;">⛔ New recommendations paused this week</div>
+    <div style="font-size:14px; line-height:1.6; color:${COLOR.text};">
+      Hypothetical weekly drawdown is <b>${(weeklyDrawdownPct * 100).toFixed(1)}%</b> (real: $${Math.abs(weeklyPnL).toFixed(2)} in realized losses this week) — at or past the 5% circuit breaker. This isn't "nothing found today": any real setup this session, bullish or bearish, gets blocked here specifically to stop new risk during an already-losing week. Resets Monday.
+    </div>
+  </div>`;
+}
+
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
@@ -430,6 +446,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
       <a href="https://github.com/sangeeta007-eng/trading/actions/workflows/trading-session.yml" target="_blank" rel="noopener" style="display:inline-block; background:${COLOR.hot}; color:#fff; font-weight:700; font-size:14px; text-decoration:none; padding:12px 22px; border-radius:6px;">▶ Run a Fresh Session Now</a>
       <div style="font-size:12px; color:${COLOR.muted}; margin-top:6px; line-height:1.6;">Opens GitHub — click the gray <b>"Run workflow"</b> button, then the green one that appears, and this page updates in about 30-60 seconds. This runs during market hours only (9:30am-4pm ET weekdays) — outside that window it'll report the market as closed rather than guessing.</div>
     </div>
+    ${weeklyDrawdownHalted ? buildDrawdownHaltBanner(weeklyDrawdownPct, weeklyPnL) : ''}
     <div style="background:#eef3ea; border:1px solid #c9dcc0; border-radius:6px; padding:12px 14px; font-size:14px; line-height:1.6; color:#2f4a26; margin-bottom:14px;">
       This is a recommendation-only report. Nothing here was traded automatically — review it and place any trades yourself on your own broker.
     </div>
@@ -487,10 +504,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, weeklyDrawdownHalted = false, weeklyDrawdownPct = 0 }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

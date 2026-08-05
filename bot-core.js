@@ -10,11 +10,13 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const analytics = require('./analytics');
+const cfg = require('./config');
 const { isTradingOpen } = require('./marketdata');
 const { runCouncil } = require('./council/run');
 const { buildPlaybook } = require('./council/playbook');
 const { sendSessionReport, sendFailureAlert } = require('./notify');
 const { getMacroSnapshot } = require('./fred');
+const { WEEKLY_DRAWDOWN_LIMIT_PCT } = require('./council/agent3_risk');
 
 // Static copy of the same report the email sends, written to disk so
 // GitHub Pages (or any static host) can serve an always-on version —
@@ -76,10 +78,19 @@ async function runSession() {
     // just means the report shows the section as "not configured."
     const macro = await getMacroSnapshot();
 
+    // This is a session-wide condition (once tripped, every symbol gets the
+    // same Agent 3 veto regardless of its own conviction) — computed once
+    // here rather than left to surface only per-symbol, where a below-WARM-
+    // floor conviction setup would hide the real reason nothing fired.
+    const weeklyPnLValue = analytics.getWeeklyPnL();
+    const weeklyDrawdownPct = Math.abs(Math.min(0, weeklyPnLValue)) / cfg.TOTAL_BUDGET;
+    const weeklyDrawdownHalted = weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT;
+
     const html = await sendSessionReport({
       newCampaigns, exits, regime, watchlist, playbook, macro,
-      weeklyPnL: analytics.getWeeklyPnL(),
+      weeklyPnL: weeklyPnLValue,
       monthlyPnL: analytics.getMonthlyPnL(),
+      weeklyDrawdownHalted, weeklyDrawdownPct,
     });
     writeStaticReport(html);
 
