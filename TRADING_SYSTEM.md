@@ -1,5 +1,10 @@
 # 4-Agent Options Trading Council — Recommendation Engine
 
+See also: [FUNCTIONAL_SPEC.md](FUNCTIONAL_SPEC.md) (what each calculation
+does and why) and [EXIT_STRATEGY.md](EXIT_STRATEGY.md) (exactly what to
+enter on your broker to make exits automatic — GTC/OCO/trailing-stop
+mechanics).
+
 ---
 
 ## Overview
