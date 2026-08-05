@@ -155,6 +155,11 @@ function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
    ${ts} ET
 ╚══════════════════════════════════════════════════════╝
 
+Want a fresh run right now instead of waiting for the next scheduled one?
+https://github.com/sangeeta007-eng/trading/actions/workflows/trading-session.yml
+Click "Run workflow" (gray), then the green one that appears. Market hours
+only (9:30am-4pm ET weekdays) — outside that it reports closed, not a guess.
+
 This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
 
@@ -421,6 +426,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     <div id="report-ts" data-generated="${generatedIso}" data-ts-label="${ts} ET" style="font-size:13px; color:#c9c3b8; margin-top:6px;">Report generated: ${ts} ET</div>
   </div>
   <div style="background:${COLOR.card}; padding:20px 24px; border:1px solid ${COLOR.border}; border-top:none;">
+    <div style="text-align:center; margin-bottom:16px;">
+      <a href="https://github.com/sangeeta007-eng/trading/actions/workflows/trading-session.yml" target="_blank" rel="noopener" style="display:inline-block; background:${COLOR.hot}; color:#fff; font-weight:700; font-size:14px; text-decoration:none; padding:12px 22px; border-radius:6px;">▶ Run a Fresh Session Now</a>
+      <div style="font-size:12px; color:${COLOR.muted}; margin-top:6px; line-height:1.6;">Opens GitHub — click the gray <b>"Run workflow"</b> button, then the green one that appears, and this page updates in about 30-60 seconds. This runs during market hours only (9:30am-4pm ET weekdays) — outside that window it'll report the market as closed rather than guessing.</div>
+    </div>
     <div style="background:#eef3ea; border:1px solid #c9dcc0; border-radius:6px; padding:12px 14px; font-size:14px; line-height:1.6; color:#2f4a26; margin-bottom:14px;">
       This is a recommendation-only report. Nothing here was traded automatically — review it and place any trades yourself on your own broker.
     </div>
