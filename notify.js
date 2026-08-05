@@ -122,7 +122,7 @@ function formatOutcome(e, i) {
 └${'─'.repeat(60)}`;
 }
 
-function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, ts, target }) {
+function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
   const recommendationBlock = newCampaigns.length
     ? newCampaigns.map((c, i) => formatRecommendation(c, i)).join('\n')
     : '  No new recommendations this session.';
@@ -145,6 +145,9 @@ function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
   const realizedPnL = exits.reduce((s, e) => s + (e.pnl || 0), 0);
   const regimeLine = `${regime.name} | VIX ~${regime.vix?.toFixed(1)} | Sizing ${(regime.sizingMod * 100).toFixed(0)}%`;
   const weekProgress = `$${weeklyPnL.toFixed(2)} / $${target} target (${((weeklyPnL / target) * 100).toFixed(0)}%)`;
+  const macroLine = macro?.fedFunds
+    ? `Fed Funds ${macro.fedFunds.value.toFixed(2)}% (${macro.fedFunds.date}) | 10Y-2Y Curve ${macro.yieldCurve ? macro.yieldCurve.value.toFixed(2) + 'pp' + (macro.yieldCurveInverted ? ' [INVERTED]' : '') : 'n/a'}`
+    : 'not configured — set FRED_API_KEY in .env';
 
   return `
 ╔══════════════════════════════════════════════════════╗
@@ -157,6 +160,9 @@ This is a recommendation-only report. Nothing here was traded automatically
 
 📊 MARKET REGIME
    ${regimeLine}
+
+🏛 MACRO BACKDROP (real, from FRED — informational only)
+   ${macroLine}
 
 📈 SESSION SNAPSHOT
    New recommendations:   ${newCampaigns.length}
@@ -354,7 +360,25 @@ function buildExitStrategyBlock() {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, ts, target }) {
+// Real Fed funds rate + yield curve data (fred.js) — informational only,
+// not yet a sizing/veto input. Shows "not configured" honestly rather than
+// hiding the section or guessing a number when FRED_API_KEY isn't set.
+function buildMacroBlock(macro) {
+  const fedLine = macro?.fedFunds
+    ? `Fed Funds Rate: <b>${macro.fedFunds.value.toFixed(2)}%</b> (as of ${macro.fedFunds.date})`
+    : 'Fed Funds Rate: not configured — set FRED_API_KEY in .env (free, see .env.example)';
+  const curveLine = macro?.yieldCurve
+    ? `10Y-2Y Yield Curve: <b>${macro.yieldCurve.value.toFixed(2)}pp</b> (as of ${macro.yieldCurve.date}) — ${macro.yieldCurveInverted ? '<b style="color:#b91c1c;">INVERTED</b> (a real recession-risk signal, not a trading veto here)' : 'normal (not inverted)'}`
+    : '10Y-2Y Yield Curve: not configured';
+
+  return `
+  <div style="margin:24px 0; background:${COLOR.card}; border:1px solid ${COLOR.border}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:15px; font-weight:700; color:${COLOR.text}; margin-bottom:8px;">🏛 Macro Backdrop (real, from FRED — informational only)</div>
+    <div style="font-size:14px; line-height:1.8; color:${COLOR.text};">${fedLine}<br>${curveLine}</div>
+  </div>`;
+}
+
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
@@ -413,6 +437,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
       </tr>
     </table>
 
+    ${buildMacroBlock(macro)}
     ${hotTable}
     ${warmTable}
     ${buildExitStrategyBlock()}
@@ -453,10 +478,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [] }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

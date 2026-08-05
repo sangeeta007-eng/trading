@@ -28,6 +28,7 @@
 const { getBars, ema } = require('../marketdata');
 const { historicalVol } = require('../greek');
 const { rsi, stochastic, ema9, ema21, adx } = require('./indicators');
+const { getSeasonality } = require('./seasonality');
 const analytics = require('../analytics');
 
 // Liquid ETF universe — broad market, sectors, and macro hedges with deep,
@@ -136,6 +137,23 @@ async function analyze(symbol, sectorPercentile = null) {
     if (!qualifies) bias = 'NEUTRAL';
   }
 
+  // Seasonality: informational only, never a veto — a single real historical
+  // pattern shouldn't override a live technical + relative-strength setup,
+  // but it's useful context. Only fetched once the setup has already
+  // survived every other check (this needs ~10 years of daily bars per
+  // symbol, real but not cheap — no point spending that API cost on a
+  // symbol that's already NEUTRAL).
+  let seasonalityLine = null;
+  if (bias !== 'NEUTRAL') {
+    const season = await getSeasonality(symbol);
+    if (season.available) {
+      const favorable = (bias === 'CALL' && season.avgReturn > 0) || (bias === 'PUT' && season.avgReturn < 0);
+      seasonalityLine = `Seasonality: ${symbol} has averaged ${(season.avgReturn * 100).toFixed(1)}% in ${season.month} over the last ${season.sampleYears} years (up in ${season.winCount}/${season.sampleYears}) — ${favorable ? 'agrees with' : 'runs counter to'} this ${bias} bias. Historical pattern, not a filter — shown for context only.`;
+    } else {
+      seasonalityLine = `Seasonality: not enough real history to compute (${season.reason})`;
+    }
+  }
+
   const conviction = bias === 'NEUTRAL' ? 0 : computeConviction({
     rsi14, biasCenter: bias === 'CALL' ? 55 : 45, price, e21, adxVal,
   });
@@ -147,6 +165,7 @@ async function analyze(symbol, sectorPercentile = null) {
     `Volatility: IV Rank is at ${ivRank.toFixed(0)}%, 30d realized vol ${(hv * 100).toFixed(1)}%.`,
     ...(weeklyLine ? [weeklyLine] : []),
     ...(sectorLine ? [sectorLine] : []),
+    ...(seasonalityLine ? [seasonalityLine] : []),
     `Decision: ${bias === 'CALL' ? `BULLISH BIAS (CALL) — conviction ${conviction}/100` : bias === 'PUT' ? `BEARISH BIAS (PUT) — conviction ${conviction}/100` : 'NO TRADE — setup criteria not met'}`,
   ];
 

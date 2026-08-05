@@ -45,6 +45,19 @@ Each non-neutral signal gets a 0-100 **conviction score** (RSI centering +
 trend separation + ADX strength), used to process the strongest setups first
 and to scale position sizing.
 
+**Seasonality** (`council/seasonality.js`): once a setup survives every other
+check, real historical data (10 years of daily bars, via the same `getBars`
+call) shows each symbol's actual average return and win rate for the current
+calendar month. Informational only — agreement/disagreement with the bias is
+noted, never a veto. Needs 5+ complete historical years of real data or it's
+skipped, not guessed.
+
+**Macro backdrop** (`fred.js`): real Fed funds rate and the 10Y-2Y Treasury
+yield curve spread, pulled from FRED (the St. Louis Fed's free public API).
+Informational only, shown in every report — not yet a sizing/veto input.
+Needs a free `FRED_API_KEY` in `.env`; without one, the report shows the
+section as "not configured" rather than a guessed number.
+
 ### Agent 2 — Option Structurer (`council/agent2_structurer.js`)
 Filters the real option chain and prices off live bid/ask — never a stale close price.
 

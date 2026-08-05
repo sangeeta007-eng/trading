@@ -50,15 +50,28 @@ function calendarDaysFor(timeframe, limit) {
   return Math.ceil(limit * 2.1); // daily (or intraday, comfortably covered by the same padding)
 }
 
-// Get most recent N bars for the given timeframe (always most recent, never first-N bug)
+// Get most recent N bars for the given timeframe (always most recent, never first-N bug).
+// Alpaca caps each response page at 1000 bars, oldest-first within the
+// requested date range — a single unpaginated call for a range spanning
+// more than 1000 bars silently returns the OLDEST bars in that range, not
+// the most recent (verified against the real API: a 9-year SPY request
+// returned 2017-2021, missing 2021-2026 entirely). Since pages arrive
+// oldest-first, "stop once we have enough bars" would still leave us with
+// the oldest N, not the most recent N — every page in the requested date
+// range has to be fetched, then trimmed to the most recent `limit` after.
 async function getBars(symbol, timeframe = '1Day', limit = 60) {
   const start = new Date();
   start.setDate(start.getDate() - calendarDaysFor(timeframe, limit));
-  const res = await dataApi.get(`/stocks/${symbol}/bars`, {
-    params: { timeframe, start: start.toISOString().split('T')[0], feed: 'sip', limit: 1000 },
-  });
-  const bars = res.data.bars || [];
-  return bars.slice(-limit);
+  let all = [];
+  let pageToken;
+  do {
+    const res = await dataApi.get(`/stocks/${symbol}/bars`, {
+      params: { timeframe, start: start.toISOString().split('T')[0], feed: 'sip', limit: 1000, page_token: pageToken },
+    });
+    all = all.concat(res.data.bars || []);
+    pageToken = res.data.next_page_token;
+  } while (pageToken);
+  return all.slice(-limit);
 }
 
 // EMA (exponential moving average) from bars

@@ -14,6 +14,7 @@ const { isTradingOpen } = require('./marketdata');
 const { runCouncil } = require('./council/run');
 const { buildPlaybook } = require('./council/playbook');
 const { sendSessionReport, sendFailureAlert } = require('./notify');
+const { getMacroSnapshot } = require('./fred');
 
 // Static copy of the same report the email sends, written to disk so
 // GitHub Pages (or any static host) can serve an always-on version —
@@ -70,9 +71,13 @@ async function runSession() {
       .map(toRecommendationCard);
 
     const playbook = await buildPlaybook();
+    // Real Fed funds rate + yield curve data (fred.js) — informational, not
+    // yet a sizing/veto input. Never throws: no FRED_API_KEY configured
+    // just means the report shows the section as "not configured."
+    const macro = await getMacroSnapshot();
 
     const html = await sendSessionReport({
-      newCampaigns, exits, regime, watchlist, playbook,
+      newCampaigns, exits, regime, watchlist, playbook, macro,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
