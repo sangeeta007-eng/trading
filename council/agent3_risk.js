@@ -113,13 +113,13 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
 
   const weeklyPnL = analytics.getWeeklyPnL();
   const weeklyDrawdownPct = Math.abs(Math.min(0, weeklyPnL)) / capital;
-  if (weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT) {
-    return {
-      approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED',
-      detail: `Weekly (hypothetical) drawdown ${(weeklyDrawdownPct * 100).toFixed(1)}% ≥ ${(WEEKLY_DRAWDOWN_LIMIT_PCT * 100).toFixed(0)}% limit — no new recommendations until it resets.`,
-      capital, weeklyPnL, weeklyDrawdownPct,
-    };
-  }
+  // This one is deliberately NOT an early hard block like the checks above.
+  // Those represent things that make the setup itself unreliable (bad data,
+  // no real contract, an event about to move price). A weekly drawdown pause
+  // is a portfolio-level "don't add risk this week" call, not a flaw in this
+  // specific pick — so sizing still gets computed normally below and the
+  // real numbers still get shown, just marked paused rather than hidden.
+  const weeklyDrawdownPaused = weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT;
 
   // ── Conviction-scaled sizing (10-15% band) ──────────────────────────────
   let ivFavorability = 100 - Math.min(100, structured.ivRank);
@@ -146,13 +146,14 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
 
   const tradeCost = qty * costPerContract;
 
-  return {
-    approved: true, status: 'APPROVED',
+  // Everything below is real and fully computed either way — only the
+  // approved/status/detail framing differs based on the drawdown pause.
+  const sizing = {
     capital, qty, tradeCost,
     allocationPct: tradeCost / capital,
     allocationMin: minAllocation, allocationMax: maxAllocation,
     openPositions, maxOpenPositions: MAX_OPEN_POSITIONS,
-    weeklyPnL, weeklyDrawdownPct,
+    weeklyPnL, weeklyDrawdownPct, weeklyDrawdownPaused,
     conviction: finalConviction, ivFavorability, ivHvRatio,
     netExposureBefore: currentExposure, netExposureAfter: projectedExposure,
     // Below IV_RANK_MIN_SAMPLE, the IV Rank and IV/HV vetoes above are
@@ -160,6 +161,16 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     // plainly instead of silently looking like those protections are live.
     ivGateActive: ivSampleSize >= IV_RANK_MIN_SAMPLE, ivSampleSize,
   };
+
+  if (weeklyDrawdownPaused) {
+    return {
+      approved: false, status: 'PAUSED', vetoReason: 'WEEKLY_DRAWDOWN_PAUSED',
+      detail: `Weekly (hypothetical) drawdown ${(weeklyDrawdownPct * 100).toFixed(1)}% ≥ ${(WEEKLY_DRAWDOWN_LIMIT_PCT * 100).toFixed(0)}% limit — real, fully-qualified setup, but new entries are paused this week rather than dropped. Resets Monday.`,
+      ...sizing,
+    };
+  }
+
+  return { approved: true, status: 'APPROVED', ...sizing };
 }
 
 module.exports = {
