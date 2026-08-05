@@ -10,7 +10,12 @@ on:
     - cron: '50 13 * * 1-5'
     - cron: '0 15 * * 1-5'
     - cron: '0 19 * * 1-5'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      bootstrap_placeholder:
+        description: 'Deploy a one-time honest "no session yet" placeholder instead of running a real session (used once to trigger GitHub Pages domain verification/cert issuance before the first real market-hours run)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -35,6 +40,7 @@ jobs:
       - run: npm ci
 
       - name: Run council session (recommendation-only, no order ever placed)
+        if: github.event.inputs.bootstrap_placeholder != 'true'
         env:
           MARKET_DATA_KEY: ${{ secrets.MARKET_DATA_KEY }}
           MARKET_DATA_SECRET: ${{ secrets.MARKET_DATA_SECRET }}
@@ -46,6 +52,26 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node bot.js
+
+      # One-time bootstrap: GitHub doesn't start domain verification / cert
+      # issuance for a custom Pages domain until the first real deployment
+      # happens. This writes a plainly-honest status page (no trade data,
+      # real or fabricated) purely so that first deployment can occur before
+      # the next real market-hours session.
+      - name: Write bootstrap placeholder
+        if: github.event.inputs.bootstrap_placeholder == 'true'
+        run: |
+          mkdir -p report
+          cat > report/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html><body style="margin:0; padding:0; background:#f3f4f6; font-family:Arial,Helvetica,sans-serif;">
+          <div style="max-width:600px; margin:60px auto; padding:24px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; text-align:center;">
+            <div style="font-size:18px; font-weight:700; color:#111827; margin-bottom:8px;">4-Agent Trading Council</div>
+            <div style="font-size:14px; color:#6b7280; margin-bottom:16px;">No session has run during market hours yet.</div>
+            <div style="font-size:13px; color:#9ca3af;">This page is set up and waiting — recommendations will appear here after the next weekday session (9:50am / 11am / 3pm ET).</div>
+          </div>
+          </body></html>
+          HTML
 
       - name: Persist council.db + analytics.json back to the repo
         run: |
