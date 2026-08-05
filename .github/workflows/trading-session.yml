@@ -55,15 +55,32 @@ jobs:
           git diff --staged --quiet || git commit -m "Session data update [skip ci]"
           git push
 
+      # report/index.html only gets written when the market was actually
+      # open this run (see bot-core.js runSession) — on a closed-market run
+      # there's nothing new to publish, so skip Pages entirely rather than
+      # fail on a missing directory or overwrite the last real report with
+      # a placeholder.
+      - name: Check whether a fresh report was generated
+        id: report_check
+        run: |
+          if [ -f report/index.html ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Configure Pages
+        if: steps.report_check.outputs.exists == 'true'
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload report artifact
+        if: steps.report_check.outputs.exists == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: report
 
       - name: Deploy to GitHub Pages
+        if: steps.report_check.outputs.exists == 'true'
         uses: actions/deploy-pages@v4
