@@ -64,11 +64,11 @@ jobs:
           mkdir -p report
           cat > report/index.html <<'HTML'
           <!DOCTYPE html>
-          <html><body style="margin:0; padding:0; background:#f3f4f6; font-family:Arial,Helvetica,sans-serif;">
-          <div style="max-width:600px; margin:60px auto; padding:24px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; text-align:center;">
-            <div style="font-size:18px; font-weight:700; color:#111827; margin-bottom:8px;">4-Agent Trading Council</div>
-            <div style="font-size:14px; color:#6b7280; margin-bottom:16px;">No session has run during market hours yet.</div>
-            <div style="font-size:13px; color:#9ca3af;">This page is set up and waiting — recommendations will appear here after the next weekday session (9:50am / 11am / 3pm ET).</div>
+          <html><body style="margin:0; padding:0; background:#f3f1ea; font-family:Verdana, Tahoma, Arial, Helvetica, sans-serif;">
+          <div style="max-width:600px; margin:60px auto; padding:28px; background:#fdfbf6; border:1px solid #e6e0d4; border-radius:8px; text-align:center; letter-spacing:0.15px;">
+            <div style="font-size:19px; font-weight:700; color:#2b2723; margin-bottom:10px; line-height:1.4;">4-Agent Trading Council</div>
+            <div style="font-size:15px; color:#6b6358; margin-bottom:16px; line-height:1.6;">No session has run during market hours yet.</div>
+            <div style="font-size:14px; color:#6b6358; line-height:1.6;">This page is set up and waiting — recommendations will appear here after the next weekday session (9:50am / 11am / 3pm ET).</div>
           </div>
           </body></html>
           HTML
