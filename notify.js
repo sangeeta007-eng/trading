@@ -443,9 +443,35 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
   </div>
   <div style="background:${COLOR.card}; padding:20px 24px; border:1px solid ${COLOR.border}; border-top:none;">
     <div style="text-align:center; margin-bottom:16px;">
-      <a href="https://github.com/sangeeta007-eng/trading/actions/workflows/trading-session.yml" target="_blank" rel="noopener" style="display:inline-block; background:${COLOR.hot}; color:#fff; font-weight:700; font-size:14px; text-decoration:none; padding:12px 22px; border-radius:6px;">▶ Run a Fresh Session Now</a>
-      <div style="font-size:12px; color:${COLOR.muted}; margin-top:6px; line-height:1.6;">Opens GitHub — click the gray <b>"Run workflow"</b> button, then the green one that appears, and this page updates in about 30-60 seconds. This runs during market hours only (9:30am-4pm ET weekdays) — outside that window it'll report the market as closed rather than guessing.</div>
+      <button id="run-now-btn" onclick="runNow()" style="display:inline-block; background:${COLOR.hot}; color:#fff; font-weight:700; font-size:14px; border:none; cursor:pointer; padding:12px 22px; border-radius:6px; font-family:${FONT_STACK};">▶ Run a Fresh Session Now</button>
+      <div id="run-now-status" style="font-size:12px; color:${COLOR.muted}; margin-top:6px; line-height:1.6;">Runs during market hours only (9:30am-4pm ET weekdays) — outside that window it reports the market as closed rather than guessing. Takes about 30-60 seconds, then this page updates on its own.</div>
     </div>
+    <script>
+      async function runNow() {
+        const btn = document.getElementById('run-now-btn');
+        const status = document.getElementById('run-now-status');
+        btn.disabled = true;
+        btn.textContent = 'Starting session…';
+        try {
+          const res = await fetch('https://trading-refresh.ignite-shakti-website.workers.dev', { method: 'POST' });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Unknown error');
+          status.textContent = 'Session started — this page will refresh automatically in about a minute.';
+          status.style.color = '${COLOR.target}';
+          let secondsLeft = 65;
+          const timer = setInterval(() => {
+            secondsLeft--;
+            btn.textContent = 'Refreshing in ' + secondsLeft + 's…';
+            if (secondsLeft <= 0) { clearInterval(timer); location.reload(); }
+          }, 1000);
+        } catch (err) {
+          status.textContent = '⚠ Could not start a session: ' + err.message + ' — try the GitHub Actions page directly: github.com/sangeeta007-eng/trading/actions';
+          status.style.color = '${COLOR.stop}';
+          btn.disabled = false;
+          btn.textContent = '▶ Run a Fresh Session Now';
+        }
+      }
+    </script>
     ${weeklyDrawdownHalted ? buildDrawdownHaltBanner(weeklyDrawdownPct, weeklyPnL) : ''}
     <div style="background:#eef3ea; border:1px solid #c9dcc0; border-radius:6px; padding:12px 14px; font-size:14px; line-height:1.6; color:#2f4a26; margin-bottom:14px;">
       This is a recommendation-only report. Nothing here was traded automatically — review it and place any trades yourself on your own broker.
