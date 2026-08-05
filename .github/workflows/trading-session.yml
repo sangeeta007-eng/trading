@@ -1,0 +1,69 @@
+name: Trading Council Session
+
+# Cron times are UTC, calibrated for US Eastern Daylight Time (EDT, UTC-4):
+# 09:50 ET, 11:00 ET, 15:00 ET. During EST (UTC-5, roughly Nov-Mar) these
+# fire about an hour early ET — harmless, since bot-core.js checks
+# isTradingOpen() and no-ops with no side effects if the market isn't open
+# yet, rather than guessing at data that doesn't exist.
+on:
+  schedule:
+    - cron: '50 13 * * 1-5'
+    - cron: '0 15 * * 1-5'
+    - cron: '0 19 * * 1-5'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Never let two sessions overlap on the same data files.
+concurrency:
+  group: trading-council-session
+  cancel-in-progress: false
+
+jobs:
+  run-session:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - name: Run council session (recommendation-only, no order ever placed)
+        env:
+          MARKET_DATA_KEY: ${{ secrets.MARKET_DATA_KEY }}
+          MARKET_DATA_SECRET: ${{ secrets.MARKET_DATA_SECRET }}
+          MARKET_DATA_BASE_URL: ${{ secrets.MARKET_DATA_BASE_URL }}
+          MARKET_DATA_URL: ${{ secrets.MARKET_DATA_URL }}
+          TOTAL_BUDGET: ${{ secrets.TOTAL_BUDGET }}
+          WEEKLY_TARGET: ${{ secrets.WEEKLY_TARGET }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: node bot.js
+
+      - name: Persist council.db + analytics.json back to the repo
+        run: |
+          git config user.name "trading-council-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add council/council.db analytics.json
+          git diff --staged --quiet || git commit -m "Session data update [skip ci]"
+          git push
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload report artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: report
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

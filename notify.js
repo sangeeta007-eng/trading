@@ -358,6 +358,7 @@ async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, month
   const subjectPnL = realizedPnL !== 0 ? ` | P&L ${realizedPnL >= 0 ? '+' : ''}$${realizedPnL.toFixed(0)}` : '';
   const subjectTag = newCampaigns.length > 0 ? `${newCampaigns.length} new pick(s)` : exits.length > 0 ? `${exits.length} closed` : 'Daily update';
   await send(`[Trading Council] ${subjectTag}${subjectPnL} — ${ts}`, text, html);
+  return html;
 }
 
 module.exports = { sendSessionReport };

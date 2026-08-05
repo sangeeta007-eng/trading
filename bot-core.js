@@ -7,11 +7,22 @@
  * places a real order — see marketdata.js, which is read-only by design.
  */
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const analytics = require('./analytics');
 const { isTradingOpen } = require('./marketdata');
 const { runCouncil } = require('./council/run');
 const { buildPlaybook } = require('./council/playbook');
 const { sendSessionReport } = require('./notify');
+
+// Static copy of the same report the email sends, written to disk so
+// GitHub Pages (or any static host) can serve an always-on version —
+// nothing here is regenerated differently, it's the same html.
+function writeStaticReport(html) {
+  const reportDir = path.join(__dirname, 'report');
+  fs.mkdirSync(reportDir, { recursive: true });
+  fs.writeFileSync(path.join(reportDir, 'index.html'), html);
+}
 
 function toRecommendationCard(result) {
   const { analysis, structured, risk, outcome } = result;
@@ -59,11 +70,12 @@ async function runSession() {
 
   const playbook = await buildPlaybook();
 
-  await sendSessionReport({
+  const html = await sendSessionReport({
     newCampaigns, exits, regime, watchlist, playbook,
     weeklyPnL: analytics.getWeeklyPnL(),
     monthlyPnL: analytics.getMonthlyPnL(),
   });
+  writeStaticReport(html);
 
   return { newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
 }

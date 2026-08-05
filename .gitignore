@@ -9,6 +9,10 @@
 campaigns.json
 positions_log.json
 
+# Static report output — regenerated every session, deployed straight to
+# GitHub Pages via the Actions workflow, never committed
+report/
+
 # Dependencies
 node_modules/
 
