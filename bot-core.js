@@ -13,7 +13,7 @@ const analytics = require('./analytics');
 const { isTradingOpen } = require('./marketdata');
 const { runCouncil } = require('./council/run');
 const { buildPlaybook } = require('./council/playbook');
-const { sendSessionReport } = require('./notify');
+const { sendSessionReport, sendFailureAlert } = require('./notify');
 
 // Static copy of the same report the email sends, written to disk so
 // GitHub Pages (or any static host) can serve an always-on version —
@@ -56,28 +56,43 @@ function toOutcomeCard(closed) {
 async function runSession() {
   console.log(`\n[${new Date().toISOString()}] ══ 4-Agent Council Session ══`);
 
-  if (!await isTradingOpen()) {
-    console.log('[bot] Market is closed — no fresh recommendations (live quotes wouldn\'t be current).');
-    return { marketClosed: true, newCampaigns: [], exits: [] };
+  try {
+    if (!await isTradingOpen()) {
+      console.log('[bot] Market is closed — no fresh recommendations (live quotes wouldn\'t be current).');
+      return { marketClosed: true, newCampaigns: [], exits: [] };
+    }
+
+    const { results, reconciliation, regime, watchlist } = await runCouncil();
+
+    const exits = reconciliation.closed.map(toOutcomeCard);
+    const newCampaigns = results
+      .filter(r => r.structured?.ok && r.risk?.approved)
+      .map(toRecommendationCard);
+
+    const playbook = await buildPlaybook();
+
+    const html = await sendSessionReport({
+      newCampaigns, exits, regime, watchlist, playbook,
+      weeklyPnL: analytics.getWeeklyPnL(),
+      monthlyPnL: analytics.getMonthlyPnL(),
+    });
+    writeStaticReport(html);
+
+    return { newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
+  } catch (err) {
+    // A crashed session produces no report at all — that silence could be
+    // mistaken for a normal "nothing new today" run. Alert distinctly
+    // rather than let it pass unnoticed, then let the caller's own error
+    // handling (bot.js's exit code, server.js's dashboard broadcast) still
+    // run exactly as before.
+    console.error('[bot-core] Session failed:', err.response?.data || err.message);
+    try {
+      await sendFailureAlert(err);
+    } catch (alertErr) {
+      console.error('[bot-core] Also failed to send the failure alert:', alertErr.message);
+    }
+    throw err;
   }
-
-  const { results, reconciliation, regime, watchlist } = await runCouncil();
-
-  const exits = reconciliation.closed.map(toOutcomeCard);
-  const newCampaigns = results
-    .filter(r => r.structured?.ok && r.risk?.approved)
-    .map(toRecommendationCard);
-
-  const playbook = await buildPlaybook();
-
-  const html = await sendSessionReport({
-    newCampaigns, exits, regime, watchlist, playbook,
-    weeklyPnL: analytics.getWeeklyPnL(),
-    monthlyPnL: analytics.getMonthlyPnL(),
-  });
-  writeStaticReport(html);
-
-  return { newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
 }
 
 module.exports = { runSession };

@@ -2,13 +2,14 @@
  * Agent 4 — Chief Strategist & Auto-Learning Engine ("The Planner")
  *
  * Synthesizes Agents 1-3 into a human-readable, fully-grounded report with
- * exact manual trade instructions (you place these yourself on Fidelity/
- * Robinhood), and archives every proposal (approved or rejected) to
- * trade_history for the learning loop. This tool never places a real order —
- * see marketdata.js, which is read-only market data by design.
+ * exact manual trade instructions (you place these yourself on your own
+ * broker — usually Robinhood), and archives every proposal (approved or
+ * rejected) to trade_history for the learning loop. This tool never places
+ * a real order — see marketdata.js, which is read-only market data by design.
  */
 const { v4: uuidv4 } = require('uuid');
 const db = require('./db');
+const { IV_RANK_MIN_SAMPLE } = require('./agent3_risk');
 
 function bar(ch = '=') { return ch.repeat(80); }
 
@@ -65,6 +66,9 @@ function buildReport({ analysis, structured, risk }) {
   lines.push(`• Weekly Drawdown (hypothetical): ${(risk.weeklyDrawdownPct * 100).toFixed(1)}% (limit 5%) [APPROVED]`);
   lines.push(`• Net Directional Exposure: ${risk.netExposureBefore.toFixed(2)} -> ${risk.netExposureAfter.toFixed(2)} (cap ±1.3, correlation proxy) [APPROVED]`);
   lines.push(`• Conviction: ${risk.conviction}/100 (IV favorability ${risk.ivFavorability.toFixed(0)}${risk.ivHvRatio != null ? `, IV/HV ${risk.ivHvRatio.toFixed(2)}` : ''}) -> allocation ${(risk.allocationPct * 100).toFixed(1)}% of capital`);
+  lines.push(risk.ivGateActive
+    ? `• IV Safety Gates: ACTIVE (${risk.ivSampleSize} days of IV history — IV Rank veto and IV/HV ratio veto both live for ${structured.symbol})`
+    : `• IV Safety Gates: NOT YET ACTIVE for ${structured.symbol} — only ${risk.ivSampleSize}/${IV_RANK_MIN_SAMPLE} days of IV history collected. The IV Rank veto and IV/HV ratio veto are both skipped (not passed) until then — this pick isn't protected by those two checks yet.`);
   lines.push('• Status: RECOMMENDED');
   lines.push('');
   lines.push('-'.repeat(80));

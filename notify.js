@@ -19,6 +19,40 @@ async function send(subject, text, html) {
   console.log(`[notify] ✉️  Sent → ${process.env.NOTIFY_EMAIL}`);
 }
 
+// A session that errors out produces no report at all — silence that could
+// easily be mistaken for "nothing new today" when something actually broke.
+// This is a distinct, clearly-labeled alert so a crashed run doesn't go
+// unnoticed among routine "Daily update" emails.
+async function sendFailureAlert(err) {
+  const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const message = err?.response?.data ? JSON.stringify(err.response.data) : (err?.message || String(err));
+
+  const text = `
+⚠ TRADING COUNCIL SESSION FAILED — ${ts} ET
+
+The session did not complete. This is NOT "nothing new to report" —
+something broke, and no fresh recommendations or outcome checks happened
+this run.
+
+Error: ${message}
+
+Check the full log at:
+https://github.com/sangeeta007-eng/trading/actions
+`;
+
+  const html = `<!DOCTYPE html>
+<html><body style="margin:0; padding:0; background:#f3f1ea; font-family:Verdana, Tahoma, Arial, Helvetica, sans-serif;">
+<div style="max-width:600px; margin:40px auto; padding:22px; background:#fdfbf6; border:2px solid #b91c1c; border-radius:8px; letter-spacing:0.15px;">
+  <div style="font-size:18px; font-weight:700; color:#b91c1c; margin-bottom:10px; line-height:1.4;">⚠ Trading Council session FAILED</div>
+  <div style="font-size:14px; line-height:1.6; color:#2b2723; margin-bottom:14px;">${ts} ET — the session did not complete. This is not "nothing new to report" — something broke, and no fresh recommendations or outcome checks happened this run.</div>
+  <div style="font-size:13px; font-family:monospace; background:#f7f5ef; border:1px solid #e6e0d4; border-radius:4px; padding:12px; color:#2b2723; word-break:break-word; line-height:1.5;">${message}</div>
+  <div style="font-size:13px; color:#6b6358; margin-top:14px; line-height:1.6;">Full log: <a href="https://github.com/sangeeta007-eng/trading/actions" style="color:#166534;">github.com/sangeeta007-eng/trading/actions</a></div>
+</div>
+</body></html>`;
+
+  await send(`[Trading Council] ⚠ SESSION FAILED — ${ts}`, text, html);
+}
+
 // ── Plain-text formatting (console log + email fallback) ───────────────────
 
 function dirLabel(direction) {
@@ -434,4 +468,4 @@ async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, month
   return html;
 }
 
-module.exports = { sendSessionReport, buildHtmlBody };
+module.exports = { sendSessionReport, sendFailureAlert, buildHtmlBody };

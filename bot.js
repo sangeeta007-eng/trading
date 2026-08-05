@@ -32,7 +32,9 @@ console.log('');
 
 runSession()
   .then(() => process.exit(0))
-  .catch(err => {
-    console.error('[bot] Session error:', err.response?.data || err.message);
+  .catch(() => {
+    // bot-core.js already logs the error and sends a failure-alert email —
+    // this just sets the exit code so Task Scheduler/GitHub Actions see
+    // the run as failed.
     process.exit(1);
   });

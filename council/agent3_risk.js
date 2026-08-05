@@ -155,10 +155,14 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     weeklyPnL, weeklyDrawdownPct,
     conviction: finalConviction, ivFavorability, ivHvRatio,
     netExposureBefore: currentExposure, netExposureAfter: projectedExposure,
+    // Below IV_RANK_MIN_SAMPLE, the IV Rank and IV/HV vetoes above are
+    // simply skipped (not passed) — surfaced here so the report can say so
+    // plainly instead of silently looking like those protections are live.
+    ivGateActive: ivSampleSize >= IV_RANK_MIN_SAMPLE, ivSampleSize,
   };
 }
 
 module.exports = {
   evaluate, ALLOC_MIN_PCT, ALLOC_MAX_PCT, MAX_OPEN_POSITIONS, WEEKLY_DRAWDOWN_LIMIT_PCT,
-  IV_RANK_VETO, IV_HV_RATIO_VETO, MAX_NET_DIRECTIONAL_EXPOSURE,
+  IV_RANK_VETO, IV_HV_RATIO_VETO, IV_RANK_MIN_SAMPLE, MAX_NET_DIRECTIONAL_EXPOSURE,
 };
