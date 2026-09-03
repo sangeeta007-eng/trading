@@ -295,7 +295,7 @@ function buildHotRows(hot) {
       ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
       ${td(c ? '$' + c.targetLimit.toFixed(2) + ' (+' + ((c.targetLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.target}; font-weight:700;`)}
       ${td(c && c.stopUnderlying != null
-            ? `${w.symbol} < $${c.stopUnderlying.toFixed(2)}<div style="font-size:11px; font-weight:400; color:${COLOR.muted};">stock now $${w.price.toFixed(2)} · −${(c.stopUnderlyingPct * 100).toFixed(1)}%</div>`
+            ? `${w.symbol} below $${c.stopUnderlying.toFixed(2)}<div style="font-size:11px; font-weight:400; color:${COLOR.muted};">stock now $${w.price.toFixed(2)} · −${(c.stopUnderlyingPct * 100).toFixed(1)}%</div>`
             : '—', `color:${COLOR.stop}; font-weight:700;`)}
       ${td(c && c.qty
             ? `${c.qty} × $${c.tradeCost.toFixed(0)}${c.maxLossPct != null ? `<div style="font-size:11px; font-weight:400; color:${COLOR.muted};">risking ${(c.maxLossPct * 100).toFixed(1)}% of capital</div>` : ''}`
@@ -342,7 +342,7 @@ function buildWarmRows(warm) {
       ${td(convictionBadge(w.conviction))}
       ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
       ${td(c ? '$' + c.targetLimit.toFixed(2) : '—', c ? `color:${COLOR.target};` : '')}
-      ${td(c && c.stopUnderlying != null ? `${w.symbol} < $${c.stopUnderlying.toFixed(2)}` : '—', c ? `color:${COLOR.stop};` : '')}
+      ${td(c && c.stopUnderlying != null ? `${w.symbol} below $${c.stopUnderlying.toFixed(2)}` : '—', c ? `color:${COLOR.stop};` : '')}
       ${td(w.blockedDetail || w.blockedReason || 'pending better conditions', `color:${COLOR.muted}; font-size:13px;`)}
     </tr>`;
   }).join('');
@@ -631,7 +631,7 @@ function buildVerdictBanner(v) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, ts, target }) {
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const hotStocks = hot.filter(w => w.assetType === 'STOCK');
   const hotEtfs = hot.filter(w => w.assetType !== 'STOCK');
@@ -729,7 +729,6 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
     ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
-    ${buildSpreadBlock(spreads)}
     ${buildMacroBlock(macro)}
     ${buildNewsBlock(marketNews, hot)}
     ${stockTable}
@@ -737,7 +736,9 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     ${etfTable}
     ${buildAdvisoryBlock(hot)}
     ${warmTable}
+    ${buildDipWatch(dipWatch)}
     ${buildExitStrategyBlock()}
+    ${buildSpreadBlock(spreads)}
     ${recTable}
     ${outcomeTable}
     ${playbookTable}
@@ -776,10 +777,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [] }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [], dipWatch = [] }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);
