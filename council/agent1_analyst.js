@@ -44,6 +44,18 @@ const DEFAULT_UNIVERSE = [
 const ADX_MIN_TREND = 18; // below this, treat the market as too choppy/directionless to trade
 const RS_LOOKBACK_DAYS = 21; // ~1 trading month
 
+// Pullback-within-trend entry model. The trend still has to be intact (price
+// on the right side of the 21 EMA, ADX above the chop floor, weekly timeframe
+// agreeing) — but the *entry* is timed to a pullback toward that trend line
+// rather than a chase after an extended move.
+//
+// This deliberately inverts the previous conviction formula, which scored
+// `separation from the 21 EMA` as a positive and maxed out at 3% extended.
+// That rewarded buying whatever had already run hardest, which is how the
+// report kept surfacing metals near their highs.
+const IDEAL_EXTENSION_PCT = 4;  // at the EMA = best entry; 4%+ away = no credit
+const MAX_EXTENSION_PCT   = 8;  // beyond this it's a chase, not a pullback — no trade
+
 // Ranks every symbol in the universe by trailing-month return relative to
 // SPY. Returns { [symbol]: percentile }, where 100 = strongest relative
 // performer, 0 = weakest. A symbol whose bars couldn't be fetched is simply
@@ -74,12 +86,30 @@ function scoreCentering(value, center, halfWidth) {
   return Math.max(0, 100 - (Math.abs(value - center) / halfWidth) * 100);
 }
 
-function computeConviction({ rsi14, biasCenter, price, e21, adxVal }) {
-  const rsiScore = scoreCentering(rsi14, biasCenter, 10);
+// 0-100 conviction, weighted toward a good entry price rather than a strong
+// recent move. Every component is computed from real bars or real IV history
+// — nothing here is a sentiment guess.
+function computeConviction({ rsi14, biasCenter, price, e21, adxVal, ivRank, ivSampleReal }) {
+  // Entry quality (35%) — how close price sits to the trend line it pulled
+  // back to. At the 21 EMA scores 100; IDEAL_EXTENSION_PCT away scores 0.
   const sepPct = Math.abs(price - e21) / e21 * 100;
-  const trendScore = Math.min(100, (sepPct / 3) * 100);
+  const pullbackScore = Math.max(0, 100 - (sepPct / IDEAL_EXTENSION_PCT) * 100);
+
+  // Momentum reset (25%) — centered on a neutral RSI, because a pullback in
+  // an uptrend (or a bounce in a downtrend) shows momentum cooling back to
+  // the middle, not pinned at an extreme.
+  const rsiScore = scoreCentering(rsi14, biasCenter, 10);
+
+  // Trend strength (25%) — the trend being pulled back into must be real.
   const adxScore = adxVal == null ? 50 : Math.min(100, (adxVal / 40) * 100);
-  return Math.round(rsiScore * 0.4 + trendScore * 0.3 + adxScore * 0.3);
+
+  // Premium cheapness (15%) — desks buy volatility when it's cheap relative
+  // to its own history, not when it's rich. Only counted when there's a real
+  // IV sample behind the rank; otherwise neutral, so the placeholder 50 can
+  // never inflate or depress conviction on its own.
+  const ivScore = ivSampleReal ? Math.max(0, 100 - ivRank) : 50;
+
+  return Math.round(pullbackScore * 0.35 + rsiScore * 0.25 + adxScore * 0.25 + ivScore * 0.15);
 }
 
 async function analyze(symbol, sectorPercentile = null) {
@@ -102,9 +132,24 @@ async function analyze(symbol, sectorPercentile = null) {
   }
 
   const trendOk = adxVal != null && adxVal >= ADX_MIN_TREND;
+  const extensionPct = Math.abs(price - e21) / e21 * 100;
   let bias = 'NEUTRAL';
   if (price > e21 && rsi14 > 45 && rsi14 < 65 && trendOk) bias = 'CALL';
   else if (price < e21 && rsi14 < 55 && rsi14 > 35 && trendOk) bias = 'PUT';
+
+  // Extension gate: an intact trend that price has run far away from is a
+  // chase, not a pullback. Entering here means paying up and having the
+  // stop sit a long way below — the exact thing that kept putting metals
+  // near their highs on this list.
+  let extensionLine = null;
+  if (bias !== 'NEUTRAL') {
+    if (extensionPct > MAX_EXTENSION_PCT) {
+      extensionLine = `Entry Quality: price is ${extensionPct.toFixed(1)}% from its 21 EMA — beyond the ${MAX_EXTENSION_PCT}% chase limit. The trend is real but this is not a pullback entry, so no trade.`;
+      bias = 'NEUTRAL';
+    } else {
+      extensionLine = `Entry Quality: price is ${extensionPct.toFixed(1)}% from its 21 EMA (${extensionPct <= 1.5 ? 'right at the trend line — prime pullback entry' : extensionPct <= IDEAL_EXTENSION_PCT ? 'near the trend line — reasonable entry' : `stretched, ${MAX_EXTENSION_PCT}% is the chase limit`}).`;
+    }
+  }
 
   // Multi-timeframe confirmation: a daily-only signal is a much weaker read
   // than one the weekly trend agrees with. Only fetched when the daily
@@ -154,15 +199,19 @@ async function analyze(symbol, sectorPercentile = null) {
     }
   }
 
+  // A pullback is momentum cooling back toward neutral, so both directions
+  // score best around a mid-range RSI — not pinned at an extreme.
+  const ivSampleReal = analytics.getIVHistoryCount(symbol) >= 10;
   const conviction = bias === 'NEUTRAL' ? 0 : computeConviction({
-    rsi14, biasCenter: bias === 'CALL' ? 55 : 45, price, e21, adxVal,
+    rsi14, biasCenter: 50, price, e21, adxVal, ivRank, ivSampleReal,
   });
 
   const reasonLines = [
     `Price Action: ${symbol} ($${price.toFixed(2)}) is ${price > e21 ? 'above' : 'below'} 21 EMA ($${e21.toFixed(2)})${e9 ? `, 9 EMA ($${e9.toFixed(2)})` : ''}.`,
+    ...(extensionLine ? [extensionLine] : []),
     `Momentum: 14-day RSI is at ${rsi14.toFixed(1)}${stoch.k != null ? `, Stochastic %K ${stoch.k.toFixed(1)} / %D ${stoch.d.toFixed(1)}` : ''}.`,
     `Trend Strength: ADX(14) ${adxVal != null ? adxVal.toFixed(1) : 'n/a'} (${trendOk ? 'trending — tradable' : `below ${ADX_MIN_TREND} — too choppy to trade`}).`,
-    `Volatility: IV Rank is at ${ivRank.toFixed(0)}%, 30d realized vol ${(hv * 100).toFixed(1)}%.`,
+    `Volatility: IV Rank is at ${ivRank.toFixed(0)}%${ivSampleReal ? ' (real — scored into conviction; cheaper premium ranks higher)' : ' (placeholder — under 10 days of IV history, so it is NOT scored into conviction)'}, 30d realized vol ${(hv * 100).toFixed(1)}%.`,
     ...(weeklyLine ? [weeklyLine] : []),
     ...(sectorLine ? [sectorLine] : []),
     ...(seasonalityLine ? [seasonalityLine] : []),

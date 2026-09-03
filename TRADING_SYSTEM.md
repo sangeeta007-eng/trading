@@ -41,9 +41,30 @@ Computes 9/21 EMA, 14-period RSI, Stochastic %K/%D, and ADX(14) from real daily 
 | **PUT**  | Price < 21 EMA AND 35 < RSI < 55 AND ADX ≥ 18 |
 | **NEUTRAL** | Otherwise — no recommendation (includes choppy markets, ADX < 18) |
 
-Each non-neutral signal gets a 0-100 **conviction score** (RSI centering +
-trend separation + ADX strength), used to process the strongest setups first
-and to scale position sizing.
+**Entry model: pullback within an intact trend.** The trend has to be real
+(right side of the 21 EMA, ADX ≥ 18, weekly timeframe agreeing), but the
+entry is timed to a *pullback toward* that trend line, not a chase after an
+extended move. Price more than **8% from the 21 EMA is rejected outright**
+as a chase.
+
+Each non-neutral signal gets a 0-100 **conviction score**:
+
+| Component | Weight | What scores high |
+|---|---|---|
+| Entry quality | 35% | Price *close* to the 21 EMA (at it = 100, 4%+ away = 0) |
+| Momentum reset | 25% | RSI near 50 — cooled back to neutral, not pinned at an extreme |
+| Trend strength | 25% | ADX(14), scaled to 40 |
+| Premium cheapness | 15% | Low IV Rank — but only counted when ≥10 days of real IV history exist, otherwise neutral |
+
+This deliberately **inverts** the earlier formula, which scored *separation
+from* the 21 EMA as a positive and maxed out at 3% extended — that rewarded
+buying whatever had already run hardest, which is why metals near their
+highs kept topping the list.
+
+**Affordability:** contracts costing more than `MAX_PREMIUM_PER_CONTRACT`
+(default $1,000, set in `.env`) are excluded from picks so one expensive
+contract can't swallow a position slot. The symbol still appears in WARM
+with its real cheapest qualifying price — nothing is hidden.
 
 **Seasonality** (`council/seasonality.js`): once a setup survives every other
 check, real historical data (10 years of daily bars, via the same `getBars`

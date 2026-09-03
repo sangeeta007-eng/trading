@@ -25,6 +25,13 @@ const MIN_VOLUME        = 500;
 const MAX_SPREAD_PCT    = 0.08;  // 8% of mid
 const MAX_SPREAD_FLOOR  = 0.05;  // ...but always allow at least a nickel, for cheap contracts
 function spreadCap(mid) { return Math.max(MAX_SPREAD_FLOOR, mid * MAX_SPREAD_PCT); }
+
+// Affordability cap on the premium itself. A 0.5-0.65 delta contract on a
+// high-priced ETF can run $1,400+, which swallows a whole position slot and
+// leaves no room to scale out in pieces. Contracts above this are excluded
+// from picks — the symbol still shows up in WARM with the real cheapest
+// price, so nothing is hidden, it just doesn't get recommended.
+const MAX_PREMIUM_PER_CONTRACT = parseFloat(process.env.MAX_PREMIUM_PER_CONTRACT) || 1000;
 const TARGET_ATR_MULT   = 1.8; // target = entry + 1.8x underlying ATR(14), translated through delta
 const STOP_ATR_MULT     = 1.0; // stop   = entry - 1.0x underlying ATR(14), translated through delta
 // ATR translated through delta can swing wildly (options leverage) — a cheap,
@@ -137,9 +144,21 @@ async function structureContract(symbol, bias, spotPrice) {
     };
   }
 
+  // Affordability filter, applied after the quality filters so the reject
+  // message can quote the real cheapest qualifying contract rather than a
+  // vague "nothing found".
+  const affordable = candidates.filter(c => c.ask * 100 <= MAX_PREMIUM_PER_CONTRACT);
+  if (!affordable.length) {
+    const cheapest = candidates.reduce((a, b) => (a.ask <= b.ask ? a : b));
+    return {
+      ok: false, vetoReason: 'DATA_INSUFFICIENT',
+      detail: `Cheapest qualifying contract costs $${(cheapest.ask * 100).toFixed(0)} per contract (${cheapest.expiration} $${cheapest.strike} @ $${cheapest.ask.toFixed(2)}), above the $${MAX_PREMIUM_PER_CONTRACT} per-contract limit. Real setup, just too expensive per contract to size sensibly — raise MAX_PREMIUM_PER_CONTRACT in .env to include these.`,
+    };
+  }
+
   const targetDelta = (delta_min + delta_max) / 2;
-  candidates.sort((a, b) => Math.abs(a.delta - targetDelta) - Math.abs(b.delta - targetDelta));
-  const best = candidates[0];
+  affordable.sort((a, b) => Math.abs(a.delta - targetDelta) - Math.abs(b.delta - targetDelta));
+  const best = affordable[0];
 
   // Entry priced at the ASK, not the mid — the mid is a fair-value estimate,
   // but a real marketable buy order fills at the ask. Pricing entry at mid
