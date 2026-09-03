@@ -543,6 +543,22 @@ function buildSpreadBlock(spreads) {
   </div>`;
 }
 
+// Stocks carry a risk ETFs structurally don't: one company, one earnings
+// date, one piece of news. A recent large single-day move is a factual sign
+// the price is already being driven by an event.
+function buildStockRiskNote(hotStocks) {
+  const gapped = hotStocks.filter(w => w.eventGap);
+  return `
+  <div style="margin:-8px 0 24px; background:#fdf1e8; border:1px solid ${COLOR.hotBorder}; border-radius:6px; padding:12px 14px;">
+    <div style="font-size:14px; line-height:1.7; color:${COLOR.text};">
+      <b style="color:${COLOR.hot};">Why stocks are capped at 3.</b> An ETF holds dozens of companies, so no single piece of news moves it much. A stock is one company — an earnings miss or a lawsuit can drop it 20% overnight, straight through your stop, before you can act. They're here because they actually move enough to reach a 12-15% target (MU rose 12%+ within 20 days on 76% of days; SPY managed 1.4%), but that same movement is the risk.
+      <br><br>
+      <b>Check the earnings date before buying any of these.</b> This tool does not have earnings dates and will not guess at them.
+      ${gapped.length ? `<br><br><b style="color:${COLOR.hot};">Already moving on news:</b> ${gapped.map(w => `${w.symbol} moved ${w.eventGap.pct >= 0 ? '+' : ''}${w.eventGap.pct.toFixed(1)}% in a single day on ${w.eventGap.date}`).join('; ')}. A move that size is an event, not a trend — worth knowing what it was before buying into it.` : ''}
+    </div>
+  </div>`;
+}
+
 // Plain-English glossary for the column headings and recurring terms, so
 // the tables can be read without already knowing options vocabulary.
 function buildGlossary() {
@@ -585,15 +601,22 @@ function buildVerdictBanner(v) {
 
 function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
+  const hotStocks = hot.filter(w => w.assetType === 'STOCK');
+  const hotEtfs = hot.filter(w => w.assetType !== 'STOCK');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
   const realizedPnL = exits.reduce((s, e) => s + (e.pnl || 0), 0);
   const weekPct = ((weeklyPnL / target) * 100).toFixed(0);
 
-  const hotTable = tableWrap(
-    '🔥 HOT — Actionable Now', COLOR.hot, COLOR.hot,
+  const stockTable = tableWrap(
+    '📈 STOCKS — options on individual companies', COLOR.hot, COLOR.hot,
     ['Symbol', 'Direction', 'Strike', 'Expiry', 'Delta', 'Entry', 'Target ▲', 'Stop ▼', 'Size', 'Conv.', '⚠'],
-    buildHotRows(hot), 'Nothing hot this session.'
+    buildHotRows(hotStocks), 'No stock setups cleared today.'
+  );
+  const etfTable = tableWrap(
+    '🗂 ETFs — options on funds (baskets of many companies)', COLOR.hot, COLOR.hot,
+    ['Symbol', 'Direction', 'Strike', 'Expiry', 'Delta', 'Entry', 'Target ▲', 'Stop ▼', 'Size', 'Conv.', '⚠'],
+    buildHotRows(hotEtfs), 'No ETF setups cleared today.'
   );
   const warmTable = tableWrap(
     '🌤️ WARM — Good Setup, Not Yet Actionable', COLOR.warm, COLOR.warm,
@@ -677,7 +700,9 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     ${buildSpreadBlock(spreads)}
     ${buildMacroBlock(macro)}
     ${buildNewsBlock(marketNews, hot)}
-    ${hotTable}
+    ${stockTable}
+    ${hotStocks.length ? buildStockRiskNote(hotStocks) : ''}
+    ${etfTable}
     ${buildAdvisoryBlock(hot)}
     ${warmTable}
     ${buildExitStrategyBlock()}

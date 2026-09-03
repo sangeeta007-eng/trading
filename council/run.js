@@ -24,6 +24,7 @@ const db = require('./db');
 // to place yet. Both grounded in the same conviction score and real market
 // data — no separate, fabricated sentiment layer.
 const WARM_CONVICTION_FLOOR = 50;
+const MAX_STOCK_PICKS = 3; // individual stocks carry single-company gap risk — keep the list short
 
 function classifyWatchlist(results) {
   const watchlist = [];
@@ -40,6 +41,7 @@ function classifyWatchlist(results) {
 
     watchlist.push({
       symbol: analysis.symbol, bias: analysis.bias, conviction, tier, approved,
+      assetType: analysis.assetType || 'ETF', eventGap: analysis.eventGap || null,
       price: analysis.price, rsi: analysis.rsi, adx: analysis.adx,
       advisories: approved ? (risk.advisories || []) : [],
       contract: structured?.ok ? {
@@ -53,7 +55,21 @@ function classifyWatchlist(results) {
       blockedDetail: !approved ? (risk?.detail || structured?.detail || null) : null,
     });
   }
-  return watchlist.sort((a, b) => b.conviction - a.conviction);
+  watchlist.sort((a, b) => b.conviction - a.conviction);
+
+  // Cap individual stocks. They carry single-company risk an ETF doesn't —
+  // one earnings miss or one piece of company news can gap a stock in a way
+  // a basket of 30+ holdings cannot — so the list stays short by design.
+  const capped = [];
+  let stocksKept = 0;
+  for (const w of watchlist) {
+    if (w.assetType === 'STOCK') {
+      if (stocksKept >= MAX_STOCK_PICKS) continue;
+      stocksKept++;
+    }
+    capped.push(w);
+  }
+  return capped;
 }
 
 // A plain daily call on whether this is a day to be putting money to work,

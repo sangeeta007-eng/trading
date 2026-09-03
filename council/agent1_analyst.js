@@ -35,12 +35,36 @@ const analytics = require('../analytics');
 // Liquid ETF universe — broad market, sectors, and macro hedges with deep,
 // reliably tight options markets (carried over from the retired advisor bot's
 // vetted allowlist). VXX is excluded — it's a regime signal, not traded.
-const DEFAULT_UNIVERSE = [
+const ETF_UNIVERSE = [
   'SPY', 'QQQ', 'IWM', 'DIA', 'MDY',
   'XLK', 'XLF', 'XLE', 'XLV', 'XLI', 'XLU', 'XLP', 'XLY', 'XLB',
   'GLD', 'TLT', 'SLV', 'USO', 'UNG',
   'SOXX', 'SMH',
 ];
+
+// Individual stocks, screened on two things measured from real bars: they
+// have liquid options (contracts with OI > 1000 in the target expiry
+// window), and they actually move enough for a 12-15% option target to be
+// reachable. Measured share of days that saw a >=12% rise within 20
+// trading days: MU 76%, AMD 55%, PLTR 51%, COIN 45%, AVGO 39%, GOOGL 36%,
+// TSLA 32%, NVDA 26%, AMZN 24%, META 23%, XOM 21%, MSFT 18%, NFLX 16%,
+// AAPL 16%. For comparison SPY manages 1.4%, which is why the ETF list
+// alone was never going to produce this kind of target.
+//
+// Deliberately excluded despite good liquidity: JPM (3.6%), DIS (4.3%),
+// UBER (7.9%), BAC (11.4%) — they simply don't move enough.
+const STOCK_UNIVERSE = [
+  'NVDA', 'AMD', 'MU', 'AVGO',          // semis — the highest-movement group
+  'TSLA', 'PLTR', 'COIN',               // high-beta
+  'GOOGL', 'META', 'AMZN', 'MSFT', 'AAPL', 'NFLX', 'XOM',
+];
+
+// Kept as the combined default so existing callers (backtest, scans) keep
+// working unchanged.
+const DEFAULT_UNIVERSE = [...ETF_UNIVERSE, ...STOCK_UNIVERSE];
+
+const ETF_SET = new Set(ETF_UNIVERSE);
+function assetTypeOf(symbol) { return ETF_SET.has(symbol) ? 'ETF' : 'STOCK'; }
 
 const ADX_MIN_TREND = 18; // below this, treat the market as too choppy/directionless to trade
 const RS_LOOKBACK_DAYS = 21; // ~1 trading month
@@ -264,7 +288,25 @@ async function analyze(symbol, sectorPercentile = null) {
     `Decision: ${bias === 'CALL' ? `BULLISH BIAS (CALL) — conviction ${conviction}/100` : bias === 'PUT' ? `BEARISH BIAS (PUT) — conviction ${conviction}/100` : 'NO TRADE — setup criteria not met'}`,
   ];
 
-  return { symbol, price, ema9: e9, ema21: e21, rsi: rsi14, stochastic: stoch, adx: adxVal, hv, ivRank, bias, conviction, reasonLines };
+  const assetType = assetTypeOf(symbol);
+
+  // Single stocks gap on earnings and company news in a way a basket of 30+
+  // holdings simply cannot. A large recent single-day move is a factual,
+  // measurable sign the price is being driven by an event rather than by
+  // the trend — worth flagging before buying options into it.
+  let eventGap = null;
+  if (assetType === 'STOCK') {
+    const recent = bars.slice(-11);
+    for (let i = 1; i < recent.length; i++) {
+      const move = (recent[i].c - recent[i - 1].c) / recent[i - 1].c;
+      if (Math.abs(move) >= 0.07) {
+        eventGap = { pct: move * 100, daysAgo: recent.length - 1 - i, date: recent[i].t.slice(0, 10) };
+        break;
+      }
+    }
+  }
+
+  return { symbol, assetType, eventGap, price, ema9: e9, ema21: e21, rsi: rsi14, stochastic: stoch, adx: adxVal, hv, ivRank, bias, conviction, reasonLines };
 }
 
 async function scanUniverse(universe = DEFAULT_UNIVERSE) {
@@ -280,4 +322,4 @@ async function scanUniverse(universe = DEFAULT_UNIVERSE) {
   return results;
 }
 
-module.exports = { analyze, scanUniverse, computeSectorRanking, DEFAULT_UNIVERSE, ADX_MIN_TREND };
+module.exports = { analyze, scanUniverse, computeSectorRanking, DEFAULT_UNIVERSE, ETF_UNIVERSE, STOCK_UNIVERSE, assetTypeOf, ADX_MIN_TREND };
