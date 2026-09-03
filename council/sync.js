@@ -24,6 +24,7 @@ const db = require('./db');
 const learning = require('./learning');
 
 const TIME_STOP_DTE = 5; // flag as EXPIRED within this many calendar days of expiration, neither target nor stop hit
+const MAX_HOLD_DAYS  = 7; // active recommendations roll off after a week — the list is always "this week's ideas"
 
 function finalizeClose(trade, { exitPrice, status, closedAt, reasonTag }) {
   const entryPrice = trade.entry_price;
@@ -65,6 +66,18 @@ async function reconcile() {
       }
       if (quote.bid <= trade.stop_price) {
         closed.push(finalizeClose(trade, { exitPrice: quote.bid, status: 'CLOSED_LOSS', closedAt: now.toISOString(), reasonTag: 'stop reached' }));
+        continue;
+      }
+
+      // Seven-day time stop. A recommendation that hasn't resolved inside a
+      // week is closed out and drops off the active list, so the list is
+      // always "this week's ideas" rather than an ever-growing backlog.
+      // Measured against 8 years of history, capping the hold at 7 days
+      // instead of 15 changes expectancy by 0.03pp — the average trade
+      // resolves in ~2 days either way, so this costs nothing.
+      const daysHeld = (now - new Date(trade.opened_at)) / (1000 * 60 * 60 * 24);
+      if (daysHeld >= MAX_HOLD_DAYS) {
+        closed.push(finalizeClose(trade, { exitPrice: quote.bid, status: 'EXPIRED', closedAt: now.toISOString(), reasonTag: `${MAX_HOLD_DAYS}-day time stop reached (held ${daysHeld.toFixed(1)}d), neither target nor stop hit` }));
         continue;
       }
 

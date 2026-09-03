@@ -461,6 +461,35 @@ function buildEvidenceBanner() {
   </div>`;
 }
 
+// Real headlines, shown for you to read. Deliberately NOT scored or turned
+// into a signal — see news.js for why that line is drawn where it is.
+function buildNewsBlock(marketNews, hot) {
+  const item = n => `
+    <div style="font-size:14px; line-height:1.6; color:${COLOR.text}; margin-bottom:7px;">
+      <span style="color:${COLOR.muted}; font-size:12px;">${new Date(n.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+      &nbsp;${n.url ? `<a href="${n.url}" style="color:${COLOR.text}; text-decoration:underline;">${n.headline}</a>` : n.headline}
+      <span style="color:${COLOR.muted}; font-size:12px;">— ${n.source}</span>
+    </div>`;
+
+  const perPick = (hot || []).filter(w => w.news?.length).map(w => `
+    <div style="margin-top:12px;">
+      <div style="font-size:14px; font-weight:700; color:${COLOR.text}; margin-bottom:5px;">${w.symbol}</div>
+      ${w.news.map(item).join('')}
+    </div>`).join('');
+
+  if (!marketNews?.length && !perPick) return '';
+
+  return `
+  <div style="margin:24px 0; background:${COLOR.card}; border:1px solid ${COLOR.border}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:15px; font-weight:700; color:${COLOR.text}; margin-bottom:4px;">📰 What's in the news</div>
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.muted}; margin-bottom:10px;">
+      Real headlines from the last couple of days, for you to read and weigh. They are <b>not</b> scored or used to pick anything — turning news into a number would mean inventing that number, and nothing else here works that way.
+    </div>
+    ${marketNews?.length ? `<div style="font-size:14px; font-weight:700; color:${COLOR.text}; margin-bottom:5px;">Market &amp; macro</div>${marketNews.map(item).join('')}` : ''}
+    ${perPick}
+  </div>`;
+}
+
 // Plain-English glossary for the column headings and recurring terms, so
 // the tables can be read without already knowing options vocabulary.
 function buildGlossary() {
@@ -501,7 +530,7 @@ function buildVerdictBanner(v) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target }) {
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
@@ -593,6 +622,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
     ${buildMacroBlock(macro)}
+    ${buildNewsBlock(marketNews, hot)}
     ${hotTable}
     ${buildAdvisoryBlock(hot)}
     ${warmTable}
@@ -635,10 +665,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [] }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

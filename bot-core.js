@@ -16,6 +16,7 @@ const { runCouncil } = require('./council/run');
 const { buildPlaybook } = require('./council/playbook');
 const { sendSessionReport, sendFailureAlert } = require('./notify');
 const { getMacroSnapshot } = require('./fred');
+const { getMarketNews, getSymbolNews } = require('./news');
 
 
 // Static copy of the same report the email sends, written to disk so
@@ -78,8 +79,15 @@ async function runSession() {
     // just means the report shows the section as "not configured."
     const macro = await getMacroSnapshot();
 
+    // Real, dated headlines — market/macro backdrop plus per-pick context.
+    // Displayed for you to read; never scored or fed into a decision.
+    const marketNews = await getMarketNews({ limit: 5, lookbackDays: 2 });
+    for (const w of watchlist.filter(x => x.tier === 'HOT')) {
+      w.news = await getSymbolNews(w.symbol, { limit: 3, lookbackDays: 7 });
+    }
+
     const html = await sendSessionReport({
-      newCampaigns, exits, regime, watchlist, playbook, macro, verdict,
+      newCampaigns, exits, regime, watchlist, playbook, macro, verdict, marketNews,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
