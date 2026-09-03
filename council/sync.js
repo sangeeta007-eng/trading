@@ -24,7 +24,7 @@ const db = require('./db');
 const learning = require('./learning');
 
 const TIME_STOP_DTE = 5; // flag as EXPIRED within this many calendar days of expiration, neither target nor stop hit
-const MAX_HOLD_DAYS  = 7; // active recommendations roll off after a week — the list is always "this week's ideas"
+const MAX_HOLD_DAYS  = 21; // 21-day window: the dip trade is given three weeks to work, matching what was backtested (avg resolution 8.1 days)
 
 function finalizeClose(trade, { exitPrice, status, closedAt, reasonTag }) {
   const entryPrice = trade.entry_price;

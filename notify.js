@@ -559,6 +559,31 @@ function buildStockRiskNote(hotStocks) {
   </div>`;
 }
 
+// The dip trigger fires roughly once every 2-3 days across the whole
+// universe — that selectivity is where the 75% win rate comes from. This
+// shows what's approaching it so a quiet day still tells you something.
+function buildDipWatch(dipWatch) {
+  if (!dipWatch?.length) return '';
+  const rows = dipWatch.map((d, i) => `<tr style="background:${zebra(i)};">
+      ${td(`<b>${d.symbol}</b> <span style="color:${COLOR.muted}; font-size:12px;">${d.assetType}</span>`)}
+      ${td(`$${d.price.toFixed(2)}`)}
+      ${td(`<b>${d.rsi2.toFixed(1)}</b>`, `color:${d.rsi2 < 10 ? COLOR.hot : COLOR.muted};`)}
+      ${td(d.rsi2 < 10 ? 'very close' : d.rsi2 < 15 ? 'getting close' : 'watching')}
+    </tr>`).join('');
+
+  return `
+  <div style="margin:24px 0;">
+    <div style="font-size:16px; font-weight:700; color:${COLOR.text}; margin-bottom:6px;">👀 Dip Watch — approaching the buy trigger</div>
+    <div style="font-size:14px; line-height:1.7; color:${COLOR.text}; margin-bottom:10px;">
+      Nothing here is a buy yet. The trigger needs a 2-day RSI below 5, which is a genuinely hard drop — it happens about once every 2-3 days across all 35 symbols, and that rarity is exactly where the 75% win rate comes from. These are the ones falling toward it.
+    </div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:${FONT_STACK};">
+      <thead><tr style="background:${COLOR.headerBg};">${['Symbol', 'Price', '2-day RSI (need < 5)', 'Status'].map(th).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
 // Plain-English glossary for the column headings and recurring terms, so
 // the tables can be read without already knowing options vocabulary.
 function buildGlossary() {

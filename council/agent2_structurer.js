@@ -49,8 +49,20 @@ const STOP_ATR_MULT     = 1.0; // stop   = entry - 1.0x underlying ATR(14), tran
 // it's stated in the report rather than buried.
 const TARGET_MIN_PCT    = 0.12;
 const TARGET_MAX_PCT    = 0.15;
-const STOP_MIN_PCT      = 0.08;
-const STOP_MAX_PCT      = 0.10;
+// Stop band widened deliberately, against instinct, because the backtest was
+// unambiguous. On the Connors dip entry, 8 years of real bars gave:
+//     stop -30% ... +1.00%/trade, worst trade -83.9%
+//     stop -50% ... +4.34%/trade, worst trade -88.1%
+//     stop -70% ... +6.53%/trade, worst trade -94.8%
+//     no stop  ... +8.28%/trade, worst trade -100%
+// A tight stop does not cap the tail — options gap straight through it, so
+// the -30% stop still lost 83.9% on its worst trade — while reliably cutting
+// winners short. It is close to pure cost. 60-70% keeps an explicit exit
+// without paying that much for it; the real risk control is that a long
+// option cannot lose more than the premium, and position sizing decides how
+// much premium is on the table.
+const STOP_MIN_PCT      = 0.60;
+const STOP_MAX_PCT      = 0.70;
 
 // A 21-DTE contract held for the intended three weeks expires in your hand.
 // The learning loop may tune DTE, but never below what the holding window

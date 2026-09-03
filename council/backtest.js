@@ -34,6 +34,7 @@ const { bsPrice, bsDelta, historicalVol } = require('../greek');
 const { RISK_FREE_RATE } = require('../config');
 const { rsi, adx, ema9, ema21 } = require('./indicators');
 const { weinsteinStage, tudorRegime, RASCHKE_ADX_MIN } = require('./methodology');
+const { sma } = require('../marketdata');
 
 const WARMUP_BARS = 220;      // enough for the 200-day line and Weinstein's slope
 const IV_OVER_HV = 1.15;      // realized vol understates implied; rough correction
@@ -45,34 +46,16 @@ const ENTRY_DTE = 45;
 // change here and a change there can be compared directly.
 function evaluateSignal(slice) {
   if (slice.length < WARMUP_BARS) return null;
-
   const price = slice[slice.length - 1].c;
-  const e21 = ema21(slice);
-  const rsi14 = rsi(slice, 14);
-  const adxVal = adx(slice, 14);
-  if (e21 == null || rsi14 == null || adxVal == null) return null;
 
-  const trendOk = adxVal >= 18;
-  let bias = null;
-  if (price > e21 && rsi14 > 45 && rsi14 < 65 && trendOk) bias = 'CALL';
-  else if (price < e21 && rsi14 < 55 && rsi14 > 35 && trendOk) bias = 'PUT';
-  if (!bias) return null;
+  // Connors RSI(2) dip — must mirror agent1_analyst.js exactly, or the
+  // measured number stops describing what actually ships.
+  const ma200 = sma(slice, 200);
+  if (ma200 == null || price <= ma200) return null;
+  const r2 = rsi(slice, 2);
+  if (r2 == null || r2 >= 15) return null;
 
-  // Extension gate — no chasing.
-  const extensionPct = Math.abs(price - e21) / e21 * 100;
-  if (extensionPct > 8) return null;
-
-  // Weinstein: calls only in Stage 2, puts only in Stage 4.
-  const stage = weinsteinStage(slice);
-  if (!stage.available) return null;
-  if (bias === 'CALL' && stage.stage !== 2) return null;
-  if (bias === 'PUT' && stage.stage !== 4) return null;
-
-  // Tudor: right side of the 200-day.
-  const tudor = tudorRegime(slice, bias);
-  if (!tudor.available || !tudor.aligned) return null;
-
-  return { bias, price, e21, rsi14, adxVal, extensionPct };
+  return { bias: 'CALL', price, rsi2: r2, ma200 };
 }
 
 // Picks the strike whose Black-Scholes delta is closest to the target.

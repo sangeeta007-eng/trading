@@ -24,7 +24,7 @@ const db = require('./db');
 // to place yet. Both grounded in the same conviction score and real market
 // data — no separate, fabricated sentiment layer.
 const WARM_CONVICTION_FLOOR = 50;
-const MAX_STOCK_PICKS = 3; // individual stocks carry single-company gap risk — keep the list short
+const MAX_STOCK_PICKS = 4; // individual stocks carry single-company gap risk — keep the list short
 
 function classifyWatchlist(results) {
   const watchlist = [];
@@ -170,10 +170,19 @@ async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE } = {}) {
   const warm = watchlist.filter(w => w.tier === 'WARM');
   console.log(`\n[council] 🔥 HOT: ${hot.map(w => w.symbol + (w.advisories?.length ? `(${w.advisories.length} advisory)` : '')).join(', ') || 'none'} | 🌤️  WARM: ${warm.map(w => w.symbol).join(', ') || 'none'}`);
 
+    // The dip entry is rare by design (~1 signal every 2-3 days across 35
+  // symbols). Surfacing what's approaching the trigger keeps the quiet days
+  // informative instead of blank.
+  const dipWatch = results
+    .filter(r => r.analysis?.rsi2 != null && r.analysis.rsi2 < 25 && r.analysis.entryModel !== 'CONNORS_DIP')
+    .map(r => ({ symbol: r.analysis.symbol, assetType: r.analysis.assetType, rsi2: r.analysis.rsi2, price: r.analysis.price }))
+    .sort((a, b) => a.rsi2 - b.rsi2)
+    .slice(0, 8);
+
   const verdict = dailyVerdict({ results, hot, regime });
   console.log(`[council] Verdict: ${verdict.call} — ${verdict.reason}`);
 
-  return { results, reconciliation, thresholds, regime, watchlist, verdict };
+  return { results, reconciliation, thresholds, regime, watchlist, verdict, dipWatch };
 }
 
 if (require.main === module) {

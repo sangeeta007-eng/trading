@@ -20,13 +20,13 @@ const OUT = path.join(__dirname, '..', 'backtest_results.json');
   console.log(`Backtesting ${DEFAULT_UNIVERSE.length} symbols over ${YEARS} years...`);
   const r = await bt.run({
     universe: DEFAULT_UNIVERSE, years: YEARS,
-    targetPct: 0.15, stopPct: 0.10, holdDays: 15, targetDelta: 0.6,
+    targetPct: 0.135, stopPct: 0.65, holdDays: 21, targetDelta: 0.6,
   });
   const o = r.overall;
 
   // Signal-only edge, exact from bars (no option approximation): does a
   // signal beat simply buying on a random day?
-  const hold = 15, calls = [], puts = [], base = [];
+  const hold = 21, calls = [], puts = [], base = [];
   for (const sym of DEFAULT_UNIVERSE) {
     let bars;
     try { bars = await require('../marketdata').getBars(sym, '1Day', YEARS * 260); } catch { continue; }
