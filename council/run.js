@@ -192,4 +192,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runCouncil };
+module.exports = { runCouncil, MAX_STOCK_PICKS };

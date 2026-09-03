@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { MAX_STOCK_PICKS } = require('./council/run');
 require('dotenv').config();
 
 function getTransporter() {
@@ -551,7 +552,7 @@ function buildStockRiskNote(hotStocks) {
   return `
   <div style="margin:-8px 0 24px; background:#fdf1e8; border:1px solid ${COLOR.hotBorder}; border-radius:6px; padding:12px 14px;">
     <div style="font-size:14px; line-height:1.7; color:${COLOR.text};">
-      <b style="color:${COLOR.hot};">Why stocks are capped at 3.</b> An ETF holds dozens of companies, so no single piece of news moves it much. A stock is one company — an earnings miss or a lawsuit can drop it 20% overnight, straight through your stop, before you can act. They're here because they actually move enough to reach a 12-15% target (MU rose 12%+ within 20 days on 76% of days; SPY managed 1.4%), but that same movement is the risk.
+      <b style="color:${COLOR.hot};">Why stocks are capped at ${MAX_STOCK_PICKS}.</b> An ETF holds dozens of companies, so no single piece of news moves it much. A stock is one company — an earnings miss or a lawsuit can drop it 20% overnight, straight through your stop, before you can act. They're here because they actually move enough to reach a 12-15% target (MU rose 12%+ within 20 days on 76% of days; SPY managed 1.4%), but that same movement is the risk.
       <br><br>
       <b>Check the earnings date before buying any of these.</b> This tool does not have earnings dates and will not guess at them.
       ${gapped.length ? `<br><br><b style="color:${COLOR.hot};">Already moving on news:</b> ${gapped.map(w => `${w.symbol} moved ${w.eventGap.pct >= 0 ? '+' : ''}${w.eventGap.pct.toFixed(1)}% in a single day on ${w.eventGap.date}`).join('; ')}. A move that size is an event, not a trend — worth knowing what it was before buying into it.` : ''}
