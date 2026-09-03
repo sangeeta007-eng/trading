@@ -126,7 +126,7 @@ function formatOutcome(e, i) {
 └${'─'.repeat(60)}`;
 }
 
-function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
+function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target }) {
   const recommendationBlock = newCampaigns.length
     ? newCampaigns.map((c, i) => formatRecommendation(c, i)).join('\n')
     : '  No new recommendations this session.';
@@ -167,6 +167,9 @@ only (9:30am-4pm ET weekdays) — outside that it reports closed, not a guess.
 This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
 
+${verdict ? `TODAY'S CALL: ${verdict.call}
+   ${verdict.reason}
+` : ''}
 📊 MARKET REGIME
    ${regimeLine}
 
@@ -413,7 +416,23 @@ function buildMacroBlock(macro) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
+// The day's plain call on whether to be putting money to work. Never
+// suppresses anything — the picks are listed underneath regardless.
+function buildVerdictBanner(v) {
+  if (!v) return '';
+  const tone = v.call === 'GOOD DAY TO BUY'
+    ? { bg: '#eef3ea', border: '#c9dcc0', fg: COLOR.target }
+    : v.call === 'SIT OUT'
+    ? { bg: '#fdf1e8', border: COLOR.hot, fg: COLOR.hot }
+    : { bg: '#fdf6e3', border: COLOR.warmBorder, fg: COLOR.warm };
+  return `
+  <div style="margin-bottom:16px; background:${tone.bg}; border:2px solid ${tone.border}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:16px; font-weight:700; color:${tone.fg}; margin-bottom:6px;">Today's call: ${v.call}</div>
+    <div style="font-size:14px; line-height:1.6; color:${COLOR.text};">${v.reason}</div>
+  </div>`;
+}
+
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
@@ -502,6 +521,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
       </tr>
     </table>
 
+    ${buildVerdictBanner(verdict)}
     ${buildMacroBlock(macro)}
     ${hotTable}
     ${buildAdvisoryBlock(hot)}
@@ -544,10 +564,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

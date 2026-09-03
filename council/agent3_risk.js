@@ -96,30 +96,14 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     advisories.push({ code: 'IV_HV_GAP', message: `IV/HV ratio ${ivHvRatio.toFixed(2)} > ${IV_HV_RATIO_VETO} — implied vol is well above what this symbol has actually been realizing, which usually prices in event risk.` });
   }
 
-  // "Open positions" = our own tracked ACTIVE recommendations, since there's
-  // no live broker to check — this assumes you acted on every recommendation
-  // we made, which is a guess, not a fact about your account.
   const openPositions = db.getTradesByStatus('ACTIVE').length;
-  if (openPositions >= MAX_OPEN_POSITIONS) {
-    advisories.push({ code: 'MANY_OPEN', message: `${openPositions} recommendations already tracked as open (soft guide: ${MAX_OPEN_POSITIONS}). Counted from what this tool suggested, not from your actual Robinhood account.` });
-  }
 
-  // ── Net directional (correlation-proxy) exposure ─────────────────────────
   const currentExposure = netDirectionalExposure();
   const signedDelta = structured.bias === 'CALL' ? structured.delta : -structured.delta;
   const projectedExposure = currentExposure + signedDelta;
-  if (Math.abs(projectedExposure) > MAX_NET_DIRECTIONAL_EXPOSURE) {
-    advisories.push({ code: 'CORRELATED', message: `Net directional exposure would reach ${projectedExposure.toFixed(2)} (soft guide ±${MAX_NET_DIRECTIONAL_EXPOSURE}) — several same-direction ETF positions behave more like one leveraged bet than diversification.` });
-  }
 
   const weeklyPnL = analytics.getWeeklyPnL();
   const weeklyDrawdownPct = Math.abs(Math.min(0, weeklyPnL)) / capital;
-  if (weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT) {
-    advisories.push({
-      code: 'WEEKLY_DRAWDOWN',
-      message: `Tracked hypothetical P&L is down ${(weeklyDrawdownPct * 100).toFixed(1)}% ($${Math.abs(weeklyPnL).toFixed(0)}) this week. This assumes every past suggestion was taken at its suggested size — it is not your real account's performance.`,
-    });
-  }
 
   // ── Conviction-scaled sizing (10-15% band) ──────────────────────────────
   let ivFavorability = 100 - Math.min(100, structured.ivRank);

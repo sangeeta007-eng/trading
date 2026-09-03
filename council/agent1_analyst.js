@@ -29,6 +29,7 @@ const { getBars, ema } = require('../marketdata');
 const { historicalVol } = require('../greek');
 const { rsi, stochastic, ema9, ema21, adx } = require('./indicators');
 const { getSeasonality } = require('./seasonality');
+const { weinsteinStage, tudorRegime, raschkePullback, RASCHKE_ADX_MIN } = require('./methodology');
 const analytics = require('../analytics');
 
 // Liquid ETF universe — broad market, sectors, and macro hedges with deep,
@@ -101,7 +102,9 @@ function computeConviction({ rsi14, biasCenter, price, e21, adxVal, ivRank, ivSa
   const rsiScore = scoreCentering(rsi14, biasCenter, 10);
 
   // Trend strength (25%) — the trend being pulled back into must be real.
-  const adxScore = adxVal == null ? 50 : Math.min(100, (adxVal / 40) * 100);
+  // Scaled so Raschke's ADX 30 threshold is full marks; anything under it
+  // scores proportionally less rather than being silently accepted.
+  const adxScore = adxVal == null ? 50 : Math.min(100, (adxVal / RASCHKE_ADX_MIN) * 100);
 
   // Premium cheapness (15%) — desks buy volatility when it's cheap relative
   // to its own history, not when it's rich. Only counted when there's a real
@@ -113,7 +116,10 @@ function computeConviction({ rsi14, biasCenter, price, e21, adxVal, ivRank, ivSa
 }
 
 async function analyze(symbol, sectorPercentile = null) {
-  const bars = await getBars(symbol, '1Day', 60);
+  // 260 bars ~= 1 trading year: enough for Weinstein's 30-week MA and its
+  // slope, and for the 200-day line. Every shorter indicator is computed
+  // from the same fetch.
+  const bars = await getBars(symbol, '1Day', 260);
   if (bars.length < 30) {
     return { symbol, bias: 'NEUTRAL', vetoReason: 'DATA_INSUFFICIENT', reasonLines: [`Only ${bars.length} daily bars available (need 30+ for ADX).`] };
   }
@@ -148,6 +154,40 @@ async function analyze(symbol, sectorPercentile = null) {
       bias = 'NEUTRAL';
     } else {
       extensionLine = `Entry Quality: price is ${extensionPct.toFixed(1)}% from its 21 EMA (${extensionPct <= 1.5 ? 'right at the trend line — prime pullback entry' : extensionPct <= IDEAL_EXTENSION_PCT ? 'near the trend line — reasonable entry' : `stretched, ${MAX_EXTENSION_PCT}% is the chase limit`}).`;
+    }
+  }
+
+  // ── Published methodology gates (see council/methodology.js) ────────────
+  // Weinstein decides whether the symbol is in a tradable stage at all;
+  // Tudor Jones's 200-day decides whether the direction is on the right
+  // side of the long-term line. Both are hard gates — they are the whole
+  // point of using a defined method rather than reacting to a chart.
+  let stageLine = null, tudorLine = null, raschke = null, raschkeLine = null;
+  if (bias !== 'NEUTRAL') {
+    const stage = weinsteinStage(bars);
+    if (!stage.available) {
+      stageLine = `Weinstein Stage: not enough history to classify (${stage.reason}) — no trade rather than a guess.`;
+      bias = 'NEUTRAL';
+    } else {
+      const stageOk = (bias === 'CALL' && stage.stage === 2) || (bias === 'PUT' && stage.stage === 4);
+      stageLine = `Weinstein Stage: ${stage.label} — 30-week MA $${stage.ma.toFixed(2)}, ${stage.slopePct >= 0 ? 'up' : 'down'} ${Math.abs(stage.slopePct).toFixed(1)}% over the last month.${stageOk ? '' : ` A ${bias} needs Stage ${bias === 'CALL' ? 2 : 4}, so no trade.`}`;
+      if (!stageOk) bias = 'NEUTRAL';
+    }
+  }
+  if (bias !== 'NEUTRAL') {
+    const tudor = tudorRegime(bars, bias);
+    if (!tudor.available) {
+      tudorLine = `200-day line: not enough history (${tudor.reason}) — no trade rather than a guess.`;
+      bias = 'NEUTRAL';
+    } else {
+      tudorLine = tudor.label;
+      if (!tudor.aligned) bias = 'NEUTRAL';
+    }
+  }
+  if (bias !== 'NEUTRAL') {
+    raschke = raschkePullback(bars, adxVal, bias);
+    if (raschke.available) {
+      raschkeLine = `${raschke.label}${raschke.qualifies ? ' Textbook setup.' : raschke.strongTrend ? '' : ` Tradable, but below Raschke's ADX ${RASCHKE_ADX_MIN} bar — conviction scored down accordingly.`}`;
     }
   }
 
@@ -212,6 +252,9 @@ async function analyze(symbol, sectorPercentile = null) {
     `Momentum: 14-day RSI is at ${rsi14.toFixed(1)}${stoch.k != null ? `, Stochastic %K ${stoch.k.toFixed(1)} / %D ${stoch.d.toFixed(1)}` : ''}.`,
     `Trend Strength: ADX(14) ${adxVal != null ? adxVal.toFixed(1) : 'n/a'} (${trendOk ? 'trending — tradable' : `below ${ADX_MIN_TREND} — too choppy to trade`}).`,
     `Volatility: IV Rank is at ${ivRank.toFixed(0)}%${ivSampleReal ? ' (real — scored into conviction; cheaper premium ranks higher)' : ' (placeholder — under 10 days of IV history, so it is NOT scored into conviction)'}, 30d realized vol ${(hv * 100).toFixed(1)}%.`,
+    ...(stageLine ? [stageLine] : []),
+    ...(tudorLine ? [tudorLine] : []),
+    ...(raschkeLine ? [raschkeLine] : []),
     ...(weeklyLine ? [weeklyLine] : []),
     ...(sectorLine ? [sectorLine] : []),
     ...(seasonalityLine ? [seasonalityLine] : []),

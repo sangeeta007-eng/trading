@@ -9,6 +9,7 @@
 const { getOptionsChain, getOptionQuotes, getBars } = require('../marketdata');
 const { impliedVol, bsDelta } = require('../greek');
 const { RISK_FREE_RATE } = require('../config');
+const { profitFeasibility } = require('./methodology');
 const { atr } = require('./indicators');
 const analytics = require('../analytics');
 const db = require('./db');
@@ -34,15 +35,28 @@ function spreadCap(mid) { return Math.max(MAX_SPREAD_FLOOR, mid * MAX_SPREAD_PCT
 const MAX_PREMIUM_PER_CONTRACT = parseFloat(process.env.MAX_PREMIUM_PER_CONTRACT) || 1000;
 const TARGET_ATR_MULT   = 1.8; // target = entry + 1.8x underlying ATR(14), translated through delta
 const STOP_ATR_MULT     = 1.0; // stop   = entry - 1.0x underlying ATR(14), translated through delta
-// ATR translated through delta can swing wildly (options leverage) — a cheap,
-// high-delta contract can imply a 40%+ stop. Clamp to a band that keeps a
-// single stopped-out trade consistent with Agent 3's 10-15% position sizing
-// and 5% weekly-drawdown limit, while still letting real volatility move the
-// exit within that band instead of using one flat number for every symbol.
-const TARGET_MIN_PCT    = 0.15;
-const TARGET_MAX_PCT    = 0.35;
+// Target band is the stated goal: 12-15% on the premium, taken quickly and
+// repeatedly. ATR still decides *where inside the band* each symbol lands —
+// a more volatile underlying gets pushed toward 15%, a quiet one toward 12%
+// — so the number is still derived from that symbol's real behaviour rather
+// than being one flat figure for everything.
+//
+// The stop band is tightened to 8-10% deliberately. Reward:risk has to stay
+// above 1:1 for the strategy to survive an ordinary win rate: at a 12%
+// target against a 20% stop you would need a 63% win rate just to break
+// even, versus 45% at 12/10. The cost of the tighter stop is being shaken
+// out more often by ordinary option noise — that's the real trade-off, and
+// it's stated in the report rather than buried.
+const TARGET_MIN_PCT    = 0.12;
+const TARGET_MAX_PCT    = 0.15;
 const STOP_MIN_PCT      = 0.08;
-const STOP_MAX_PCT      = 0.20;
+const STOP_MAX_PCT      = 0.10;
+
+// A 21-DTE contract held for the intended three weeks expires in your hand.
+// The learning loop may tune DTE, but never below what the holding window
+// structurally requires.
+const MIN_DTE_FOR_HOLD  = 30;
+const TARGET_HOLD_TRADING_DAYS = 15; // ~3 calendar weeks
 
 function fmtDate(d) { return d.toISOString().split('T')[0]; }
 
@@ -54,7 +68,8 @@ function roundToTick(price, tick, dir) {
 
 async function structureContract(symbol, bias, spotPrice) {
   const optType = bias === 'CALL' ? 'call' : 'put';
-  const { delta_min, delta_max, dte_min, dte_max } = db.getThresholds();
+  const { delta_min, delta_max, dte_min: tunedDteMin, dte_max } = db.getThresholds();
+  const dte_min = Math.max(tunedDteMin, MIN_DTE_FOR_HOLD);
 
   const today = new Date();
   const minExp = new Date(today); minExp.setDate(today.getDate() + dte_min);
@@ -181,6 +196,15 @@ async function structureContract(symbol, bias, spotPrice) {
   // A stop can never be computed at/below zero, nor at/above entry.
   const stopLimit = Math.max(tick, Math.min(roundToTick(entryLimit * (1 - stopPct), tick, 'down'), entryLimit - tick));
 
+  // Can this contract actually reach the target inside the intended holding
+  // window? Compares the underlying move required against the move the
+  // options market itself is pricing over those weeks. Both real numbers —
+  // this is a feasibility check, not a forecast.
+  const feasibility = profitFeasibility({
+    premium: entryLimit, delta: best.delta, spot: spotPrice, iv: best.iv,
+    targetPct, holdTradingDays: TARGET_HOLD_TRADING_DAYS,
+  });
+
   analytics.recordIV(symbol, best.iv);
   const ivRank = analytics.getIVRank(symbol);
 
@@ -195,6 +219,7 @@ async function structureContract(symbol, bias, spotPrice) {
     entryLimit, targetLimit, stopLimit, tick,
     expectedMove: best.expectedMove, requiredMove: best.requiredMove,
     underlyingATR, targetAtrMult: TARGET_ATR_MULT, stopAtrMult: STOP_ATR_MULT,
+    feasibility, targetHoldDays: TARGET_HOLD_TRADING_DAYS,
     targetPct, stopPct,
     targetClamped: Math.abs(targetPct - rawTargetMove / entryLimit) > 1e-9,
     stopClamped: Math.abs(stopPct - rawStopMove / entryLimit) > 1e-9,

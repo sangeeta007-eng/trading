@@ -65,7 +65,7 @@ async function runSession() {
       return { marketClosed: true, newCampaigns: [], exits: [] };
     }
 
-    const { results, reconciliation, regime, watchlist } = await runCouncil();
+    const { results, reconciliation, regime, watchlist, verdict } = await runCouncil();
 
     const exits = reconciliation.closed.map(toOutcomeCard);
     const newCampaigns = results
@@ -79,7 +79,7 @@ async function runSession() {
     const macro = await getMacroSnapshot();
 
     const html = await sendSessionReport({
-      newCampaigns, exits, regime, watchlist, playbook, macro,
+      newCampaigns, exits, regime, watchlist, playbook, macro, verdict,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
