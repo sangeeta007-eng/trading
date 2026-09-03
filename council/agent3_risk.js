@@ -67,33 +67,58 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     advisories.push({
       code: 'MACRO_EVENT',
       message: `${e.label} lands ${e.date}, inside 24h. Long options bought right before a major release pay elevated IV and can lose money on the post-release IV crush even when the direction is right.`,
+      plain: `A big government report (${e.label}) comes out on ${e.date}. Before news like that, option prices get temporarily puffed up because everyone expects a big swing. Once the news is out, that extra cost deflates fast — so you can guess the direction correctly and still lose money, simply because you overpaid going in. Waiting until the day after usually gets you the same trade cheaper.`,
     });
   }
 
   // ── Regime context ───────────────────────────────────────────────────────
   if (regime) {
     if (regime.sizingMod <= 0) {
-      advisories.push({ code: 'EXTREME_VOL', message: `Extreme volatility regime (VIX proxy ~${regime.vix}). Historically the worst conditions for buying premium — sizing guidance below is unreliable here.` });
+      advisories.push({
+        code: 'EXTREME_VOL',
+        message: `Extreme volatility regime (VIX proxy ~${regime.vix}). Historically the worst conditions for buying premium — sizing guidance below is unreliable here.`,
+        plain: `The market is unusually panicky right now (fear gauge around ${regime.vix}). When everyone is scared, options get very expensive, so you're paying top dollar for the same bet. This is generally the worst time to be buying them.`,
+      });
     }
     if (structured.bias === 'CALL' && regime.allowBullish === false) {
-      advisories.push({ code: 'REGIME_DIRECTION', message: `${regime.name} regime is set against new bullish entries.` });
+      advisories.push({
+        code: 'REGIME_DIRECTION',
+        message: `${regime.name} regime is set against new bullish entries.`,
+        plain: `Overall market conditions (${regime.name}) are currently unfriendly to bets that things go UP. This one bets up.`,
+      });
     }
     if (structured.bias === 'PUT' && regime.allowBearish === false) {
-      advisories.push({ code: 'REGIME_DIRECTION', message: `${regime.name} regime is set against new bearish entries.` });
+      advisories.push({
+        code: 'REGIME_DIRECTION',
+        message: `${regime.name} regime is set against new bearish entries.`,
+        plain: `Overall market conditions (${regime.name}) are currently unfriendly to bets that things go DOWN. This one bets down.`,
+      });
     }
     if (regime.maxNewPerDay !== undefined && regime.maxNewPerDay !== Infinity && sessionNewCount >= regime.maxNewPerDay) {
-      advisories.push({ code: 'REGIME_PACE', message: `${regime.name} regime suggests at most ${regime.maxNewPerDay} new entries/session; this is #${sessionNewCount + 1}.` });
+      advisories.push({
+        code: 'REGIME_PACE',
+        message: `${regime.name} regime suggests at most ${regime.maxNewPerDay} new entries/session; this is #${sessionNewCount + 1}.`,
+        plain: `In jumpy markets like today's, it's usually wiser to take only a couple of new trades at once instead of piling in. This would be your ${sessionNewCount + 1}${sessionNewCount === 0 ? 'st' : sessionNewCount === 1 ? 'nd' : sessionNewCount === 2 ? 'rd' : 'th'} today.`,
+      });
     }
   }
 
   // ── IV pricing gates ─────────────────────────────────────────────────────
   const ivSampleSize = analytics.getIVHistoryCount(structured.symbol);
   if (ivSampleSize >= IV_RANK_MIN_SAMPLE && structured.ivRank > IV_RANK_VETO) {
-    advisories.push({ code: 'IV_RICH', message: `IV Rank ${structured.ivRank.toFixed(0)} > ${IV_RANK_VETO} — premium is expensive relative to this symbol's own past year. You're paying up for volatility.` });
+    advisories.push({
+      code: 'IV_RICH',
+      message: `IV Rank ${structured.ivRank.toFixed(0)} > ${IV_RANK_VETO} — premium is expensive relative to this symbol's own past year. You're paying up for volatility.`,
+      plain: `This option is pricey by its own standards — more expensive than it has been about ${structured.ivRank.toFixed(0)}% of the past year. You're buying near the top of its usual price range, so you need a bigger move just to break even.`,
+    });
   }
   const ivHvRatio = analysis?.hv ? structured.iv / analysis.hv : null;
   if (ivHvRatio != null && ivHvRatio > IV_HV_RATIO_VETO) {
-    advisories.push({ code: 'IV_HV_GAP', message: `IV/HV ratio ${ivHvRatio.toFixed(2)} > ${IV_HV_RATIO_VETO} — implied vol is well above what this symbol has actually been realizing, which usually prices in event risk.` });
+    advisories.push({
+      code: 'IV_HV_GAP',
+      message: `IV/HV ratio ${ivHvRatio.toFixed(2)} > ${IV_HV_RATIO_VETO} — implied vol is well above what this symbol has actually been realizing, which usually prices in event risk.`,
+      plain: `The option's price assumes this ETF will swing around ${ivHvRatio.toFixed(1)}x more than it actually has been swinging lately. You're paying for drama that hasn't been happening — usually a sign the market expects some news.`,
+    });
   }
 
   const openPositions = db.getTradesByStatus('ACTIVE').length;
@@ -129,6 +154,7 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     advisories.push({
       code: 'ABOVE_ALLOCATION',
       message: `One contract costs $${costPerContract.toFixed(0)}, above the conviction-scaled allocation for this pick ($${targetAllocation.toFixed(0)}). Sized at the 1-contract minimum — that's ${((tradeCost / capital) * 100).toFixed(1)}% of configured capital, above the intended ${(ALLOC_MIN_PCT * 100).toFixed(0)}-${(ALLOC_MAX_PCT * 100).toFixed(0)}% band.`,
+      plain: `Even buying just one contract costs $${costPerContract.toFixed(0)}, which is a bigger chunk of your money on a single trade than intended (${((tradeCost / capital) * 100).toFixed(1)}% instead of the usual ${(ALLOC_MIN_PCT * 100).toFixed(0)}-${(ALLOC_MAX_PCT * 100).toFixed(0)}%). More riding on one bet than normal.`,
     });
   }
 

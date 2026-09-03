@@ -170,7 +170,8 @@ async function analyze(symbol, sectorPercentile = null) {
       bias = 'NEUTRAL';
     } else {
       const stageOk = (bias === 'CALL' && stage.stage === 2) || (bias === 'PUT' && stage.stage === 4);
-      stageLine = `Weinstein Stage: ${stage.label} — 30-week MA $${stage.ma.toFixed(2)}, ${stage.slopePct >= 0 ? 'up' : 'down'} ${Math.abs(stage.slopePct).toFixed(1)}% over the last month.${stageOk ? '' : ` A ${bias} needs Stage ${bias === 'CALL' ? 2 : 4}, so no trade.`}`;
+      stageLine = `Weinstein Stage: ${stage.label} — 30-week MA $${stage.ma.toFixed(2)}, ${stage.slopePct >= 0 ? 'up' : 'down'} ${Math.abs(stage.slopePct).toFixed(1)}% over the last month.${stageOk ? '' : ` A ${bias} needs Stage ${bias === 'CALL' ? 2 : 4}, so no trade.`}
+   → In plain terms: over the last 7 months this ETF has been ${stage.stage === 2 ? 'steadily climbing, and it is still climbing' : stage.stage === 4 ? 'steadily falling, and it is still falling' : stage.stage === 3 ? 'climbing but has now flattened out at the top' : 'going sideways with no clear direction'}. ${stageOk ? `That is the right backdrop for ${bias === 'CALL' ? 'betting it goes up' : 'betting it goes down'}.` : `You do not want to bet it goes ${bias === 'CALL' ? 'up while it is in this shape' : 'down while it is in this shape'} — so this one is skipped.`}`;
       if (!stageOk) bias = 'NEUTRAL';
     }
   }
@@ -180,14 +181,16 @@ async function analyze(symbol, sectorPercentile = null) {
       tudorLine = `200-day line: not enough history (${tudor.reason}) — no trade rather than a guess.`;
       bias = 'NEUTRAL';
     } else {
-      tudorLine = tudor.label;
+      tudorLine = `${tudor.label}
+   → In plain terms: the 200-day average is the long-term dividing line between a healthy chart and a broken one. Price is ${tudor.above ? 'above' : 'below'} it, which ${tudor.aligned ? 'is the side you want for this bet' : `is the wrong side for ${bias === 'CALL' ? 'betting it goes up' : 'betting it goes down'} — so this one is skipped`}.`;
       if (!tudor.aligned) bias = 'NEUTRAL';
     }
   }
   if (bias !== 'NEUTRAL') {
     raschke = raschkePullback(bars, adxVal, bias);
     if (raschke.available) {
-      raschkeLine = `${raschke.label}${raschke.qualifies ? ' Textbook setup.' : raschke.strongTrend ? '' : ` Tradable, but below Raschke's ADX ${RASCHKE_ADX_MIN} bar — conviction scored down accordingly.`}`;
+      raschkeLine = `${raschke.label}${raschke.qualifies ? ' Textbook setup.' : raschke.strongTrend ? '' : ` Tradable, but below Raschke's ADX ${RASCHKE_ADX_MIN} bar — conviction scored down accordingly.`}
+   → In plain terms: the idea is to buy on a dip, not after a big run-up. Price is currently ${Math.abs(raschke.distancePct).toFixed(1)}% ${raschke.distancePct >= 0 ? 'above' : 'below'} its recent average — ${Math.abs(raschke.distancePct) <= 1.5 ? 'right where you want to buy' : Math.abs(raschke.distancePct) <= 4 ? 'close enough to be a reasonable entry' : 'a bit far from it, so you would be paying up'}. The trend itself is ${raschke.strongTrend ? 'strong and clean' : 'real but on the weak side, so this scores lower'}.`;
     }
   }
 

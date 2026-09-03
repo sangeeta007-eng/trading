@@ -67,19 +67,43 @@ function dailyVerdict({ results, hot, regime }) {
   const macroSoon = calendar.getUpcomingEvents(1).filter(e => ['FOMC', 'CPI', 'NFP'].includes(e.type));
   const macroNote = macroSoon.length ? ` ${macroSoon[0].label} lands ${macroSoon[0].date}, which inflates premiums today and crushes them after.` : '';
 
+  const macroPlain = macroSoon.length
+    ? ` A big government report (${macroSoon[0].label}) comes out ${macroSoon[0].date}, and option prices are temporarily inflated ahead of it — they usually deflate right after, so buying today means overpaying.`
+    : '';
+
   if (regime?.sizingMod <= 0) {
-    return { call: 'SIT OUT', reason: `Extreme volatility regime (VIX proxy ~${regime.vix}). Buying premium here is historically the worst risk/reward there is.${macroNote}` };
+    return {
+      call: 'SIT OUT',
+      reason: `Extreme volatility regime (VIX proxy ~${regime.vix}). Buying premium here is historically the worst risk/reward there is.${macroNote}`,
+      plain: `The market is in a panic right now, which makes options very expensive. You'd be paying top dollar for the same bet. Best to wait for things to settle.${macroPlain}`,
+    };
   }
   if (!hot.length) {
-    return { call: 'SIT OUT', reason: `Nothing cleared the bar — ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) and none produced a contract worth the entry.${macroNote}` };
+    return {
+      call: 'SIT OUT',
+      reason: `Nothing cleared the bar — ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) and none produced a contract worth the entry.${macroNote}`,
+      plain: `Nothing worth buying today. Out of ${scanned} funds checked, only ${tradable} are even in a clean trend, and none of those had an option at a sensible price. Some days there just isn't a good trade — that's normal, and forcing one is how people lose money.${macroPlain}`,
+    };
   }
   if (macroSoon.length) {
-    return { call: 'WAIT IF YOU CAN', reason: `${hot.length} pick${hot.length === 1 ? '' : 's'} cleared, but${macroNote} Entering the day after usually gets you a similar setup at a cheaper premium.` };
+    return {
+      call: 'WAIT IF YOU CAN',
+      reason: `${hot.length} pick${hot.length === 1 ? '' : 's'} cleared, but${macroNote} Entering the day after usually gets you a similar setup at a cheaper premium.`,
+      plain: `There ${hot.length === 1 ? 'is 1 decent setup' : `are ${hot.length} decent setups`} below, but today is an expensive day to buy.${macroPlain} If you can hold off until the day after, you'd likely get the same trade for less.`,
+    };
   }
   if (breadthPct < 15) {
-    return { call: 'SELECTIVE', reason: `Only ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) — thin participation, so treat the ${hot.length} pick${hot.length === 1 ? '' : 's'} below as the exception rather than a broad green light.` };
+    return {
+      call: 'SELECTIVE',
+      reason: `Only ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) — thin participation, so treat the ${hot.length} pick${hot.length === 1 ? '' : 's'} below as the exception rather than a broad green light.`,
+      plain: `Only ${tradable} out of ${scanned} funds are in a clean trend right now, so the market isn't broadly healthy. The pick${hot.length === 1 ? '' : 's'} below ${hot.length === 1 ? 'is an exception' : 'are exceptions'} rather than a sign it's a good day generally. Smaller size than usual would be sensible.`,
+    };
   }
-  return { call: 'GOOD DAY TO BUY', reason: `${tradable} of ${scanned} ETFs in a tradable stage (${breadthPct}% breadth), ${regime?.name || 'regime'} conditions, and ${hot.length} pick${hot.length === 1 ? '' : 's'} cleared every gate.` };
+  return {
+    call: 'GOOD DAY TO BUY',
+    reason: `${tradable} of ${scanned} ETFs in a tradable stage (${breadthPct}% breadth), ${regime?.name || 'regime'} conditions, and ${hot.length} pick${hot.length === 1 ? '' : 's'} cleared every gate.`,
+    plain: `A healthy day. ${tradable} of the ${scanned} funds checked are in clean trends, market conditions are calm, no big news due, and ${hot.length} setup${hot.length === 1 ? '' : 's'} passed every check.`,
+  };
 }
 
 async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE } = {}) {

@@ -106,7 +106,9 @@ function formatWatchlistItem(w) {
   const statusLine = w.tier === 'HOT'
     ? 'ACTIONABLE NOW — this is in the recommendations below, place it manually'
     : `Not yet actionable — ${w.blockedDetail || w.blockedReason || 'pending better conditions'}`;
-  const advisoryLines = (w.advisories || []).map(a => `        ⚠ ${a.message}`);
+  const advisoryLines = (w.advisories || []).flatMap(a => a.plain
+    ? [`        ⚠ ${a.plain}`, `          (In market terms: ${a.message})`]
+    : [`        ⚠ ${a.message}`]);
 
   return [
     `   ${icon}  ${w.symbol.padEnd(6)} ${dirLabel.padEnd(16)} conviction ${w.conviction}/100`,
@@ -168,8 +170,8 @@ This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
 
 ${verdict ? `TODAY'S CALL: ${verdict.call}
-   ${verdict.reason}
-` : ''}
+   ${verdict.plain || verdict.reason}
+${verdict.plain ? `   (In market terms: ${verdict.reason})\n` : ''}` : ''}
 📊 MARKET REGIME
    ${regimeLine}
 
@@ -287,7 +289,11 @@ function buildAdvisoryBlock(hot) {
   const items = withAdvisories.map(w => `
     <div style="margin-bottom:12px;">
       <div style="font-weight:700; font-size:14px; color:${COLOR.text}; margin-bottom:4px;">${w.symbol} ${w.bias}</div>
-      ${w.advisories.map(a => `<div style="font-size:14px; line-height:1.6; color:${COLOR.text}; margin-bottom:4px;">⚠ ${a.message}</div>`).join('')}
+      ${w.advisories.map(a => `
+        <div style="margin-bottom:10px;">
+          <div style="font-size:15px; line-height:1.7; color:${COLOR.text};">⚠ ${a.plain || a.message}</div>
+          ${a.plain ? `<div style="font-size:13px; line-height:1.6; color:${COLOR.muted}; margin-top:3px; padding-left:18px;"><b>In market terms:</b> ${a.message}</div>` : ''}
+        </div>`).join('')}
     </div>`).join('');
 
   return `
@@ -416,6 +422,29 @@ function buildMacroBlock(macro) {
   </div>`;
 }
 
+// Plain-English glossary for the column headings and recurring terms, so
+// the tables can be read without already knowing options vocabulary.
+function buildGlossary() {
+  const terms = [
+    ['Strike', 'The price the ETF has to pass for your bet to be "in the money." Think of it as the finish line.'],
+    ['Expiry', 'The deadline. After this date the option is worthless, win or lose. Always exit well before it.'],
+    ['Delta', 'Roughly how much the option moves per $1 the ETF moves — and loosely, the odds it finishes a winner. 0.60 means it gains about 60 cents per $1 move.'],
+    ['Entry', 'What you pay per share of the contract. One contract = 100 shares, so $1.56 entry = $156 per contract.'],
+    ['Target ▲', 'The price to sell at for your profit. Set this as a GTC limit sell right after buying and forget it.'],
+    ['Stop ▼', 'The price to sell at to cap the loss if it goes against you. Set this too.'],
+    ['Size', 'How many contracts, and the total dollars that costs.'],
+    ['Conv.', 'Conviction, 0-100 — how well this setup scored against the rules. Higher is a cleaner fit, not a promise.'],
+    ['IV Rank', "How expensive this option is versus its own past year. 80 means pricier than 80% of the past year — you're overpaying."],
+    ['ADX', 'Trend strength, 0-100. Under 20 means the price is drifting sideways; 30+ is a strong, clean trend.'],
+    ['21 EMA', 'A smoothed average of the last few weeks of price. The engine buys when price dips back to this line, not when it has run far above it.'],
+  ];
+  return `
+  <div style="margin:24px 0; background:${COLOR.zebra}; border:1px solid ${COLOR.border}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:15px; font-weight:700; color:${COLOR.text}; margin-bottom:10px;">📖 What the columns mean</div>
+    ${terms.map(([t, d]) => `<div style="font-size:14px; line-height:1.7; color:${COLOR.text}; margin-bottom:6px;"><b>${t}</b> — ${d}</div>`).join('')}
+  </div>`;
+}
+
 // The day's plain call on whether to be putting money to work. Never
 // suppresses anything — the picks are listed underneath regardless.
 function buildVerdictBanner(v) {
@@ -427,8 +456,9 @@ function buildVerdictBanner(v) {
     : { bg: '#fdf6e3', border: COLOR.warmBorder, fg: COLOR.warm };
   return `
   <div style="margin-bottom:16px; background:${tone.bg}; border:2px solid ${tone.border}; border-radius:6px; padding:14px 16px;">
-    <div style="font-size:16px; font-weight:700; color:${tone.fg}; margin-bottom:6px;">Today's call: ${v.call}</div>
-    <div style="font-size:14px; line-height:1.6; color:${COLOR.text};">${v.reason}</div>
+    <div style="font-size:16px; font-weight:700; color:${tone.fg}; margin-bottom:8px;">Today's call: ${v.call}</div>
+    ${v.plain ? `<div style="font-size:15px; line-height:1.7; color:${COLOR.text}; margin-bottom:10px;">${v.plain}</div>` : ''}
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.muted};"><b>In market terms:</b> ${v.reason}</div>
   </div>`;
 }
 
@@ -530,6 +560,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     ${recTable}
     ${outcomeTable}
     ${playbookTable}
+    ${buildGlossary()}
 
     <div style="margin-top:20px; padding-top:16px; border-top:1px solid ${COLOR.border}; font-size:13px; line-height:1.6; color:${COLOR.muted};">
       Weekly P&L (hypothetical): <b style="color:${weeklyPnL >= 0 ? COLOR.target : COLOR.stop};">${weeklyPnL >= 0 ? '+' : ''}$${weeklyPnL.toFixed(2)}</b>
