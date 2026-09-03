@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-09-03T19:07:21.499Z",
+  "params": {
+    "years": 8,
+    "targetPct": 0.15,
+    "stopPct": 0.1,
+    "holdDays": 15,
+    "targetDelta": 0.6,
+    "breakeven": 0.4
+  },
+  "optionSim": {
+    "trades": 3145,
+    "winRate": 0.3751987281399046,
+    "lossRate": 0.6248012718600954,
+    "avgWin": 0.269813811662108,
+    "avgLoss": -0.21408349735497198,
+    "expectancy": -0.03252584246144093,
+    "avgDays": 2.126868044515103
+  },
+  "signalEdge": {
+    "holdDays": 15,
+    "call": {
+      "n": 5493,
+      "avgReturn": 0.004993942633038324,
+      "winRate": 0.5836519206262516
+    },
+    "put": {
+      "n": 2044,
+      "avgReturn": -0.01050181183019078,
+      "winRate": 0.4241682974559687
+    },
+    "baselineLong": {
+      "n": 39165,
+      "avgReturn": 0.009999558239383137,
+      "winRate": 0.586952636282395
+    },
+    "callEdgeVsBaseline": -0.005005615606344813
+  }
+}

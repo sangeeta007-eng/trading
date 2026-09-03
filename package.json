@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node bot.js",
     "web": "node server.js",
-    "council": "node council/run.js"
+    "council": "node council/run.js",
+    "backtest": "node council/backtest-cli.js"
   },
   "keywords": [],
   "author": "",

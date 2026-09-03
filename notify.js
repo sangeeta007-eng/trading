@@ -166,6 +166,13 @@ https://github.com/sangeeta007-eng/trading/actions/workflows/trading-session.yml
 Click "Run workflow" (gray), then the green one that appears. Market hours
 only (9:30am-4pm ET weekdays) — outside that it reports closed, not a guess.
 
+⚠ MEASURED RESULT: tested on 8 years of real prices, these exact rules
+   LOST about 3.3% per trade over 3,145 simulated trades (37.5% win rate
+   vs the 40% needed to break even). After a buy signal the fund rose
+   0.50% on average, versus 1.00% for buying on any random day — the
+   signal picked worse than chance. Treat everything below as research
+   output, not advice to place money. Run: npm run backtest
+
 This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
 
@@ -422,6 +429,38 @@ function buildMacroBlock(macro) {
   </div>`;
 }
 
+// Measured performance of these exact rules, from council/backtest.js.
+// This sits at the top of every report because it is the single most
+// important fact about the picks below: as of the last run, the rules do
+// not have a positive measured expectancy. Hiding that while presenting
+// "actionable" picks would be dishonest.
+function buildEvidenceBanner() {
+  let bt;
+  try { bt = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'backtest_results.json'), 'utf8')); }
+  catch { return ''; }
+
+  const o = bt.optionSim, s = bt.signalEdge;
+  const negative = o.expectancy <= 0;
+  const tone = negative
+    ? { bg: '#fdf1e8', border: COLOR.stop, fg: COLOR.stop }
+    : { bg: '#eef3ea', border: '#c9dcc0', fg: COLOR.target };
+
+  return `
+  <div style="margin-bottom:16px; background:${tone.bg}; border:2px solid ${tone.border}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:16px; font-weight:700; color:${tone.fg}; margin-bottom:8px;">
+      ${negative ? '⚠ These rules have NOT been shown to make money' : '✓ Measured expectancy is positive'}
+    </div>
+    <div style="font-size:15px; line-height:1.7; color:${COLOR.text}; margin-bottom:10px;">
+      ${negative
+        ? `Tested against ${bt.params.years} years of real prices, these exact rules produced <b>${o.trades.toLocaleString()} trades</b> and <b>lost an average of ${Math.abs(o.expectancy * 100).toFixed(1)}% per trade</b>. Only ${(o.winRate * 100).toFixed(0)}% were winners, against the ${(bt.params.breakeven * 100).toFixed(0)}% needed just to break even. Worse: after a buy signal the fund rose <b>${(s.call.avgReturn * 100).toFixed(2)}%</b> on average over ${s.signalEdge?.holdDays || s.holdDays} days, versus <b>${(s.baselineLong.avgReturn * 100).toFixed(2)}%</b> for simply buying on any random day — so the signal picked <i>worse</i> than chance. Treat everything below as research output, not advice to place money.`
+        : `Tested over ${bt.params.years} years: ${o.trades.toLocaleString()} trades, ${(o.winRate * 100).toFixed(0)}% win rate, ${(o.expectancy * 100).toFixed(2)}% average per trade.`}
+    </div>
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.muted};">
+      <b>In market terms:</b> ${o.trades.toLocaleString()} simulated trades, win rate ${(o.winRate * 100).toFixed(1)}% vs ${(bt.params.breakeven * 100).toFixed(1)}% breakeven, expectancy ${(o.expectancy * 100).toFixed(2)}%/trade, mean hold ${o.avgDays.toFixed(1)}d. Signal edge vs buy-and-hold baseline: ${(s.callEdgeVsBaseline * 100).toFixed(2)}%. Option leg is Black-Scholes-approximated (IV proxied at 1.15x realized, 2% spread each way); underlying moves are exact. Run <code>npm run backtest</code> to reproduce.
+    </div>
+  </div>`;
+}
+
 // Plain-English glossary for the column headings and recurring terms, so
 // the tables can be read without already knowing options vocabulary.
 function buildGlossary() {
@@ -551,6 +590,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
       </tr>
     </table>
 
+    ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
     ${buildMacroBlock(macro)}
     ${hotTable}

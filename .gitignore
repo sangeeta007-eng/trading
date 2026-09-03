@@ -27,3 +27,4 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+_bars_cache.json
