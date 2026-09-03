@@ -49,18 +49,36 @@ const STOP_ATR_MULT     = 1.0; // stop   = entry - 1.0x underlying ATR(14), tran
 // it's stated in the report rather than buried.
 const TARGET_MIN_PCT    = 0.12;
 const TARGET_MAX_PCT    = 0.15;
-// Stop band widened deliberately, against instinct, because the backtest was
-// unambiguous. On the Connors dip entry, 8 years of real bars gave:
-//     stop -30% ... +1.00%/trade, worst trade -83.9%
-//     stop -50% ... +4.34%/trade, worst trade -88.1%
-//     stop -70% ... +6.53%/trade, worst trade -94.8%
-//     no stop  ... +8.28%/trade, worst trade -100%
-// A tight stop does not cap the tail — options gap straight through it, so
-// the -30% stop still lost 83.9% on its worst trade — while reliably cutting
-// winners short. It is close to pure cost. 60-70% keeps an explicit exit
-// without paying that much for it; the real risk control is that a long
-// option cannot lose more than the premium, and position sizing decides how
-// much premium is on the table.
+// THE STOP IS ON THE UNDERLYING, NOT ON THE OPTION.
+//
+// This is the single most important structural decision in the file, and it
+// reverses how the engine used to work. Measured over 8 years of real bars
+// on the Connors dip entry, stopping on the option's own price gave:
+//     option -30% ..... -0.22%/trade, 59.4% win, worst trade -100%
+//     option -65% ..... +3.61%/trade, 73.8% win, worst trade -100%
+//     no stop at all .. +5.16%/trade, 75.1% win, worst trade -100%
+// and stopping on the underlying instead gave:
+//     underlying -1.0 ATR .. -0.01%/trade, 60.4% win, worst trade -100%
+//     underlying -2.0 ATR .. +2.36%/trade, 70.6% win, worst trade -100%
+//     underlying -2.5 ATR .. +3.38%/trade, 73.2% win, worst trade -100%
+//
+// Read the worst-trade column: it is -100% in every row. A stop of any kind,
+// at any level, on either instrument, never once prevented a total loss —
+// options gap straight through stops overnight. So a stop is not, and cannot
+// be, the risk control on a long option. What it can do is define when the
+// *thesis* is dead, and the thesis here is "this dipped below its own trend
+// and should revert." That thesis fails when the underlying keeps falling,
+// which has nothing to do with what IV or theta did to the premium in the
+// meantime. Hence: stop on price, at 2.5x the symbol's own ATR(14) below
+// entry. It matches the best premium-stop result (3.38% vs 3.61%) while
+// being expressed as something you can actually read and act on — "exit if
+// XOM closes under $103.40" rather than an alarming "-60%".
+//
+// The real risk control is position sizing, enforced in agent3_risk.js: size
+// so that losing the entire premium is survivable, because sometimes you do.
+const STOP_UNDERLYING_ATR_MULT = 2.5;
+// The premium stop is kept only as a disaster backstop, set far enough out
+// that it does not fire on ordinary noise ahead of the underlying stop.
 const STOP_MIN_PCT      = 0.60;
 const STOP_MAX_PCT      = 0.70;
 
@@ -208,6 +226,12 @@ async function structureContract(symbol, bias, spotPrice) {
   // A stop can never be computed at/below zero, nor at/above entry.
   const stopLimit = Math.max(tick, Math.min(roundToTick(entryLimit * (1 - stopPct), tick, 'down'), entryLimit - tick));
 
+  // The primary exit: a price on the UNDERLYING, not on the option. See the
+  // block comment at STOP_UNDERLYING_ATR_MULT for the measured reasoning.
+  // Expressed to the cent so it can be read straight off a stock chart.
+  const stopUnderlying = Number((spotPrice - STOP_UNDERLYING_ATR_MULT * underlyingATR).toFixed(2));
+  const stopUnderlyingPct = (spotPrice - stopUnderlying) / spotPrice;
+
   // Can this contract actually reach the target inside the intended holding
   // window? Compares the underlying move required against the move the
   // options market itself is pricing over those weeks. Both real numbers —
@@ -229,6 +253,8 @@ async function structureContract(symbol, bias, spotPrice) {
     bid: best.bid, ask: best.ask, spread: best.spread,
     openInterest: best.openInterest, volume: best.volume,
     entryLimit, targetLimit, stopLimit, tick,
+    stopUnderlying, stopUnderlyingPct, stopUnderlyingAtrMult: STOP_UNDERLYING_ATR_MULT,
+    maxLossPerContract: entryLimit * 100, // a long option's true worst case: the whole premium
     expectedMove: best.expectedMove, requiredMove: best.requiredMove,
     underlyingATR, targetAtrMult: TARGET_ATR_MULT, stopAtrMult: STOP_ATR_MULT,
     feasibility, targetHoldDays: TARGET_HOLD_TRADING_DAYS,

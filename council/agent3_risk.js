@@ -25,6 +25,21 @@ const ALLOC_MAX_PCT = 0.15;
 const MAX_OPEN_POSITIONS = 3;
 const WEEKLY_DRAWDOWN_LIMIT_PCT = 0.05;
 
+// ── The actual risk control ──────────────────────────────────────────────
+// Eight years of backtesting says the worst single trade on this strategy
+// loses 100% of the premium, and says it identically whether the stop is
+// -30%, -65%, on the option, on the underlying, or absent entirely. Options
+// gap through stops; no stop level ever prevented a total loss. So the stop
+// is not what protects the account — the size of the bet is.
+//
+// This is the standard professional discipline for long options, and it is
+// why the sizing math has to run off MAX loss (the whole premium) rather
+// than off expected loss. At 2% risked per trade it takes ~34 consecutive
+// total losses to halve the account; the 1% version of the same rule needs
+// ~69. Against a measured 73% win rate, either is comfortably survivable.
+// The allocation band below still applies — whichever is smaller wins.
+const MAX_LOSS_PER_TRADE_PCT = parseFloat(process.env.MAX_LOSS_PER_TRADE_PCT) || 0.02;
+
 const IV_RANK_VETO = 70;       // don't recommend buying premium this rich
 const IV_RANK_MIN_SAMPLE = 10; // below this, getIVRank's 50 is a placeholder, not a real reading
 const IV_HV_RATIO_VETO = 2.0;  // implied vol this far above realized vol suggests an event-risk premium
@@ -143,14 +158,30 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
   const minAllocation = capital * ALLOC_MIN_PCT * regimeSizingMod;
 
   const costPerContract = structured.entryLimit * 100;
-  // Floor at 1: a contract that costs more than the conviction-scaled
-  // allocation is still a real, buyable contract. Show it with the real
-  // cost and flag that it's above the intended band, rather than dropping
-  // the pick for being expensive.
-  const qty = Math.max(1, Math.floor(targetAllocation / costPerContract));
-  const tradeCost = qty * costPerContract;
 
-  if (tradeCost > maxAllocation) {
+  // For a long option, cost per contract IS max loss per contract — there is
+  // no scenario where it loses more, and the backtest confirms there are
+  // scenarios where it loses exactly that. So the risk budget and the
+  // allocation budget are both denominated in the same dollars, and the
+  // tighter of the two decides the size.
+  const riskBudget = capital * MAX_LOSS_PER_TRADE_PCT;
+  const sizingBudget = Math.min(targetAllocation, riskBudget);
+  // Floor at 1: a contract that costs more than the budget is still a real,
+  // buyable contract. Show it with the real cost and flag exactly what a
+  // total loss would do to the account, rather than dropping the pick.
+  const qty = Math.max(1, Math.floor(sizingBudget / costPerContract));
+  const tradeCost = qty * costPerContract;
+  const maxLossPct = tradeCost / capital; // if it goes to zero, this is the damage
+
+  const sizedBy = riskBudget < targetAllocation ? 'RISK' : 'ALLOCATION';
+
+  if (tradeCost > riskBudget) {
+    advisories.push({
+      code: 'ABOVE_RISK_BUDGET',
+      message: `One contract costs $${costPerContract.toFixed(0)}, above the ${(MAX_LOSS_PER_TRADE_PCT * 100).toFixed(0)}%-of-capital max-loss budget ($${riskBudget.toFixed(0)}). Sized at the 1-contract minimum, so a total loss on this position would be ${(maxLossPct * 100).toFixed(1)}% of capital rather than the intended ${(MAX_LOSS_PER_TRADE_PCT * 100).toFixed(0)}%.`,
+      plain: `The smallest amount you can buy — one contract — costs $${costPerContract.toFixed(0)}. If this trade went completely wrong and the option expired worthless, you'd lose ${(maxLossPct * 100).toFixed(1)}% of your account on this one bet, instead of the ${(MAX_LOSS_PER_TRADE_PCT * 100).toFixed(0)}% cap the tool aims for. That's more riding on a single trade than intended — either skip it, or accept the bigger swing knowingly.`,
+    });
+  } else if (tradeCost > maxAllocation) {
     advisories.push({
       code: 'ABOVE_ALLOCATION',
       message: `One contract costs $${costPerContract.toFixed(0)}, above the conviction-scaled allocation for this pick ($${targetAllocation.toFixed(0)}). Sized at the 1-contract minimum — that's ${((tradeCost / capital) * 100).toFixed(1)}% of configured capital, above the intended ${(ALLOC_MIN_PCT * 100).toFixed(0)}-${(ALLOC_MAX_PCT * 100).toFixed(0)}% band.`,
@@ -162,6 +193,8 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     approved: true, status: 'APPROVED',
     advisories,
     capital, qty, tradeCost,
+    maxLoss: tradeCost, maxLossPct, riskBudget, sizedBy,
+    maxLossPerTradePct: MAX_LOSS_PER_TRADE_PCT,
     allocationPct: tradeCost / capital,
     allocationMin: minAllocation, allocationMax: maxAllocation,
     openPositions, maxOpenPositions: MAX_OPEN_POSITIONS,
@@ -177,5 +210,6 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
 
 module.exports = {
   evaluate, ALLOC_MIN_PCT, ALLOC_MAX_PCT, MAX_OPEN_POSITIONS, WEEKLY_DRAWDOWN_LIMIT_PCT,
+  MAX_LOSS_PER_TRADE_PCT,
   IV_RANK_VETO, IV_HV_RATIO_VETO, IV_RANK_MIN_SAMPLE, MAX_NET_DIRECTIONAL_EXPOSURE,
 };

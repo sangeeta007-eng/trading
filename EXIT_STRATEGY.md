@@ -144,11 +144,64 @@ in gains sooner.
 
 Target and stop are computed per symbol from that symbol's real ATR(14) —
 a sleepy utility ETF and a volatile semiconductor ETF don't move the same
-amount day to day, so a flat 12%/10% for both would be arbitrary. The
-computed target is clamped to a 15-35% band and the stop to an 8-20% band
-so a single trade's max loss stays consistent with the 10-15% position
-sizing and 5% weekly-drawdown limit elsewhere in the system. See
+amount day to day, so a flat 12%/10% for both would be arbitrary. See
 [FUNCTIONAL_SPEC.md](FUNCTIONAL_SPEC.md) for the full calculation.
+
+---
+
+## Why the stop is on the stock, not on the option
+
+The **Stop ▼** column in the report is a price on the underlying stock or
+ETF. If the stock closes below it, sell the option — the reason you bought
+is gone. There is deliberately no stop order sitting on the option itself.
+
+This reverses how the tool used to work, and the reversal was forced by
+measurement rather than opinion. Eight years of real bars on the live entry
+rule, 2,200+ trades:
+
+| stop method | expectancy | win rate | worst trade |
+|---|---|---|---|
+| option −30% | −0.22% | 59.4% | **−100%** |
+| option −65% | +3.61% | 73.8% | **−100%** |
+| no stop at all | +5.16% | 75.1% | **−100%** |
+| underlying −1.0 ATR | −0.01% | 60.4% | **−100%** |
+| underlying −2.0 ATR | +2.36% | 70.6% | **−100%** |
+| **underlying −2.5 ATR (live)** | **+3.26%** | **72.8%** | **−100%** |
+
+Two things fall out of that table.
+
+**A stop never prevented a total loss.** The worst-trade column is −100% in
+every row — tight, wide, on either instrument, or absent. Options gap
+overnight, and a stop order cannot fill at a price the market skipped over.
+Any claim that a stop "limits your risk" on a long option is false.
+
+**A tight stop on the option is expensive.** The −30% option stop turned a
++3.6% average trade into −0.2%, because option premium moves on implied
+volatility, time decay, and bid-ask noise that have nothing to do with
+whether the trade thesis is still good. It sells you out of winners.
+
+So the stop's job is narrowed to the only thing it can honestly do: say
+when the thesis is dead. The thesis is "this dipped below its own trend and
+should revert," and it dies when the underlying keeps falling — 2.5× ATR(14)
+below entry, roughly a 3-6% move depending on the symbol.
+
+## What actually controls risk: position size
+
+Since max loss on a long option is the entire premium, and the backtest
+confirms that outcome genuinely occurs, the premium paid *is* the risk. So
+that is what gets budgeted.
+
+`MAX_LOSS_PER_TRADE_PCT` (default **2%**, override in `.env`) caps the total
+premium of any single position at 2% of configured capital. The **Size**
+column states the resulting contract count and what a total loss would cost
+you as a percentage. At 2% per trade it takes ~34 consecutive complete
+losses to halve the account; against a measured 72.8% win rate that is not a
+realistic path. With `MAX_OPEN_POSITIONS = 3`, at most ~6% of capital is
+exposed at once.
+
+Where one contract already exceeds the budget, the pick is still shown at
+1 contract with an `ABOVE_RISK_BUDGET` advisory naming the real percentage —
+the trade isn't hidden, the cost is just stated plainly.
 
 Always use the exact $ prices from the current session's report — don't
 reuse a number from a previous day, even for the same symbol.

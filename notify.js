@@ -294,8 +294,12 @@ function buildHotRows(hot) {
       ${td(c ? 'Δ' + c.delta.toFixed(2) : '—')}
       ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
       ${td(c ? '$' + c.targetLimit.toFixed(2) + ' (+' + ((c.targetLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.target}; font-weight:700;`)}
-      ${td(c ? '$' + c.stopLimit.toFixed(2) + ' (' + ((c.stopLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.stop}; font-weight:700;`)}
-      ${td(c && c.qty ? c.qty + ' × $' + c.tradeCost.toFixed(0) : '—')}
+      ${td(c && c.stopUnderlying != null
+            ? `${w.symbol} < $${c.stopUnderlying.toFixed(2)}<div style="font-size:11px; font-weight:400; color:${COLOR.muted};">stock now $${w.price.toFixed(2)} · −${(c.stopUnderlyingPct * 100).toFixed(1)}%</div>`
+            : '—', `color:${COLOR.stop}; font-weight:700;`)}
+      ${td(c && c.qty
+            ? `${c.qty} × $${c.tradeCost.toFixed(0)}${c.maxLossPct != null ? `<div style="font-size:11px; font-weight:400; color:${COLOR.muted};">risking ${(c.maxLossPct * 100).toFixed(1)}% of capital</div>` : ''}`
+            : '—')}
       ${td(convictionBadge(w.conviction))}
       ${td(w.advisories?.length ? `<b style="color:${COLOR.advisory};">⚠ ${w.advisories.length}</b>` : '—')}
     </tr>`;
@@ -338,7 +342,7 @@ function buildWarmRows(warm) {
       ${td(convictionBadge(w.conviction))}
       ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
       ${td(c ? '$' + c.targetLimit.toFixed(2) : '—', c ? `color:${COLOR.target};` : '')}
-      ${td(c ? '$' + c.stopLimit.toFixed(2) : '—', c ? `color:${COLOR.stop};` : '')}
+      ${td(c && c.stopUnderlying != null ? `${w.symbol} < $${c.stopUnderlying.toFixed(2)}` : '—', c ? `color:${COLOR.stop};` : '')}
       ${td(w.blockedDetail || w.blockedReason || 'pending better conditions', `color:${COLOR.muted}; font-size:13px;`)}
     </tr>`;
   }).join('');
@@ -412,8 +416,10 @@ function buildExitStrategyBlock() {
       For every <b style="color:${COLOR.hot};">HOT</b> pick, place two orders on your broker right after you buy, both marked
       <b>GTC (Good-Til-Cancelled)</b> so they stay active without you watching the position:
     </div>
-    ${box('1. Stop-Loss (protects the downside from day one)',
-      'SELL TO CLOSE, STOP (or stop-limit) order at the <b>Stop</b> price shown in the table above. GTC. This fires automatically if the trade fails, capping the loss — you never have to watch for it.')}
+    ${box('1. Stop — watch the STOCK price, not the option price',
+      `The <b>Stop ▼</b> column gives a price on the <b>underlying stock or ETF</b>, not on the option. If the stock closes below that level, the reason for the trade is gone — sell the option at the market next session, whatever it's worth.<br><br>
+       <b>Why not a stop order on the option itself?</b> Because it doesn't work, and this was measured rather than assumed. Across 8 years of real bars, the worst single trade lost <b>100% of the premium</b> — and it lost exactly 100% whether the stop was set at −30%, −65%, on the underlying, or not set at all. Options gap overnight; a stop order can't fill at a price the market skipped past. Meanwhile a tight stop on the option reliably sells you out of good trades over ordinary price noise: the −30% option stop turned a <b>+3.6%</b> average trade into <b>−0.2%</b>. So a stop on the option costs real money and buys no protection.<br><br>
+       <b>What actually protects you is the size of the bet</b> — see the <b>Size</b> column, which is set so that losing the entire premium costs a small, fixed slice of your capital. That's the real safety net, and it's the one professionals rely on for long options.`)}
     ${box('2. Take-Profit — two ways to run it',
       `<b>Simple:</b> SELL TO CLOSE, LIMIT order at the <b>Target</b> price shown. GTC. Fires automatically once reached, locks in the full computed gain.<br><br>
        <b>Let-it-run version:</b> instead of a flat limit, use a <b>GTC trailing stop-limit</b> order. Set the trail % so it never gives back more than you're comfortable with off the peak price, while letting the position keep running if it moves further than the original target. See the full math (which trail % protects which profit floor) in Exit Strategy in the repo — the short version: an 8% trail won't lock in a floor of at least +10% profit until the position first reaches about +20% gain; a 4% trail locks that floor in earlier (around +15% gain) but is more likely to trigger early on normal day-to-day option price noise. Tighter trail = protects sooner but exits more easily on noise; looser trail = lets it run more but the floor guarantee kicks in later.`)}
@@ -594,7 +600,7 @@ function buildGlossary() {
     ['Delta', 'Roughly how much the option moves per $1 the ETF moves — and loosely, the odds it finishes a winner. 0.60 means it gains about 60 cents per $1 move.'],
     ['Entry', 'What you pay per share of the contract. One contract = 100 shares, so $1.56 entry = $156 per contract.'],
     ['Target ▲', 'The price to sell at for your profit. Set this as a GTC limit sell right after buying and forget it.'],
-    ['Stop ▼', 'The price to sell at to cap the loss if it goes against you. Set this too.'],
+    ['Stop ▼', 'A price on the <b>stock</b>, not the option. If the stock closes below it, the reason you bought is gone — sell and move on. Deliberately not a stop order on the option: those get triggered by ordinary price noise and still don\'t stop a bad gap.'],
     ['Size', 'How many contracts, and the total dollars that costs.'],
     ['Conv.', 'Conviction, 0-100 — how well this setup scored against the rules. Higher is a cleaner fit, not a promise.'],
     ['IV Rank', "How expensive this option is versus its own past year. 80 means pricier than 80% of the past year — you're overpaying."],

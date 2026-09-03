@@ -47,9 +47,15 @@ function classifyWatchlist(results) {
       contract: structured?.ok ? {
         strike: structured.strike, expiration: structured.expiration, dte: structured.dte,
         entryLimit: structured.entryLimit, targetLimit: structured.targetLimit, stopLimit: structured.stopLimit,
+        // The exit that actually governs: a price on the underlying. The
+        // premium stopLimit above is only a disaster backstop.
+        stopUnderlying: structured.stopUnderlying, stopUnderlyingPct: structured.stopUnderlyingPct,
+        stopUnderlyingAtrMult: structured.stopUnderlyingAtrMult,
         delta: structured.delta, ivRank: structured.ivRank,
         qty: approved ? risk.qty : null,
         tradeCost: approved ? risk.tradeCost : null,
+        maxLoss: approved ? risk.maxLoss : null,
+        maxLossPct: approved ? risk.maxLossPct : null,
       } : null,
       blockedReason: !approved ? (risk?.vetoReason || structured?.vetoReason || null) : null,
       blockedDetail: !approved ? (risk?.detail || structured?.detail || null) : null,

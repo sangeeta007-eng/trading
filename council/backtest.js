@@ -32,7 +32,7 @@
 const { getBars } = require('../marketdata');
 const { bsPrice, bsDelta, historicalVol } = require('../greek');
 const { RISK_FREE_RATE } = require('../config');
-const { rsi, adx, ema9, ema21 } = require('./indicators');
+const { rsi, adx, ema9, ema21, atr } = require('./indicators');
 const { weinsteinStage, tudorRegime, RASCHKE_ADX_MIN } = require('./methodology');
 const { sma } = require('../marketdata');
 
@@ -70,12 +70,20 @@ function pickStrike(spot, T, iv, optType, targetDelta) {
   return best;
 }
 
-function simulateTrade({ bars, entryIndex, bias, targetPct, stopPct, holdDays, targetDelta }) {
+function simulateTrade({ bars, entryIndex, bias, targetPct, stopPct, holdDays, targetDelta, stopUnderlyingAtrMult }) {
   const slice = bars.slice(0, entryIndex + 1);
   const spot = slice[slice.length - 1].c;
   const hv = historicalVol(slice, 30);
   if (!hv || hv <= 0) return null;
   const iv = hv * IV_OVER_HV;
+
+  // Primary exit is a level on the underlying, mirroring agent2_structurer's
+  // STOP_UNDERLYING_ATR_MULT. Must stay in sync with it or this stops
+  // measuring what actually ships.
+  const atr14 = atr(slice, 14);
+  const stopUnderlying = (stopUnderlyingAtrMult && atr14)
+    ? spot - stopUnderlyingAtrMult * atr14
+    : null;
 
   const optType = bias === 'CALL' ? 'call' : 'put';
   const T0 = ENTRY_DTE / 365;
@@ -97,7 +105,13 @@ function simulateTrade({ bars, entryIndex, bias, targetPct, stopPct, holdDays, t
     const exitable = fair * (1 - SPREAD_HAIRCUT); // sell into the bid
 
     if (exitable >= targetPrice) return { outcome: 'WIN', pnlPct: (exitable - entryPrice) / entryPrice, days: d };
-    if (exitable <= stopPrice) return { outcome: 'LOSS', pnlPct: (exitable - entryPrice) / entryPrice, days: d };
+    // Thesis broken: the underlying closed through its stop level. Checked
+    // before the premium backstop because it is the exit that actually fires
+    // in live use.
+    if (stopUnderlying != null && bars[i].c <= stopUnderlying) {
+      return { outcome: 'LOSS', pnlPct: (exitable - entryPrice) / entryPrice, days: d, exitBy: 'UNDERLYING' };
+    }
+    if (exitable <= stopPrice) return { outcome: 'LOSS', pnlPct: (exitable - entryPrice) / entryPrice, days: d, exitBy: 'PREMIUM' };
   }
 
   // Ran out of window — close at whatever it is worth.
@@ -109,7 +123,7 @@ function simulateTrade({ bars, entryIndex, bias, targetPct, stopPct, holdDays, t
 }
 
 async function backtestSymbol(symbol, opts) {
-  const { years, targetPct, stopPct, holdDays, targetDelta } = opts;
+  const { years, targetPct, stopPct, holdDays, targetDelta, stopUnderlyingAtrMult } = opts;
   const bars = await getBars(symbol, '1Day', Math.ceil(years * 260));
   if (bars.length < WARMUP_BARS + holdDays + 20) {
     return { symbol, error: `only ${bars.length} bars` };
@@ -123,7 +137,7 @@ async function backtestSymbol(symbol, opts) {
     const sig = evaluateSignal(slice);
     if (!sig) continue;
 
-    const res = simulateTrade({ bars, entryIndex: i, bias: sig.bias, targetPct, stopPct, holdDays, targetDelta });
+    const res = simulateTrade({ bars, entryIndex: i, bias: sig.bias, targetPct, stopPct, holdDays, targetDelta, stopUnderlyingAtrMult });
     if (!res) continue;
     trades.push({ symbol, date: bars[i].t.split('T')[0], bias: sig.bias, ...res });
     lastExit = i + res.days;
@@ -155,13 +169,13 @@ function summarize(trades) {
 async function run(opts = {}) {
   const {
     universe, years = 8, targetPct = 0.15, stopPct = 0.10,
-    holdDays = 15, targetDelta = 0.6,
+    holdDays = 15, targetDelta = 0.6, stopUnderlyingAtrMult = 2.5,
   } = opts;
 
   const all = [];
   const perSymbol = {};
   for (const symbol of universe) {
-    const r = await backtestSymbol(symbol, { years, targetPct, stopPct, holdDays, targetDelta });
+    const r = await backtestSymbol(symbol, { years, targetPct, stopPct, holdDays, targetDelta, stopUnderlyingAtrMult });
     if (r.error) { perSymbol[symbol] = { error: r.error }; continue; }
     perSymbol[symbol] = summarize(r.trades);
     all.push(...r.trades);
@@ -170,7 +184,7 @@ async function run(opts = {}) {
   // Breakeven win rate ignoring timeouts, for reference against the result.
   const breakeven = stopPct / (targetPct + stopPct);
 
-  return { overall: summarize(all), perSymbol, trades: all, params: { years, targetPct, stopPct, holdDays, targetDelta, breakeven } };
+  return { overall: summarize(all), perSymbol, trades: all, params: { years, targetPct, stopPct, holdDays, targetDelta, stopUnderlyingAtrMult, breakeven } };
 }
 
 module.exports = { run, backtestSymbol, evaluateSignal, summarize };
