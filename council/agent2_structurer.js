@@ -15,7 +15,16 @@ const db = require('./db');
 
 const MIN_OPEN_INTEREST = 1000;
 const MIN_VOLUME        = 500;
-const MAX_SPREAD        = 0.08;
+// Spread cap is RELATIVE to the contract's own price, not a flat dollar
+// amount. A flat $0.08 cap silently restricted the whole system to options
+// priced roughly under $2 — on a $12 option, $0.08 is 0.6%, which
+// essentially no ETF option ever quotes. Combined with a delta band that
+// favours deeper-ITM (pricier) contracts, the two filters fought each other
+// and nothing could ever qualify. What actually matters is how much of the
+// move gets eaten by crossing the spread, which is a percentage question.
+const MAX_SPREAD_PCT    = 0.08;  // 8% of mid
+const MAX_SPREAD_FLOOR  = 0.05;  // ...but always allow at least a nickel, for cheap contracts
+function spreadCap(mid) { return Math.max(MAX_SPREAD_FLOOR, mid * MAX_SPREAD_PCT); }
 const TARGET_ATR_MULT   = 1.8; // target = entry + 1.8x underlying ATR(14), translated through delta
 const STOP_ATR_MULT     = 1.0; // stop   = entry - 1.0x underlying ATR(14), translated through delta
 // ATR translated through delta can swing wildly (options leverage) — a cheap,
@@ -90,7 +99,7 @@ async function structureContract(symbol, bias, spotPrice) {
     const q = quotes[c.symbol];
     if (!q) continue; // no live quote — do not estimate, just exclude
     const spread = q.ask - q.bid;
-    if (spread >= MAX_SPREAD) continue;
+    if (spread >= spreadCap(q.mid)) continue;
 
     const strike  = parseFloat(c.strike_price);
     const expDate = new Date(c.expiration_date);
@@ -124,7 +133,7 @@ async function structureContract(symbol, bias, spotPrice) {
   if (!candidates.length) {
     return {
       ok: false, vetoReason: 'DATA_INSUFFICIENT',
-      detail: `No contract met Delta ${delta_min}-${delta_max}, spread < $${MAX_SPREAD}, live-quote, and expected-move requirements (checked ${liquid.length} liquid contracts, ${liquidityNote}).`,
+      detail: `No contract met Delta ${delta_min}-${delta_max}, spread < ${(MAX_SPREAD_PCT * 100).toFixed(0)}% of mid (min $${MAX_SPREAD_FLOOR}), live-quote, and expected-move requirements (checked ${liquid.length} liquid contracts, ${liquidityNote}).`,
     };
   }
 

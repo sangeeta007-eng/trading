@@ -12,17 +12,16 @@ const agent4 = require('./agent4_strategist');
 const sync = require('./sync');
 const db = require('./db');
 
-// HOT = actually approved and actionable this session (buying now / already
-// bought). PAUSED = a real, fully-qualified setup (same structuring/sizing
-// math as HOT) that Agent 3 specifically held back on portfolio-level
-// grounds (currently: weekly drawdown circuit breaker) rather than a flaw
-// in the setup itself — shown with full real numbers, just marked as a
-// suggestion to sit out this week rather than dropped from the report.
-// WARM = a real non-neutral technical setup (conviction >= 50) that didn't
-// get a workable contract this session (liquidity/pricing), not a bad
-// setup — worth watching. All three grounded in the same conviction score
-// and risk outcome used for actual trading decisions — no separate,
-// fabricated sentiment layer.
+// HOT = a real, tradable setup: a live contract was found that cleared the
+// per-trade quality bar (delta band, spread, liquidity, expected move), and
+// it's sized against configured capital. Portfolio-level context — macro
+// events, regime, how much is already open, weekly drawdown — rides along
+// as `advisories` on the pick rather than suppressing it, because whether
+// those outweigh the setup is the user's judgment call, not this tool's.
+// WARM = a real non-neutral technical setup (conviction >= 50) where no
+// contract cleared that quality bar this session — worth watching, nothing
+// to place yet. Both grounded in the same conviction score and real market
+// data — no separate, fabricated sentiment layer.
 const WARM_CONVICTION_FLOOR = 50;
 
 function classifyWatchlist(results) {
@@ -33,22 +32,21 @@ function classifyWatchlist(results) {
 
     const conviction = analysis.conviction || 0;
     const approved = risk?.approved === true;
-    const paused = risk?.status === 'PAUSED';
     let tier = null;
     if (approved) tier = 'HOT';
-    else if (paused) tier = 'PAUSED';
     else if (conviction >= WARM_CONVICTION_FLOOR) tier = 'WARM';
     if (!tier) continue;
 
     watchlist.push({
       symbol: analysis.symbol, bias: analysis.bias, conviction, tier, approved,
       price: analysis.price, rsi: analysis.rsi, adx: analysis.adx,
+      advisories: approved ? (risk.advisories || []) : [],
       contract: structured?.ok ? {
         strike: structured.strike, expiration: structured.expiration, dte: structured.dte,
         entryLimit: structured.entryLimit, targetLimit: structured.targetLimit, stopLimit: structured.stopLimit,
         delta: structured.delta, ivRank: structured.ivRank,
-        qty: (approved || paused) ? risk.qty : null,
-        tradeCost: (approved || paused) ? risk.tradeCost : null,
+        qty: approved ? risk.qty : null,
+        tradeCost: approved ? risk.tradeCost : null,
       } : null,
       blockedReason: !approved ? (risk?.vetoReason || structured?.vetoReason || null) : null,
       blockedDetail: !approved ? (risk?.detail || structured?.detail || null) : null,
@@ -102,9 +100,8 @@ async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE } = {}) {
 
   const watchlist = classifyWatchlist(results);
   const hot = watchlist.filter(w => w.tier === 'HOT');
-  const paused = watchlist.filter(w => w.tier === 'PAUSED');
   const warm = watchlist.filter(w => w.tier === 'WARM');
-  console.log(`\n[council] 🔥 HOT: ${hot.map(w => w.symbol).join(', ') || 'none'} | ⏸️  PAUSED: ${paused.map(w => w.symbol).join(', ') || 'none'} | 🌤️  WARM: ${warm.map(w => w.symbol).join(', ') || 'none'}`);
+  console.log(`\n[council] 🔥 HOT: ${hot.map(w => w.symbol + (w.advisories?.length ? `(${w.advisories.length} advisory)` : '')).join(', ') || 'none'} | 🌤️  WARM: ${warm.map(w => w.symbol).join(', ') || 'none'}`);
 
   return { results, reconciliation, thresholds, regime, watchlist };
 }

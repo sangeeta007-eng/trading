@@ -9,7 +9,7 @@
  */
 const { v4: uuidv4 } = require('uuid');
 const db = require('./db');
-const { IV_RANK_MIN_SAMPLE } = require('./agent3_risk');
+const { IV_RANK_MIN_SAMPLE, MAX_NET_DIRECTIONAL_EXPOSURE } = require('./agent3_risk');
 
 function bar(ch = '=') { return ch.repeat(80); }
 
@@ -27,28 +27,22 @@ function buildVetoReport({ analysis, structured, risk }) {
 }
 
 function buildReport({ analysis, structured, risk }) {
-  const paused = risk.status === 'PAUSED';
+  const advisories = risk.advisories || [];
   const action = structured.optType === 'call' ? 'BUY TO OPEN (CALL OPTION)' : 'BUY TO OPEN (PUT OPTION)';
   const contractLabel = `${structured.symbol} ${structured.expiration} $${structured.strike} ${structured.optType.toUpperCase()}`;
 
   const lines = [];
   lines.push(bar());
-  lines.push(paused
-    ? '        4-AGENT TRADE SUGGESTION — PAUSED, DO NOT ENTER THIS WEEK'
-    : '                    4-AGENT TRADE RECOMMENDATION REPORT');
+  lines.push('                    4-AGENT TRADE RECOMMENDATION REPORT');
   lines.push(bar());
-  if (paused) {
+  if (advisories.length) {
     lines.push('');
-    lines.push(`⏸ This is a real, fully-qualified setup — same technical, liquidity, and`);
-    lines.push(`  pricing checks as any HOT pick. It's held back only because the weekly`);
-    lines.push(`  drawdown circuit breaker is active (see the report's top banner for the`);
-    lines.push(`  real $ and % behind it). Numbers below are exactly what would be`);
-    lines.push(`  recommended once that resets Monday — nothing here is guessed to fill`);
-    lines.push(`  the gap. Entering anyway is your call, not something this tool suggests.`);
+    lines.push(`[${advisories.length} ADVISOR${advisories.length === 1 ? 'Y' : 'IES'} — context worth knowing, not blockers]`);
+    advisories.forEach(a => lines.push(`⚠ ${a.message}`));
   }
   lines.push('');
   lines.push('[SUMMARY & RECOMMENDATION]');
-  lines.push(`Action: ${action}${paused ? ' — SUGGESTION ONLY, NOT RECOMMENDED THIS WEEK' : ''}`);
+  lines.push(`Action: ${action}`);
   lines.push(`Ticker: ${structured.symbol}`);
   lines.push(`Contract: ${contractLabel}`);
   lines.push(`Position Sizing: ${risk.qty} Contracts (~$${risk.tradeCost.toFixed(0)} / ${(risk.allocationPct * 100).toFixed(1)}% of configured capital)`);
@@ -73,31 +67,24 @@ function buildReport({ analysis, structured, risk }) {
   lines.push('[AGENT 3: RISK GUARDIAN VALIDATION]');
   lines.push(`• Configured Capital: $${risk.capital.toFixed(2)} (set TOTAL_BUDGET in .env to match your real account)`);
   lines.push(`• Allocation Band: $${risk.allocationMin.toFixed(2)} - $${risk.allocationMax.toFixed(2)} (10-15%)`);
-  lines.push(`• Suggested Cost: ${risk.qty} Contracts × $${structured.entryLimit.toFixed(2)} × 100 = $${risk.tradeCost.toFixed(2)}${paused ? ' [would need this if entered]' : ' [APPROVED]'}`);
-  lines.push(`• Active Recommendations: ${risk.openPositions} / ${risk.maxOpenPositions} [APPROVED]`);
-  lines.push(`• Weekly Drawdown (hypothetical): ${(risk.weeklyDrawdownPct * 100).toFixed(1)}% (limit 5%)${paused ? ' [PAUSED — at/past limit, see banner]' : ' [APPROVED]'}`);
-  lines.push(`• Net Directional Exposure: ${risk.netExposureBefore.toFixed(2)} -> ${risk.netExposureAfter.toFixed(2)} (cap ±1.3, correlation proxy) [APPROVED]`);
+  lines.push(`• Suggested Cost: ${risk.qty} Contracts × $${structured.entryLimit.toFixed(2)} × 100 = $${risk.tradeCost.toFixed(2)}`);
+  lines.push(`• Tracked Open Recommendations: ${risk.openPositions} (soft guide ${risk.maxOpenPositions} — counted from this tool's own suggestions, not your broker)`);
+  lines.push(`• Weekly P&L (hypothetical): ${risk.weeklyPnL >= 0 ? '+' : ''}$${risk.weeklyPnL.toFixed(0)} (${(risk.weeklyDrawdownPct * 100).toFixed(1)}% drawdown vs configured capital)`);
+  lines.push(`• Net Directional Exposure: ${risk.netExposureBefore.toFixed(2)} -> ${risk.netExposureAfter.toFixed(2)} (soft guide ±${MAX_NET_DIRECTIONAL_EXPOSURE}, correlation proxy)`);
   lines.push(`• Conviction: ${risk.conviction}/100 (IV favorability ${risk.ivFavorability.toFixed(0)}${risk.ivHvRatio != null ? `, IV/HV ${risk.ivHvRatio.toFixed(2)}` : ''}) -> allocation ${(risk.allocationPct * 100).toFixed(1)}% of capital`);
   lines.push(risk.ivGateActive
     ? `• IV Safety Gates: ACTIVE (${risk.ivSampleSize} days of IV history — IV Rank veto and IV/HV ratio veto both live for ${structured.symbol})`
     : `• IV Safety Gates: NOT YET ACTIVE for ${structured.symbol} — only ${risk.ivSampleSize}/${IV_RANK_MIN_SAMPLE} days of IV history collected. The IV Rank veto and IV/HV ratio veto are both skipped (not passed) until then — this pick isn't protected by those two checks yet.`);
-  lines.push(paused ? '• Status: PAUSED — suggestion only, do not enter this week (resets Monday)' : '• Status: RECOMMENDED');
+  lines.push(advisories.length
+    ? `• Status: RECOMMENDED — with ${advisories.length} advisor${advisories.length === 1 ? 'y' : 'ies'} listed at the top`
+    : '• Status: RECOMMENDED');
   lines.push('');
   lines.push('-'.repeat(80));
-  lines.push(paused
-    ? '[AGENT 4: WHAT THIS WOULD LOOK LIKE — not a recommendation to act on now]'
-    : '[AGENT 4: MANUAL TRADE INSTRUCTIONS — place these yourself]');
-  if (paused) {
-    lines.push('This is what the entry/target/stop would be if this setup were approved.');
-    lines.push('It is not right now — the weekly drawdown pause is real and current. If you');
-    lines.push('choose to enter anyway, that is your decision, not something this tool');
-    lines.push('recommends this week.');
-  } else {
-    lines.push('This tool does not place real orders. Enter these manually on your broker');
-    lines.push('(usually Robinhood). We track the outcome using real market quotes so');
-    lines.push('future reports show whether it hit target or stop — but the actual trade,');
-    lines.push('fill price, and execution are entirely up to you.');
-  }
+  lines.push('[AGENT 4: MANUAL TRADE INSTRUCTIONS — place these yourself]');
+  lines.push('This tool does not place real orders. Enter these manually on your broker');
+  lines.push('(usually Robinhood). We track the outcome using real market quotes so');
+  lines.push('future reports show whether it hit target or stop — but the actual trade,');
+  lines.push('fill price, and execution are entirely up to you.');
   lines.push('');
   lines.push('1. ENTRY:');
   lines.push(`   - Action: BUY TO OPEN | Symbol: ${structured.contractSymbol} | Quantity: ${risk.qty}`);
@@ -118,24 +105,6 @@ function buildReport({ analysis, structured, risk }) {
 // there is no order to wait on since nothing is actually submitted anywhere.
 async function finalize({ analysis, structured, risk, regime }) {
   const trade_id = uuidv4();
-
-  // A paused pick is real and fully structured — log it as PAUSED (with its
-  // real qty/allocation) rather than REJECTED, and give it the full report
-  // instead of the generic veto text, so the record and the report both
-  // reflect what this actually was.
-  if (risk.status === 'PAUSED') {
-    db.insertTrade({
-      trade_id, ticker: structured.symbol, option_type: structured.optType,
-      contract_symbol: structured.contractSymbol, strike: structured.strike,
-      expiration: structured.expiration, delta: structured.delta,
-      rsi_at_entry: analysis.rsi, iv_at_entry: structured.iv,
-      entry_price: structured.entryLimit, target_price: structured.targetLimit,
-      stop_price: structured.stopLimit,
-      qty: risk.qty, allocation: risk.tradeCost, status: 'PAUSED', reject_reason: risk.vetoReason,
-      conviction_score: risk.conviction ?? null, regime_at_entry: regime?.name || null, iv_hv_ratio: risk.ivHvRatio ?? null,
-    });
-    return { trade_id, report: buildReport({ analysis, structured, risk }) };
-  }
 
   if (!risk.approved) {
     db.insertTrade({

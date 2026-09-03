@@ -40,46 +40,15 @@ function netDirectionalExposure() {
 }
 
 async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = {}) {
+  // Only two things below actually suppress a pick, and both mean there is
+  // literally nothing real to show: no usable contract, or no configured
+  // capital to size against. Everything else — event blackouts, regime
+  // caps, position counts, exposure, weekly drawdown — is a caution about
+  // context, not a defect in the setup. Those are attached as advisories
+  // and shown alongside the real numbers, because deciding whether to act
+  // on them is the user's call, not this tool's. See ADVISORIES.md.
   if (!structured.ok) {
     return { approved: false, status: 'REJECTED', vetoReason: structured.vetoReason, detail: structured.detail };
-  }
-
-  // ── Economic event blackout ──────────────────────────────────────────────
-  // ETFs don't have a single earnings date, but FOMC/CPI/NFP move them the
-  // same way — real, verified dates (see calendar.js), never a guess.
-  const upcomingMacro = calendar.getUpcomingEvents(1).filter(e => EVENT_TYPES_THAT_VETO.includes(e.type));
-  if (upcomingMacro.length) {
-    const e = upcomingMacro[0];
-    return {
-      approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED',
-      detail: `HOLD — ${e.label} on ${e.date}, within 24h. IV and price both tend to move sharply around this release; no new recommendations until it's passed.`,
-    };
-  }
-
-  // ── Regime gate ──────────────────────────────────────────────────────────
-  if (regime) {
-    if (regime.sizingMod <= 0) {
-      return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `Extreme volatility regime (VIX proxy ~${regime.vix}) — no new recommendations.` };
-    }
-    if (structured.bias === 'CALL' && regime.allowBullish === false) {
-      return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `${regime.name} regime disallows new bullish entries.` };
-    }
-    if (structured.bias === 'PUT' && regime.allowBearish === false) {
-      return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `${regime.name} regime disallows new bearish entries.` };
-    }
-    if (regime.maxNewPerDay !== undefined && regime.maxNewPerDay !== Infinity && sessionNewCount >= regime.maxNewPerDay) {
-      return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `${regime.name} regime caps new recommendations at ${regime.maxNewPerDay}/session (already recommended ${sessionNewCount}).` };
-    }
-  }
-
-  // ── IV pricing gates ─────────────────────────────────────────────────────
-  const ivSampleSize = analytics.getIVHistoryCount(structured.symbol);
-  if (ivSampleSize >= IV_RANK_MIN_SAMPLE && structured.ivRank > IV_RANK_VETO) {
-    return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `IV Rank ${structured.ivRank.toFixed(0)} > ${IV_RANK_VETO} — premium is too rich to recommend buying long options.` };
-  }
-  const ivHvRatio = analysis?.hv ? structured.iv / analysis.hv : null;
-  if (ivHvRatio != null && ivHvRatio > IV_HV_RATIO_VETO) {
-    return { approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED', detail: `IV/HV ratio ${ivHvRatio.toFixed(2)} > ${IV_HV_RATIO_VETO} — implied vol is pricing in outsized event risk relative to realized vol.` };
   }
 
   const capital = cfg.TOTAL_BUDGET;
@@ -87,39 +56,70 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
     return { approved: false, status: 'REJECTED', vetoReason: 'DATA_INSUFFICIENT', detail: 'TOTAL_BUDGET is not configured — set it in .env to your real account size.' };
   }
 
-  // "Open positions" = our own tracked ACTIVE recommendations, since there's
-  // no live broker to check — this assumes you acted on every recommendation
-  // we made. If you skip one, tell it to ignore that symbol or clear the DB row.
-  const openPositions = db.getTradesByStatus('ACTIVE').length;
-  if (openPositions >= MAX_OPEN_POSITIONS) {
-    return {
-      approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED',
-      detail: `Max open recommendations reached (${openPositions}/${MAX_OPEN_POSITIONS}).`,
-      capital, openPositions, maxOpenPositions: MAX_OPEN_POSITIONS,
-    };
+  const advisories = [];
+
+  // ── Economic event blackout ──────────────────────────────────────────────
+  // ETFs don't have a single earnings date, but FOMC/CPI/NFP move them the
+  // same way — real, verified dates (see calendar.js), never a guess.
+  const upcomingMacro = calendar.getUpcomingEvents(1).filter(e => EVENT_TYPES_THAT_VETO.includes(e.type));
+  if (upcomingMacro.length) {
+    const e = upcomingMacro[0];
+    advisories.push({
+      code: 'MACRO_EVENT',
+      message: `${e.label} lands ${e.date}, inside 24h. Long options bought right before a major release pay elevated IV and can lose money on the post-release IV crush even when the direction is right.`,
+    });
   }
 
-  // ── Net directional (correlation-proxy) exposure cap ────────────────────
+  // ── Regime context ───────────────────────────────────────────────────────
+  if (regime) {
+    if (regime.sizingMod <= 0) {
+      advisories.push({ code: 'EXTREME_VOL', message: `Extreme volatility regime (VIX proxy ~${regime.vix}). Historically the worst conditions for buying premium — sizing guidance below is unreliable here.` });
+    }
+    if (structured.bias === 'CALL' && regime.allowBullish === false) {
+      advisories.push({ code: 'REGIME_DIRECTION', message: `${regime.name} regime is set against new bullish entries.` });
+    }
+    if (structured.bias === 'PUT' && regime.allowBearish === false) {
+      advisories.push({ code: 'REGIME_DIRECTION', message: `${regime.name} regime is set against new bearish entries.` });
+    }
+    if (regime.maxNewPerDay !== undefined && regime.maxNewPerDay !== Infinity && sessionNewCount >= regime.maxNewPerDay) {
+      advisories.push({ code: 'REGIME_PACE', message: `${regime.name} regime suggests at most ${regime.maxNewPerDay} new entries/session; this is #${sessionNewCount + 1}.` });
+    }
+  }
+
+  // ── IV pricing gates ─────────────────────────────────────────────────────
+  const ivSampleSize = analytics.getIVHistoryCount(structured.symbol);
+  if (ivSampleSize >= IV_RANK_MIN_SAMPLE && structured.ivRank > IV_RANK_VETO) {
+    advisories.push({ code: 'IV_RICH', message: `IV Rank ${structured.ivRank.toFixed(0)} > ${IV_RANK_VETO} — premium is expensive relative to this symbol's own past year. You're paying up for volatility.` });
+  }
+  const ivHvRatio = analysis?.hv ? structured.iv / analysis.hv : null;
+  if (ivHvRatio != null && ivHvRatio > IV_HV_RATIO_VETO) {
+    advisories.push({ code: 'IV_HV_GAP', message: `IV/HV ratio ${ivHvRatio.toFixed(2)} > ${IV_HV_RATIO_VETO} — implied vol is well above what this symbol has actually been realizing, which usually prices in event risk.` });
+  }
+
+  // "Open positions" = our own tracked ACTIVE recommendations, since there's
+  // no live broker to check — this assumes you acted on every recommendation
+  // we made, which is a guess, not a fact about your account.
+  const openPositions = db.getTradesByStatus('ACTIVE').length;
+  if (openPositions >= MAX_OPEN_POSITIONS) {
+    advisories.push({ code: 'MANY_OPEN', message: `${openPositions} recommendations already tracked as open (soft guide: ${MAX_OPEN_POSITIONS}). Counted from what this tool suggested, not from your actual Robinhood account.` });
+  }
+
+  // ── Net directional (correlation-proxy) exposure ─────────────────────────
   const currentExposure = netDirectionalExposure();
   const signedDelta = structured.bias === 'CALL' ? structured.delta : -structured.delta;
   const projectedExposure = currentExposure + signedDelta;
   if (Math.abs(projectedExposure) > MAX_NET_DIRECTIONAL_EXPOSURE) {
-    return {
-      approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED',
-      detail: `Net directional exposure would be ${projectedExposure.toFixed(2)} (cap ±${MAX_NET_DIRECTIONAL_EXPOSURE}) — too many correlated same-direction recommendations already active.`,
-      currentExposure, signedDelta,
-    };
+    advisories.push({ code: 'CORRELATED', message: `Net directional exposure would reach ${projectedExposure.toFixed(2)} (soft guide ±${MAX_NET_DIRECTIONAL_EXPOSURE}) — several same-direction ETF positions behave more like one leveraged bet than diversification.` });
   }
 
   const weeklyPnL = analytics.getWeeklyPnL();
   const weeklyDrawdownPct = Math.abs(Math.min(0, weeklyPnL)) / capital;
-  // This one is deliberately NOT an early hard block like the checks above.
-  // Those represent things that make the setup itself unreliable (bad data,
-  // no real contract, an event about to move price). A weekly drawdown pause
-  // is a portfolio-level "don't add risk this week" call, not a flaw in this
-  // specific pick — so sizing still gets computed normally below and the
-  // real numbers still get shown, just marked paused rather than hidden.
-  const weeklyDrawdownPaused = weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT;
+  if (weeklyDrawdownPct >= WEEKLY_DRAWDOWN_LIMIT_PCT) {
+    advisories.push({
+      code: 'WEEKLY_DRAWDOWN',
+      message: `Tracked hypothetical P&L is down ${(weeklyDrawdownPct * 100).toFixed(1)}% ($${Math.abs(weeklyPnL).toFixed(0)}) this week. This assumes every past suggestion was taken at its suggested size — it is not your real account's performance.`,
+    });
+  }
 
   // ── Conviction-scaled sizing (10-15% band) ──────────────────────────────
   let ivFavorability = 100 - Math.min(100, structured.ivRank);
@@ -134,43 +134,35 @@ async function evaluate(structured, { analysis, regime, sessionNewCount = 0 } = 
   const minAllocation = capital * ALLOC_MIN_PCT * regimeSizingMod;
 
   const costPerContract = structured.entryLimit * 100;
-  const qty = Math.max(0, Math.floor(targetAllocation / costPerContract));
-
-  if (qty < 1) {
-    return {
-      approved: false, status: 'REJECTED', vetoReason: 'RISK_BOUNDS_EXCEEDED',
-      detail: `Single contract cost $${costPerContract.toFixed(2)} exceeds the conviction-scaled allocation ($${targetAllocation.toFixed(2)}, conviction ${finalConviction}/100) — cannot recommend even 1 contract within risk bounds.`,
-      capital, targetAllocation, finalConviction,
-    };
-  }
-
+  // Floor at 1: a contract that costs more than the conviction-scaled
+  // allocation is still a real, buyable contract. Show it with the real
+  // cost and flag that it's above the intended band, rather than dropping
+  // the pick for being expensive.
+  const qty = Math.max(1, Math.floor(targetAllocation / costPerContract));
   const tradeCost = qty * costPerContract;
 
-  // Everything below is real and fully computed either way — only the
-  // approved/status/detail framing differs based on the drawdown pause.
-  const sizing = {
+  if (tradeCost > maxAllocation) {
+    advisories.push({
+      code: 'ABOVE_ALLOCATION',
+      message: `One contract costs $${costPerContract.toFixed(0)}, above the conviction-scaled allocation for this pick ($${targetAllocation.toFixed(0)}). Sized at the 1-contract minimum — that's ${((tradeCost / capital) * 100).toFixed(1)}% of configured capital, above the intended ${(ALLOC_MIN_PCT * 100).toFixed(0)}-${(ALLOC_MAX_PCT * 100).toFixed(0)}% band.`,
+    });
+  }
+
+  return {
+    approved: true, status: 'APPROVED',
+    advisories,
     capital, qty, tradeCost,
     allocationPct: tradeCost / capital,
     allocationMin: minAllocation, allocationMax: maxAllocation,
     openPositions, maxOpenPositions: MAX_OPEN_POSITIONS,
-    weeklyPnL, weeklyDrawdownPct, weeklyDrawdownPaused,
+    weeklyPnL, weeklyDrawdownPct,
     conviction: finalConviction, ivFavorability, ivHvRatio,
     netExposureBefore: currentExposure, netExposureAfter: projectedExposure,
-    // Below IV_RANK_MIN_SAMPLE, the IV Rank and IV/HV vetoes above are
+    // Below IV_RANK_MIN_SAMPLE, the IV Rank and IV/HV checks above are
     // simply skipped (not passed) — surfaced here so the report can say so
     // plainly instead of silently looking like those protections are live.
     ivGateActive: ivSampleSize >= IV_RANK_MIN_SAMPLE, ivSampleSize,
   };
-
-  if (weeklyDrawdownPaused) {
-    return {
-      approved: false, status: 'PAUSED', vetoReason: 'WEEKLY_DRAWDOWN_PAUSED',
-      detail: `Weekly (hypothetical) drawdown ${(weeklyDrawdownPct * 100).toFixed(1)}% ≥ ${(WEEKLY_DRAWDOWN_LIMIT_PCT * 100).toFixed(0)}% limit — real, fully-qualified setup, but new entries are paused this week rather than dropped. Resets Monday.`,
-      ...sizing,
-    };
-  }
-
-  return { approved: true, status: 'APPROVED', ...sizing };
 }
 
 module.exports = {

@@ -98,20 +98,22 @@ function formatPlaybookItem(item, i) {
 }
 
 function formatWatchlistItem(w) {
-  const icon = w.tier === 'HOT' ? '🔥 HOT ' : w.tier === 'PAUSED' ? '⏸ PAUSED' : '🌤️  WARM';
+  const icon = w.tier === 'HOT' ? '🔥 HOT ' : '🌤️  WARM';
   const dirLabel = w.bias === 'CALL' ? 'CALL (bullish)' : 'PUT (bearish)';
   const contractLine = w.contract
     ? `Strike $${w.contract.strike.toFixed(2)} | Exp ${w.contract.expiration} | Δ${w.contract.delta.toFixed(2)} | Entry ~$${w.contract.entryLimit.toFixed(2)} | Target $${w.contract.targetLimit.toFixed(2)} | Stop $${w.contract.stopLimit.toFixed(2)}${w.contract.qty ? ` | Suggested Qty ${w.contract.qty}` : ''}`
     : 'No live contract selected yet';
   const statusLine = w.tier === 'HOT'
     ? 'ACTIONABLE NOW — this is in the recommendations below, place it manually'
-    : w.tier === 'PAUSED'
-    ? `Real, fully-qualified setup — SUGGESTION ONLY, do not enter this week (weekly drawdown pause, resets Monday)`
     : `Not yet actionable — ${w.blockedDetail || w.blockedReason || 'pending better conditions'}`;
+  const advisoryLines = (w.advisories || []).map(a => `        ⚠ ${a.message}`);
 
-  return `   ${icon}  ${w.symbol.padEnd(6)} ${dirLabel.padEnd(16)} conviction ${w.conviction}/100
-        ${contractLine}
-        ${statusLine}`;
+  return [
+    `   ${icon}  ${w.symbol.padEnd(6)} ${dirLabel.padEnd(16)} conviction ${w.conviction}/100`,
+    `        ${contractLine}`,
+    `        ${statusLine}`,
+    ...advisoryLines,
+  ].join('\n');
 }
 
 function formatOutcome(e, i) {
@@ -124,7 +126,7 @@ function formatOutcome(e, i) {
 └${'─'.repeat(60)}`;
 }
 
-function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target }) {
+function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
   const recommendationBlock = newCampaigns.length
     ? newCampaigns.map((c, i) => formatRecommendation(c, i)).join('\n')
     : '  No new recommendations this session.';
@@ -134,11 +136,10 @@ function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     : '  No positions closed out this session.';
 
   const hot = watchlist.filter(w => w.tier === 'HOT');
-  const paused = watchlist.filter(w => w.tier === 'PAUSED');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const watchlistBlock = watchlist.length
-    ? [...hot, ...paused, ...warm].map(formatWatchlistItem).join('\n')
-    : '   Nothing hot, paused, or warm this session — no qualifying setups.';
+    ? [...hot, ...warm].map(formatWatchlistItem).join('\n')
+    : '   Nothing hot or warm this session — no qualifying setups.';
 
   const playbookBlock = playbook.length
     ? playbook.map((p, i) => formatPlaybookItem(p, i)).join('\n')
@@ -165,13 +166,7 @@ only (9:30am-4pm ET weekdays) — outside that it reports closed, not a guess.
 
 This is a recommendation-only report. Nothing here was traded automatically
 — review it and place any trades yourself on your own broker.
-${weeklyDrawdownHalted ? `
-⛔ NEW RECOMMENDATIONS PAUSED THIS WEEK
-   Hypothetical weekly drawdown is ${(weeklyDrawdownPct * 100).toFixed(1)}% (real: $${Math.abs(weeklyPnL).toFixed(2)}
-   in realized losses this week) — at or past the 5% circuit breaker. Any
-   real setup this session, bullish or bearish, gets blocked here to stop
-   new risk during an already-losing week. Resets Monday.
-` : ''}
+
 📊 MARKET REGIME
    ${regimeLine}
 
@@ -228,7 +223,7 @@ const COLOR = {
   text: '#2b2723', muted: '#6b6358', border: '#e6e0d4',
   bg: '#f3f1ea', card: '#fdfbf6', zebra: '#f7f5ef',
   headerBg: '#2b2723', headerText: '#f3f1ea',
-  paused: '#475569', pausedBg: '#f1f4f8', pausedBorder: '#dbe3ec',
+  advisory: '#475569', advisoryBg: '#f1f4f8', advisoryBorder: '#dbe3ec',
 };
 
 function td(content, style = '') {
@@ -272,26 +267,34 @@ function buildHotRows(hot) {
       ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
       ${td(c ? '$' + c.targetLimit.toFixed(2) + ' (+' + ((c.targetLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.target}; font-weight:700;`)}
       ${td(c ? '$' + c.stopLimit.toFixed(2) + ' (' + ((c.stopLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.stop}; font-weight:700;`)}
+      ${td(c && c.qty ? c.qty + ' × $' + c.tradeCost.toFixed(0) : '—')}
       ${td(convictionBadge(w.conviction))}
+      ${td(w.advisories?.length ? `<b style="color:${COLOR.advisory};">⚠ ${w.advisories.length}</b>` : '—')}
     </tr>`;
   }).join('');
 }
 
-function buildPausedRows(paused) {
-  return paused.map(w => {
-    const c = w.contract;
-    return `<tr style="background:${COLOR.pausedBg};">
-      ${td(`<b>${w.symbol}</b>`)}
-      ${td(w.bias === 'CALL' ? '▲ CALL' : '▼ PUT', `color:${w.bias === 'CALL' ? COLOR.target : COLOR.stop}; font-weight:600;`)}
-      ${td(c ? '$' + c.strike.toFixed(2) : '—')}
-      ${td(c ? c.expiration : '—')}
-      ${td(c ? 'Δ' + c.delta.toFixed(2) : '—')}
-      ${td(c ? '$' + c.entryLimit.toFixed(2) : '—')}
-      ${td(c ? '$' + c.targetLimit.toFixed(2) + ' (+' + ((c.targetLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.target}; font-weight:700;`)}
-      ${td(c ? '$' + c.stopLimit.toFixed(2) + ' (' + ((c.stopLimit / c.entryLimit - 1) * 100).toFixed(1) + '%)' : '—', `color:${COLOR.stop}; font-weight:700;`)}
-      ${td(convictionBadge(w.conviction))}
-    </tr>`;
-  }).join('');
+// Advisories are context attached to a real pick — never a reason it was
+// withheld. Rendered under the HOT table so the numbers stay scannable and
+// the caveats stay readable, rather than crushed into a table cell.
+function buildAdvisoryBlock(hot) {
+  const withAdvisories = hot.filter(w => w.advisories?.length);
+  if (!withAdvisories.length) return '';
+
+  const items = withAdvisories.map(w => `
+    <div style="margin-bottom:12px;">
+      <div style="font-weight:700; font-size:14px; color:${COLOR.text}; margin-bottom:4px;">${w.symbol} ${w.bias}</div>
+      ${w.advisories.map(a => `<div style="font-size:14px; line-height:1.6; color:${COLOR.text}; margin-bottom:4px;">⚠ ${a.message}</div>`).join('')}
+    </div>`).join('');
+
+  return `
+  <div style="margin:16px 0 24px; background:${COLOR.advisoryBg}; border:1px solid ${COLOR.advisoryBorder}; border-radius:6px; padding:14px 16px;">
+    <div style="font-size:15px; font-weight:700; color:${COLOR.advisory}; margin-bottom:10px;">⚠ Advisories on the picks above — context, not blockers</div>
+    ${items}
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.muted}; margin-top:8px;">
+      These don't remove a pick from HOT. They're conditions worth weighing before you place it — the call is yours.
+    </div>
+  </div>`;
 }
 
 function buildWarmRows(warm) {
@@ -410,19 +413,8 @@ function buildMacroBlock(macro) {
   </div>`;
 }
 
-function buildDrawdownHaltBanner(weeklyDrawdownPct, weeklyPnL) {
-  return `
-  <div style="margin-bottom:16px; background:#fdf1e8; border:2px solid ${COLOR.hot}; border-radius:6px; padding:14px 16px;">
-    <div style="font-size:15px; font-weight:700; color:${COLOR.hot}; margin-bottom:6px;">⛔ New entries paused this week — but real setups are still shown below</div>
-    <div style="font-size:14px; line-height:1.6; color:${COLOR.text};">
-      Hypothetical weekly drawdown is <b>${(weeklyDrawdownPct * 100).toFixed(1)}%</b> (real: $${Math.abs(weeklyPnL).toFixed(2)} in realized losses this week) — at or past the 5% circuit breaker. This isn't "nothing found today": any real setup this session, bullish or bearish, that would otherwise be HOT shows up in the <b style="color:${COLOR.paused};">⏸ PAUSED</b> table below with full real numbers — it's a suggestion to sit out this week, not a reason to hide it. Resets Monday.
-    </div>
-  </div>`;
-}
-
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target }) {
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
-  const paused = watchlist.filter(w => w.tier === 'PAUSED');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
   const realizedPnL = exits.reduce((s, e) => s + (e.pnl || 0), 0);
@@ -430,13 +422,8 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
   const hotTable = tableWrap(
     '🔥 HOT — Actionable Now', COLOR.hot, COLOR.hot,
-    ['Symbol', 'Direction', 'Strike', 'Expiry', 'Delta', 'Entry', 'Target ▲', 'Stop ▼', 'Conv.'],
+    ['Symbol', 'Direction', 'Strike', 'Expiry', 'Delta', 'Entry', 'Target ▲', 'Stop ▼', 'Size', 'Conv.', '⚠'],
     buildHotRows(hot), 'Nothing hot this session.'
-  );
-  const pausedTable = tableWrap(
-    '⏸ PAUSED — Real Setup, Suggestion Only (Do Not Enter This Week)', COLOR.paused, COLOR.paused,
-    ['Symbol', 'Direction', 'Strike', 'Expiry', 'Delta', 'Entry', 'Target ▲', 'Stop ▼', 'Conv.'],
-    buildPausedRows(paused), 'Nothing paused this session.'
   );
   const warmTable = tableWrap(
     '🌤️ WARM — Good Setup, Not Yet Actionable', COLOR.warm, COLOR.warm,
@@ -499,12 +486,11 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
         }
       }
     </script>
-    ${weeklyDrawdownHalted ? buildDrawdownHaltBanner(weeklyDrawdownPct, weeklyPnL) : ''}
     <div style="background:#eef3ea; border:1px solid #c9dcc0; border-radius:6px; padding:12px 14px; font-size:14px; line-height:1.6; color:#2f4a26; margin-bottom:14px;">
       This is a recommendation-only report. Nothing here was traded automatically — review it and place any trades yourself on your own broker.
     </div>
     <div style="font-size:13px; line-height:1.8; color:${COLOR.muted}; margin-bottom:20px;">
-      Legend: <span style="color:${COLOR.target}; font-weight:700;">green = target, exit for profit</span> &nbsp;·&nbsp; <span style="color:${COLOR.stop}; font-weight:700;">red = stop, exit for loss</span> &nbsp;·&nbsp; <span style="color:${COLOR.hot}; font-weight:700;">🔥 HOT = act now</span> &nbsp;·&nbsp; <span style="color:${COLOR.paused}; font-weight:700;">⏸ PAUSED = real setup, suggested to skip this week</span> &nbsp;·&nbsp; <span style="color:${COLOR.warm}; font-weight:700;">🌤️ WARM = watch, not yet</span>
+      Legend: <span style="color:${COLOR.target}; font-weight:700;">green = target, exit for profit</span> &nbsp;·&nbsp; <span style="color:${COLOR.stop}; font-weight:700;">red = stop, exit for loss</span> &nbsp;·&nbsp; <span style="color:${COLOR.hot}; font-weight:700;">🔥 HOT = act now</span> &nbsp;·&nbsp; <span style="color:${COLOR.warm}; font-weight:700;">🌤️ WARM = watch, not yet</span>
     </div>
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
@@ -518,7 +504,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
     ${buildMacroBlock(macro)}
     ${hotTable}
-    ${paused.length ? pausedTable : ''}
+    ${buildAdvisoryBlock(hot)}
     ${warmTable}
     ${buildExitStrategyBlock()}
     ${recTable}
@@ -558,10 +544,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, weeklyDrawdownHalted = false, weeklyDrawdownPct = 0 }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, weeklyDrawdownHalted, weeklyDrawdownPct, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);
