@@ -128,7 +128,7 @@ function formatOutcome(e, i) {
 └${'─'.repeat(60)}`;
 }
 
-function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, ts, target }) {
+function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, spreads, ts, target }) {
   const recommendationBlock = newCampaigns.length
     ? newCampaigns.map((c, i) => formatRecommendation(c, i)).join('\n')
     : '  No new recommendations this session.';
@@ -146,6 +146,19 @@ function buildTextBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
   const playbookBlock = playbook.length
     ? playbook.map((p, i) => formatPlaybookItem(p, i)).join('\n')
     : '  No active recommendations.';
+
+  const spreadsTextBlock = spreads?.length
+    ? ['💰 CREDIT SPREADS — the structure that tested positive',
+       '   (+1.6%/trade over 8 years, 75% win rate, vs -3.3% for buying below)',
+       ...spreads.map(s => [
+         `   ${s.symbol}: SELL $${s.shortLeg.strike}p / BUY $${s.longLeg.strike}p, exp ${s.shortLeg.expiration} (${s.dte}d)`,
+         `        you get paid $${s.credit.toFixed(2)} | worst case $${s.maxLoss.toFixed(2)} | breakeven $${s.breakeven.toFixed(2)} (${(s.breakevenPct * 100).toFixed(1)}%)`,
+         `        return if it works ${(s.targetReturnOnRisk * 100).toFixed(1)}% | close at $${s.closeAt.toFixed(2)} or at 21 days to expiry`,
+       ].join('\n')),
+       '   Risk: wins small and frequent (+15%), losses rarer and large (-40%).',
+       '   2022 lost 5.5%/trade across the year. This is not free money.',
+      ].join('\n') + '\n'
+    : '';
 
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
   const realizedPnL = exits.reduce((s, e) => s + (e.pnl || 0), 0);
@@ -179,6 +192,8 @@ This is a recommendation-only report. Nothing here was traded automatically
 ${verdict ? `TODAY'S CALL: ${verdict.call}
    ${verdict.plain || verdict.reason}
 ${verdict.plain ? `   (In market terms: ${verdict.reason})\n` : ''}` : ''}
+${spreadsTextBlock}
+
 📊 MARKET REGIME
    ${regimeLine}
 
@@ -490,6 +505,44 @@ function buildNewsBlock(marketNews, hot) {
   </div>`;
 }
 
+// Defined-risk put credit spreads — the only structure here with measured
+// positive expectancy. Shown above the long-option picks for that reason.
+function buildSpreadBlock(spreads) {
+  if (!spreads?.length) return '';
+
+  const rows = spreads.map((s, i) => `<tr style="background:${zebra(i)};">
+      ${td(`<b>${s.symbol}</b>`)}
+      ${td(`Sell $${s.shortLeg.strike}p<br>Buy $${s.longLeg.strike}p`, 'font-size:14px;')}
+      ${td(`${s.shortLeg.expiration}<br><span style="color:${COLOR.muted}; font-size:13px;">${s.dte}d</span>`)}
+      ${td(`<b style="color:${COLOR.target};">$${s.credit.toFixed(2)}</b>`)}
+      ${td(`$${s.maxLoss.toFixed(2)}`, `color:${COLOR.stop};`)}
+      ${td(`<b>${(s.targetReturnOnRisk * 100).toFixed(1)}%</b>`, `color:${COLOR.target};`)}
+      ${td(`$${s.breakeven.toFixed(2)}<br><span style="color:${COLOR.muted}; font-size:13px;">${(s.breakevenPct * 100).toFixed(1)}%</span>`)}
+      ${td(`$${s.closeAt.toFixed(2)}`)}
+    </tr>`).join('');
+
+  return `
+  <div style="margin:24px 0;">
+    <div style="font-size:16px; font-weight:700; color:${COLOR.target}; margin-bottom:6px;">💰 Credit Spreads — the strategy that actually tested positive</div>
+    <div style="font-size:14px; line-height:1.7; color:${COLOR.text}; margin-bottom:10px;">
+      Instead of <i>buying</i> an option and needing a move, you <i>sell</i> one and get paid up front. You keep the payment if the fund simply stays above the breakeven price — it can go up, sideways, or even drift down a little and you still win. A second option is bought below as a hard cap, so the worst case is a known number before you enter, not open-ended.
+      <br><br>
+      Over 8 years on these same funds this measured <b>+1.6% per trade at a 75% win rate</b>, versus <b>−3.3%</b> for the buying strategy below. Needs Level 3 approval, which you have.
+    </div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; font-family:${FONT_STACK};">
+      <thead><tr style="background:${COLOR.target};">${['Fund', 'The trade', 'Expires', 'You get paid', 'Worst case', 'Return if it works', 'Breakeven', 'Close at'].map(th).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:13px; line-height:1.7; color:${COLOR.muted}; margin-top:10px;">
+      <b>How to place it:</b> on Robinhood pick the fund → Trade Options → switch to the multi-leg/spread builder → <b>Sell to Open</b> the higher strike, <b>Buy to Open</b> the lower one, same expiry, as a single order for the net credit shown. Then set a GTC buy-to-close at the "Close at" price, which takes half the payment as profit.
+      <br><br>
+      <b>Exit rules (tested, not guessed):</b> close at half the credit received, or at 21 days to expiry, whichever comes first.
+      <br><br>
+      <b>The real risk:</b> wins are frequent but small, losses are rarer and larger — averaging +15% against −40% of the amount at risk. In 2022's grinding decline this lost 5.5% per trade across the year. It is not free money.
+    </div>
+  </div>`;
+}
+
 // Plain-English glossary for the column headings and recurring terms, so
 // the tables can be read without already knowing options vocabulary.
 function buildGlossary() {
@@ -530,7 +583,7 @@ function buildVerdictBanner(v) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, ts, target }) {
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const warm = watchlist.filter(w => w.tier === 'WARM');
   const totalDeployed = newCampaigns.reduce((s, c) => s + c.netDebit, 0);
@@ -621,6 +674,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
     ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
+    ${buildSpreadBlock(spreads)}
     ${buildMacroBlock(macro)}
     ${buildNewsBlock(marketNews, hot)}
     ${hotTable}
@@ -665,10 +719,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [] }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [] }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

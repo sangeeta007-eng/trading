@@ -17,6 +17,27 @@ const { buildPlaybook } = require('./council/playbook');
 const { sendSessionReport, sendFailureAlert } = require('./notify');
 const { getMacroSnapshot } = require('./fred');
 const { getMarketNews, getSymbolNews } = require('./news');
+const { structureSpread } = require('./council/spread_structurer');
+const { DEFAULT_UNIVERSE } = require('./council/agent1_analyst');
+const { getBars } = require('./marketdata');
+
+// Defined-risk put credit spreads, scanned across the universe. This is the
+// only structure here with measured positive expectancy (+1.6%/trade over 8
+// years vs -3.3% for buying) — see STRATEGY_RESEARCH.md. Deliberately
+// unfiltered: every trend filter tested made the bad years worse.
+async function scanSpreads(limit = 4) {
+  const found = [];
+  for (const sym of DEFAULT_UNIVERSE) {
+    try {
+      const bars = await getBars(sym, '1Day', 5);
+      if (!bars.length) continue;
+      const s = await structureSpread(sym, bars[bars.length - 1].c);
+      if (s.ok) found.push(s);
+    } catch { /* one symbol failing must not take down the session */ }
+  }
+  // Best paid for the risk taken.
+  return found.sort((a, b) => b.creditPctOfWidth - a.creditPctOfWidth).slice(0, limit);
+}
 
 
 // Static copy of the same report the email sends, written to disk so
@@ -82,12 +103,13 @@ async function runSession() {
     // Real, dated headlines — market/macro backdrop plus per-pick context.
     // Displayed for you to read; never scored or fed into a decision.
     const marketNews = await getMarketNews({ limit: 5, lookbackDays: 2 });
+    const spreads = await scanSpreads(4);
     for (const w of watchlist.filter(x => x.tier === 'HOT')) {
       w.news = await getSymbolNews(w.symbol, { limit: 3, lookbackDays: 7 });
     }
 
     const html = await sendSessionReport({
-      newCampaigns, exits, regime, watchlist, playbook, macro, verdict, marketNews,
+      newCampaigns, exits, regime, watchlist, playbook, macro, verdict, marketNews, spreads,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
