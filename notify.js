@@ -251,6 +251,11 @@ const COLOR = {
   text: '#2b2723', muted: '#6b6358', border: '#e6e0d4',
   bg: '#f3f1ea', card: '#fdfbf6', zebra: '#f7f5ef',
   headerBg: '#2b2723', headerText: '#f3f1ea',
+  // Page header only — deliberately NOT headerBg, which every table header
+  // also uses. A deep blue tells this page apart from the Government Stakes
+  // page at a glance when both are open in tabs, without touching the warm
+  // neutral palette the tables rely on for readability.
+  pageHeaderBg: '#1d3557', pageHeaderLink: '#b9cde4',
   advisory: '#475569', advisoryBg: '#f1f4f8', advisoryBorder: '#dbe3ec',
 };
 
@@ -258,6 +263,13 @@ const COLOR = {
 // relative link would work on the site and be dead in the inbox. Set
 // SITE_BASE_URL (e.g. https://igniteshakti.com) and emails get a working
 // absolute link; leave it unset and the published page still links fine.
+// The hub page listing every tool. Same default as govt/report.js, and
+// deliberately NOT SITE_BASE_URL: that is where these pages are served from
+// (GitHub Pages) and is fetched by CI, whereas this is only ever rendered as
+// a link for a person to click. Conflating the two once pointed CI at the
+// hub page.
+const HOME_URL = process.env.HOME_URL || 'https://igniteshakti.com/tradinglink';
+
 function govtPageUrl() {
   const base = process.env.SITE_BASE_URL;
   if (!base) return './govt.html';
@@ -864,10 +876,14 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
   return `<!DOCTYPE html>
 <html><body style="margin:0; padding:0; background:${COLOR.bg};">
 <div style="max-width:900px; margin:0 auto; padding:24px; font-family:${FONT_STACK}; color:${COLOR.text}; letter-spacing:0.15px;">
-  <div style="background:${COLOR.headerBg}; color:${COLOR.headerText}; padding:20px 24px; border-radius:8px 8px 0 0;">
+  <div style="background:${COLOR.pageHeaderBg}; color:${COLOR.headerText}; padding:20px 24px; border-radius:8px 8px 0 0;">
     <div style="font-size:19px; font-weight:700; line-height:1.4;">4-Agent Trading Council — Daily Recommendations</div>
-    <div id="report-ts" data-generated="${generatedIso}" data-ts-label="${ts} ET" style="font-size:13px; color:#c9c3b8; margin-top:6px;">Report generated: ${ts} ET</div>
-    <div style="font-size:13px; margin-top:8px;"><a href="${govtPageUrl()}" style="color:#c9c3b8;">🏛 Government Stakes — where Washington is putting money →</a></div>
+    <div id="report-ts" data-generated="${generatedIso}" data-ts-label="${ts} ET" style="font-size:13px; color:${COLOR.pageHeaderLink}; margin-top:6px;">Report generated: ${ts} ET</div>
+    <div style="font-size:13px; margin-top:10px; line-height:1.9;">
+      <a href="${HOME_URL}" style="color:${COLOR.pageHeaderLink}; text-decoration:underline;">🏠 All tools — igniteshakti.com →</a>
+      <span style="color:#6f8bab; padding:0 8px;">|</span>
+      <a href="${govtPageUrl()}" style="color:${COLOR.pageHeaderLink}; text-decoration:underline;">🏛 Government Stakes — where Washington is putting money →</a>
+    </div>
   </div>
   <div style="background:${COLOR.card}; padding:20px 24px; border:1px solid ${COLOR.border}; border-top:none;">
     <div style="text-align:center; margin-bottom:16px;">
