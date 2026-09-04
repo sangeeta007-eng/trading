@@ -1,11 +1,11 @@
 {
   "weeklyPnL": {
     "startDate": "2026-08-31T17:01:16.898Z",
-    "realized": -2497
+    "realized": -11178
   },
   "monthlyPnL": {
     "startDate": "2026-09-01T18:00:34.698Z",
-    "realized": 0
+    "realized": -8681.000000000002
   },
   "ivHistory": {
     "XLF": [
