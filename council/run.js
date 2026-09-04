@@ -54,6 +54,8 @@ function classifyWatchlist(results) {
         delta: structured.delta, ivRank: structured.ivRank,
         qty: approved ? risk.qty : null,
         tradeCost: approved ? risk.tradeCost : null,
+        // What had to be loosened to find this contract, if anything.
+        relaxed: structured.relaxed || [],
         maxLoss: approved ? risk.maxLoss : null,
         maxLossPct: approved ? risk.maxLossPct : null,
       } : null,

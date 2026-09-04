@@ -14,8 +14,34 @@ const { atr } = require('./indicators');
 const analytics = require('../analytics');
 const db = require('./db');
 
-const MIN_OPEN_INTEREST = 1000;
-const MIN_VOLUME        = 500;
+// Liquidity tiers, tried in order until one yields a usable contract.
+//
+// A single hard OI floor was silently emptying the chain. Measured on XLP:
+// 72 contracts in the window, exactly 2 with OI > 1000, 0 with OI > 1000 AND
+// volume > 500 — the reference feed reports 0 volume and 0 OI for most
+// contracts, which is a data gap, not an illiquid market. The filter was
+// discarding 70 of 72 contracts on the strength of missing data, and then
+// the delta band had nothing left to match against, so a genuine signal
+// (XLP, conviction 60) reported "no contract met the requirements" as though
+// the market were at fault.
+//
+// Relaxing in stages keeps the strict bar as the preference while refusing
+// to turn a data gap into a silent no-trade. Whichever tier produced the
+// pick is recorded and shown, so a loosely-sourced contract never passes
+// itself off as a strictly-sourced one.
+const LIQUIDITY_TIERS = [
+  { oi: 1000, vol: 500, label: 'open interest > 1000 and volume > 500' },
+  { oi: 1000, vol: 0,   label: 'open interest > 1000 (volume feed reported nothing)' },
+  { oi: 250,  vol: 0,   label: 'open interest > 250' },
+  { oi: 0,    vol: 0,   label: 'any contract with a live two-sided quote' },
+];
+
+// How far the delta band may be widened when nothing sits inside it. The
+// learning loop can tune the band to 0.6-0.7, and on a thin chain there may
+// be no contract in a 0.10-wide window at all — XLP's only quoted contract
+// was delta 0.52. Widening symmetrically and saying so beats reporting no
+// trade on a day the signal actually fired.
+const DELTA_WIDENING = [0, 0.05, 0.10, 0.15];
 // Spread cap is RELATIVE to the contract's own price, not a flat dollar
 // amount. A flat $0.08 cap silently restricted the whole system to options
 // priced roughly under $2 — on a $12 option, $0.08 is 0.6%, which
@@ -130,24 +156,16 @@ async function structureContract(symbol, bias, spotPrice) {
     return { ok: false, vetoReason: 'DATA_INSUFFICIENT', detail: `No ${optType} contracts for ${symbol} in ${dte_min}-${dte_max} DTE window.` };
   }
 
-  // Liquidity pre-filter on reference data (OI/volume).
-  let liquid = contracts.filter(c => parseInt(c.open_interest || 0) > MIN_OPEN_INTEREST && parseInt(c.volume || 0) > MIN_VOLUME);
-  let liquidityNote = `OI > ${MIN_OPEN_INTEREST} and Volume > ${MIN_VOLUME}`;
-  if (!liquid.length) {
-    // The market data provider's paper/reference feed frequently reports volume=0 (data gap, not
-    // actually zero volume) — relax to OI-only rather than hallucinate a pass.
-    const oiOnly = contracts.filter(c => parseInt(c.open_interest || 0) > MIN_OPEN_INTEREST);
-    if (!oiOnly.length) {
-      return { ok: false, vetoReason: 'DATA_INSUFFICIENT', detail: `No contracts cleared OI > ${MIN_OPEN_INTEREST}.` };
-    }
-    liquid = oiOnly;
-    liquidityNote = `OI > ${MIN_OPEN_INTEREST} (volume feed unavailable — relaxed)`;
-  }
+  // Quote the whole window once. Quotes are the real liquidity evidence —
+  // a live two-sided quote inside the spread cap says more about whether a
+  // contract is tradable than a reference-data OI field that is frequently
+  // just absent.
+  const quotes = await getOptionQuotes(contracts.map(c => c.symbol));
 
-  const quotes = await getOptionQuotes(liquid.map(c => c.symbol));
-
-  const candidates = [];
-  for (const c of liquid) {
+  // Everything that is priceable and not too wide, measured once. The tiers
+  // below then select from this rather than re-fetching.
+  const priced = [];
+  for (const c of contracts) {
     const q = quotes[c.symbol];
     if (!q) continue; // no live quote — do not estimate, just exclude
     const spread = q.ask - q.bid;
@@ -159,7 +177,6 @@ async function structureContract(symbol, bias, spotPrice) {
     const iv = impliedVol(q.mid, spotPrice, strike, T, RISK_FREE_RATE, optType);
     if (!iv || iv <= 0) continue;
     const delta = Math.abs(bsDelta(spotPrice, strike, T, RISK_FREE_RATE, iv, optType));
-    if (delta < delta_min || delta > delta_max) continue;
 
     // Expected-move sanity check: compares two independent volatility
     // measures. ATR is the underlying's own realized (historical) daily
@@ -167,25 +184,70 @@ async function structureContract(symbol, bias, spotPrice) {
     // range by expiration (spot × IV × √T — the standard ~1-stdev move). If
     // the ATR-based target below would require the underlying to move
     // further than the market itself expects as likely, this contract's
-    // target is a low-probability stretch — skip it rather than recommend a
-    // target the market is already telling us is unlikely.
+    // target is a low-probability stretch.
     const expectedMove = spotPrice * iv * Math.sqrt(T);
     const requiredMove = TARGET_ATR_MULT * underlyingATR;
-    if (requiredMove > expectedMove) continue;
 
-    candidates.push({
+    priced.push({
       contract: c, symbol: c.symbol, strike, expiration: c.expiration_date,
       bid: q.bid, ask: q.ask, mid: q.mid, spread, iv, delta,
       openInterest: parseInt(c.open_interest || 0), volume: parseInt(c.volume || 0),
       dte: Math.round((expDate - Date.now()) / (24 * 60 * 60 * 1000)),
       expectedMove, requiredMove,
+      moveFeasible: requiredMove <= expectedMove,
     });
   }
 
-  if (!candidates.length) {
+  if (!priced.length) {
     return {
       ok: false, vetoReason: 'DATA_INSUFFICIENT',
-      detail: `No contract met Delta ${delta_min}-${delta_max}, spread < ${(MAX_SPREAD_PCT * 100).toFixed(0)}% of mid (min $${MAX_SPREAD_FLOOR}), live-quote, and expected-move requirements (checked ${liquid.length} liquid contracts, ${liquidityNote}).`,
+      detail: `None of the ${contracts.length} ${optType} contracts for ${symbol} in the ${dte_min}-${dte_max} DTE window had a live two-sided quote inside a ${(MAX_SPREAD_PCT * 100).toFixed(0)}%-of-mid spread. That is a market/data condition, not a rejected setup.`,
+    };
+  }
+
+  // Walk the relaxation ladder: strictest liquidity tier and the tuned delta
+  // band first, loosening only as far as needed to find something real, and
+  // recording exactly what had to give.
+  let candidates = [];
+  let liquidityNote = null;
+  let deltaNote = null;
+  let relaxed = [];
+  let usedDeltaMin = delta_min, usedDeltaMax = delta_max;
+
+  outer:
+  for (const widen of DELTA_WIDENING) {
+    const lo = Math.max(0.05, delta_min - widen);
+    const hi = Math.min(0.95, delta_max + widen);
+    for (const tier of LIQUIDITY_TIERS) {
+      // >= not >, deliberately. The last tier is {oi:0, vol:0} and means
+      // "don't filter on reference data at all" — with `>` a contract whose
+      // feed reports OI 0 and volume 0 fails `0 > 0`, so the catch-all tier
+      // caught nothing and the whole ladder still bottomed out empty. That
+      // is the exact case it exists to handle: XLP had a perfectly good
+      // delta-0.64 contract at strike 84 with a 13-cent spread, excluded
+      // solely because its OI field was blank.
+      const found = priced.filter(c =>
+        c.openInterest >= tier.oi && c.volume >= tier.vol &&
+        c.delta >= lo && c.delta <= hi && c.moveFeasible);
+      if (found.length) {
+        candidates = found;
+        liquidityNote = tier.label;
+        usedDeltaMin = lo; usedDeltaMax = hi;
+        relaxed = [];
+        if (tier !== LIQUIDITY_TIERS[0]) relaxed.push(`liquidity relaxed to ${tier.label}`);
+        if (widen > 0) relaxed.push(`delta band widened from ${delta_min}-${delta_max} to ${lo.toFixed(2)}-${hi.toFixed(2)}`);
+        deltaNote = `${lo.toFixed(2)}-${hi.toFixed(2)}`;
+        break outer;
+      }
+    }
+  }
+
+  if (!candidates.length) {
+    const deltas = [...new Set(priced.map(c => c.delta.toFixed(2)))].sort();
+    const infeasible = priced.filter(c => !c.moveFeasible).length;
+    return {
+      ok: false, vetoReason: 'DATA_INSUFFICIENT',
+      detail: `${priced.length} of ${contracts.length} contracts were priceable, but none fell inside the delta band even widened to ±${DELTA_WIDENING[DELTA_WIDENING.length - 1]} (tuned band ${delta_min}-${delta_max}; deltas actually available: ${deltas.join(', ') || 'none'})${infeasible ? `, and ${infeasible} could not reach the target inside the expected move` : ''}.`,
     };
   }
 
@@ -201,7 +263,7 @@ async function structureContract(symbol, bias, spotPrice) {
     };
   }
 
-  const targetDelta = (delta_min + delta_max) / 2;
+  const targetDelta = (usedDeltaMin + usedDeltaMax) / 2;
   affordable.sort((a, b) => Math.abs(a.delta - targetDelta) - Math.abs(b.delta - targetDelta));
   const best = affordable[0];
 
@@ -258,6 +320,9 @@ async function structureContract(symbol, bias, spotPrice) {
     expectedMove: best.expectedMove, requiredMove: best.requiredMove,
     underlyingATR, targetAtrMult: TARGET_ATR_MULT, stopAtrMult: STOP_ATR_MULT,
     feasibility, targetHoldDays: TARGET_HOLD_TRADING_DAYS,
+    // What, if anything, had to be loosened to find this contract. Shown on
+    // the pick so a loosely-sourced one never passes as strictly-sourced.
+    relaxed, deltaBandUsed: deltaNote, chainSize: contracts.length, pricedCount: priced.length,
     targetPct, stopPct,
     targetClamped: Math.abs(targetPct - rawTargetMove / entryLimit) > 1e-9,
     stopClamped: Math.abs(stopPct - rawStopMove / entryLimit) > 1e-9,
@@ -271,6 +336,6 @@ async function structureContract(symbol, bias, spotPrice) {
 // drifting out of step with the values actually enforced here.
 module.exports = {
   structureContract, tickSize, roundToTick,
-  MIN_OPEN_INTEREST, MAX_SPREAD_PCT, MAX_SPREAD_FLOOR, spreadCap,
+  LIQUIDITY_TIERS, DELTA_WIDENING, MAX_SPREAD_PCT, MAX_SPREAD_FLOOR, spreadCap,
   MAX_PREMIUM_PER_CONTRACT, MIN_DTE_FOR_HOLD,
 };

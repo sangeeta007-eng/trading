@@ -328,6 +328,24 @@ function buildHotRows(hot) {
   }).join('');
 }
 
+// Contract selection prefers a strict liquidity bar and the tuned delta
+// band, but loosens in stages rather than reporting "no contract" on a day
+// the signal actually fired (see agent2_structurer's LIQUIDITY_TIERS). When
+// it has loosened, that is stated here — a loosely-sourced pick must never
+// pass itself off as a strictly-sourced one.
+function buildRelaxationNote(hot) {
+  const loosened = hot.filter(w => w.contract?.relaxed?.length);
+  if (!loosened.length) return '';
+  return `
+  <div style="margin:-8px 0 18px; font-size:13px; line-height:1.7; color:${COLOR.muted}; background:${COLOR.zebra}; border:1px solid ${COLOR.border}; border-radius:5px; padding:10px 12px;">
+    <b style="color:${COLOR.text};">How these contracts were found.</b> The scan prefers heavily-traded contracts in a narrow delta band. Where that came up empty it widened the search rather than report nothing, and says so here:
+    <ul style="margin:6px 0 0; padding-left:20px;">
+      ${loosened.map(w => `<li><b>${w.symbol}</b> — ${w.contract.relaxed.join('; ')}</li>`).join('')}
+    </ul>
+    <div style="margin-top:6px;">Open interest and volume are frequently reported as zero by the data feed even for active contracts, so a blank figure is usually a gap in the data rather than an untraded option. The live bid/ask spread shown for each pick is the more reliable liquidity check, and every pick above cleared it.</div>
+  </div>`;
+}
+
 // Advisories are context attached to a real pick — never a reason it was
 // withheld. Rendered under the HOT table so the numbers stay scannable and
 // the caveats stay readable, rather than crushed into a table cell.
@@ -945,6 +963,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     ${stockTable}
     ${hotStocks.length ? buildStockRiskNote(hotStocks) : ''}
     ${etfTable}
+    ${buildRelaxationNote(hot)}
     ${buildAdvisoryBlock(hot)}
     ${warmTable}
     ${buildDipWatch(dipWatch)}
