@@ -131,7 +131,7 @@ jobs:
           # Federal Register watch feed. Without persisting it, every CI run
           # starts from an empty set and flags all 120 days of filings as
           # NEW, which makes the NEW marker meaningless.
-          git add council/council.db analytics.json govt/candidates.json
+          git add council/council.db analytics.json govt/candidates.json govt/sectors-cache.json
           git diff --staged --quiet || git commit -m "Session data update [skip ci]"
           git push
 

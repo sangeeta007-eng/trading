@@ -100,7 +100,7 @@ jobs:
         run: |
           git config user.name "trading-council-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add govt/candidates.json
+          git add govt/candidates.json govt/sectors-cache.json
           git diff --staged --quiet || git commit -m "Government stakes watch feed update [skip ci]"
           git pull --rebase --autostash || true
           git push

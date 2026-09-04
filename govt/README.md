@@ -13,9 +13,11 @@ govt/
   scan.js          trend ratings (same rules as METHODOLOGY.md)
   discover.js      Federal Register watch feed
   options.js       strike/expiry/style per symbol
+  sectors.js       sector exposure + fund holdings
   report.js        HTML
   run.js           entry point
   candidates.json  generated: the watch feed's "already seen" set
+  sectors-cache.json generated: sector data, 7-day TTL
 ```
 
 ## Refreshing it
@@ -137,6 +139,30 @@ open interest — delta alone once picked an INTC strike with 0 OI over a
 near-identical one with 7,170.
 
 A full run (29 symbols: price, rate, structure, watch feed) takes ~15s.
+
+## Sectors
+
+`sectors.js` fills the **Sector** column (companies: industry / sector) and the
+**Sector mix** column (ETFs: a stacked bar of real weights, largest first, with
+the full breakdown and top-10 holdings in the expanded row).
+
+Source is Yahoo Finance's `quoteSummary` endpoint — no key, but unofficial and
+crumb-gated (fetch a cookie from `fc.yahoo.com`, then a crumb, then pass both).
+It is deliberately **not** in `marketdata.js`, which is documented as the single
+provider-aware module for *prices*; this is a different provider and a
+different failure domain.
+
+Because the endpoint can break or rate-limit without notice, everything is
+cached to `sectors-cache.json` with a 7-day TTL and committed by CI. Sector
+weights move slowly, so the TTL costs nothing in accuracy and removes ~29
+network calls from most refreshes. A failed fetch falls back to the cache; a
+symbol with neither renders as *not available* rather than as a guess —
+invented percentages next to a BUY would be worse than a blank.
+
+Note that Yahoo's buckets are the coarse 11 GICS-style sectors, so a
+single-mandate fund reads as `Technology 100%` (SOXX) or `Industrials 100%`
+(ITA). That is accurate, just not granular; the finer detail is in the fund
+name and the top-holdings list.
 
 ## Known limits
 

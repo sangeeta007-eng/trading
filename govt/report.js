@@ -45,6 +45,73 @@ function groupHeaderRow(rating, count, colspan) {
   </td></tr>`;
 }
 
+
+// A muted, distinguishable colour per sector for the mix bars. Deliberately
+// low-saturation so the bars never compete with the BUY/SELL colours, which
+// are what the eye should land on first.
+const SECTOR_COLOR = {
+  'Technology': '#3b6ea5',
+  'Materials': '#8a6d3b',
+  'Industrials': '#5b7c5a',
+  'Healthcare': '#7d5ba6',
+  'Financials': '#2f6f6f',
+  'Energy': '#a5643b',
+  'Utilities': '#6b7280',
+  'Consumer Cyclical': '#a35b7d',
+  'Consumer Staples': '#77803b',
+  'Communications': '#4a6fa5',
+  'Real Estate': '#8a5b5b',
+};
+const sectorColor = name => SECTOR_COLOR[name] || '#6b6358';
+
+// Compact stacked bar plus the top few sector names. Renders real weights
+// only — a symbol with no data says so rather than showing an empty bar,
+// which would read as "0%".
+function sectorMixCell(d) {
+  if (!d || !d.sectors || !d.sectors.length) {
+    return td('<span style="font-size:12px;">not available</span>', 'color:' + COLOR.muted + ';');
+  }
+  const bar = d.sectors.map(x =>
+    '<div style="width:' + x.pct.toFixed(1) + '%; background:' + sectorColor(x.name) + '; height:100%; float:left;" title="' + x.name + ' ' + x.pct.toFixed(1) + '%"></div>'
+  ).join('');
+  const legend = d.sectors.slice(0, 3).map(x =>
+    '<span style="white-space:nowrap;"><span style="display:inline-block; width:8px; height:8px; background:' + sectorColor(x.name) + '; border-radius:2px;"></span> ' + x.name + ' <b>' + x.pct.toFixed(0) + '%</b></span>'
+  ).join('<br>');
+  const more = d.sectors.length > 3 ? '<div style="color:' + COLOR.muted + '; font-size:11px; margin-top:2px;">+' + (d.sectors.length - 3) + ' more</div>' : '';
+  return td(
+    '<div style="height:7px; width:100%; background:' + COLOR.border + '; border-radius:3px; overflow:hidden; margin-bottom:5px;">' + bar + '</div>' +
+    '<div style="font-size:11px; line-height:1.6;">' + legend + '</div>' + more
+  );
+}
+
+// A company sits in one sector; the industry is the more useful half.
+function stockSectorCell(d) {
+  if (!d || (!d.sector && !d.industry)) {
+    return td('<span style="font-size:12px;">not available</span>', 'color:' + COLOR.muted + ';');
+  }
+  return td(
+    '<b style="font-size:12px;">' + (d.industry || d.sector) + '</b>' +
+    (d.industry && d.sector ? '<div style="font-size:11px; color:' + COLOR.muted + '; margin-top:2px;">' + d.sector + '</div>' : ''),
+    'font-size:12px;'
+  );
+}
+
+// Full breakdown for the expanded row: every sector, and what the fund
+// actually holds at the top.
+function sectorDetail(d) {
+  if (!d) return '';
+  let out = '';
+  if (d.sectors && d.sectors.length) {
+    out += '<div style="margin-top:6px;"><b style="color:' + COLOR.text + ';">Sector breakdown:</b> ' +
+      d.sectors.map(x => x.name + ' <b>' + x.pct.toFixed(1) + '%</b>').join(' · ') + '</div>';
+  }
+  if (d.holdings && d.holdings.length) {
+    out += '<div style="margin-top:6px;"><b style="color:' + COLOR.text + ';">Top holdings:</b> ' +
+      d.holdings.slice(0, 10).map(h => (h.symbol || h.name) + ' <b>' + h.pct.toFixed(1) + '%</b>').join(' · ') + '</div>';
+  }
+  return out;
+}
+
 function ratingCell(r) {
   const color = RATING_COLOR[r.rating] || COLOR.muted;
   return td(
@@ -109,7 +176,7 @@ function contractBlock(c) {
 
 // ── Companies ───────────────────────────────────────────────────────────────
 
-function buildCompanyRows(scan, ledger, contracts) {
+function buildCompanyRows(scan, ledger, contracts, sectors) {
   const bySymbol = Object.fromEntries(ledger.positions.map(p => [p.symbol, p]));
 
   // Ledger order is the order deals were announced, which is not how anyone
@@ -129,6 +196,7 @@ function buildCompanyRows(scan, ledger, contracts) {
       ${td(`<b>${p.symbol}</b><div style="font-size:11px; color:${COLOR.muted}; margin-top:3px;">${p.category}</div>`)}
       ${td(`${p.company}${revShare ? `<div style="font-size:11px; color:${COLOR.warm}; margin-top:3px;">revenue share, not ownership</div>` : ''}`, 'font-size:13px;')}
       ${td(`<b>${p.stake}</b><div style="font-size:11px; color:${COLOR.muted}; margin-top:3px;">${p.agency} · ${p.amount} · ${p.announced}</div>`, 'font-size:13px;')}
+      ${stockSectorCell(sectors.get(p.symbol))}
       ${td(money(m.price))}
       ${pct(m.ret1m)}
       ${pct(m.ret3m)}
@@ -136,7 +204,7 @@ function buildCompanyRows(scan, ledger, contracts) {
       ${ratingCell(m)}
       ${td(`<a href="${p.source}" style="color:${COLOR.advisory}; font-size:12px;">source</a>`)}
     </tr>
-    <tr style="background:${bg};"><td colspan="9" style="padding:0 12px 12px 12px; border:1px solid ${COLOR.border}; border-top:none; font-size:12px; color:${COLOR.muted}; line-height:1.6;">
+    <tr style="background:${bg};"><td colspan="10" style="padding:0 12px 12px 12px; border:1px solid ${COLOR.border}; border-top:none; font-size:12px; color:${COLOR.muted}; line-height:1.6;">
       <b style="color:${COLOR.text};">Why ${m.rating}:</b> ${m.why} <span style="color:${COLOR.muted};">(${m.reasons.join('; ')})</span>
       ${p.note ? `<div style="margin-top:6px;"><b style="color:${COLOR.text};">Note:</b> ${p.note}</div>` : ''}
       <div style="margin-top:6px;"><b style="color:${COLOR.text};">ETFs holding it:</b> ${p.etfs.map(e => `${e.symbol} <span style="color:${COLOR.muted};">(${e.name})</span>`).join(' · ')}</div>
@@ -145,20 +213,20 @@ function buildCompanyRows(scan, ledger, contracts) {
   };
 
   const body = groups.map(g =>
-    groupHeaderRow(g.rating, g.rows.length, 9) + g.rows.map(renderRow).join('')
+    groupHeaderRow(g.rating, g.rows.length, 10) + g.rows.map(renderRow).join('')
   ).join('');
 
   const missing = unrated.map(p => {
     const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
-    return `<tr style="background:${bg};">${td(`<b>${p.symbol}</b>`)}${td(p.company, 'font-size:13px;')}${td(p.stake, 'font-size:13px;')}${td('no price data', `color:${COLOR.muted};`)}${td('—')}${td('—')}${td('—')}${td('—')}${td('—')}</tr>`;
+    return `<tr style="background:${bg};">${td(`<b>${p.symbol}</b>`)}${td(p.company, 'font-size:13px;')}${td(p.stake, 'font-size:13px;')}${td('—')}${td('no price data', `color:${COLOR.muted};`)}${td('—')}${td('—')}${td('—')}${td('—')}${td('—')}</tr>`;
   }).join('');
 
-  return body + (missing ? groupHeaderRow('NO DATA', unrated.length, 9) + missing : '');
+  return body + (missing ? groupHeaderRow('NO DATA', unrated.length, 10) + missing : '');
 }
 
 // ── ETFs ────────────────────────────────────────────────────────────────────
 
-function buildEtfRows(scan, contracts) {
+function buildEtfRows(scan, contracts, sectors) {
   // Same grouping as the companies table — alphabetical order told you
   // nothing about what to do with any of them.
   let i = 0;
@@ -168,6 +236,7 @@ function buildEtfRows(scan, contracts) {
       ${td(`<b>${m.symbol}</b>`)}
       ${td(m.name || '—', 'font-size:13px;')}
       ${td(m.holds.join(', '), `font-size:12px; color:${COLOR.hot}; font-weight:600;`)}
+      ${sectorMixCell(sectors.get(m.symbol))}
       ${td(money(m.price))}
       ${pct(m.ret1m)}
       ${pct(m.ret3m)}
@@ -175,14 +244,15 @@ function buildEtfRows(scan, contracts) {
       ${stageCell(m)}
       ${ratingCell(m)}
     </tr>
-    <tr style="background:${bg};"><td colspan="9" style="padding:0 12px 12px 12px; border:1px solid ${COLOR.border}; border-top:none; font-size:12px; color:${COLOR.muted}; line-height:1.6;">
+    <tr style="background:${bg};"><td colspan="10" style="padding:0 12px 12px 12px; border:1px solid ${COLOR.border}; border-top:none; font-size:12px; color:${COLOR.muted}; line-height:1.6;">
       <b style="color:${COLOR.text};">Why ${m.rating}:</b> ${m.why} <span style="color:${COLOR.muted};">(${m.reasons.join('; ')})</span>
+      ${sectorDetail(sectors.get(m.symbol))}
       ${contractBlock(contracts.get(m.symbol))}
     </td></tr>`;
   };
 
   return groupByRating(scan.etfs.filter(m => m.rating))
-    .map(g => groupHeaderRow(g.rating, g.rows.length, 9) + g.rows.map(renderRow).join(''))
+    .map(g => groupHeaderRow(g.rating, g.rows.length, 10) + g.rows.map(renderRow).join(''))
     .join('');
 }
 
@@ -296,24 +366,24 @@ function buildMethodBlock() {
 
 // ── Page ────────────────────────────────────────────────────────────────────
 
-function buildGovtPage({ ledger, scan, disc, contracts = new Map(), marketOpen, ts }) {
+function buildGovtPage({ ledger, scan, disc, contracts = new Map(), sectors = new Map(), marketOpen, ts }) {
   const generatedIso = new Date().toISOString();
 
   const companyTable = scrollable(tableWrap(
     '🏛 Companies the government has a position in',
     COLOR.hot, COLOR.hot,
-    ['Symbol', 'Company', 'The stake', 'Price', '1M', '3M', 'Stage', 'Rating', ''],
-    buildCompanyRows(scan, ledger, contracts),
+    ['Symbol', 'Company', 'The stake', 'Sector', 'Price', '1M', '3M', 'Stage', 'Rating', ''],
+    buildCompanyRows(scan, ledger, contracts, sectors),
     'No positions in the ledger.'
-  ), 940);
+  ), 1120);
 
   const etfTable = scrollable(tableWrap(
     '🗂 ETFs holding those companies',
     COLOR.hot, COLOR.hot,
-    ['Symbol', 'Fund', 'Tracked names inside', 'Price', '1M', '3M', '6M', 'Stage', 'Rating'],
-    buildEtfRows(scan, contracts),
+    ['Symbol', 'Fund', 'Tracked names inside', 'Sector mix', 'Price', '1M', '3M', '6M', 'Stage', 'Rating'],
+    buildEtfRows(scan, contracts, sectors),
     'No ETFs mapped.'
-  ), 900);
+  ), 1080);
 
   const privateTable = scrollable(tableWrap(
     '🔒 Positions you cannot buy directly (private companies)',

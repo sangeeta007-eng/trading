@@ -13,6 +13,7 @@ const path = require('path');
 const { isTradingOpen } = require('../marketdata');
 const { scanUniverse } = require('./scan');
 const { structureAll } = require('./options');
+const { getSectors } = require('./sectors');
 const { discover } = require('./discover');
 const { buildGovtPage } = require('./report');
 
@@ -56,14 +57,30 @@ async function runGovtScan() {
     console.error(`[govt] Contract structuring failed (page still builds): ${err.message}`);
   }
 
+  // Sector exposure. A separate provider from the price feed (see
+  // sectors.js) and therefore its own failure domain — cached to disk with a
+  // multi-day TTL, and a failed fetch falls back to the cache rather than
+  // blanking the columns.
+  let sectors = new Map();
+  try {
+    const res = await getSectors([
+      ...scan.companies.map(m => ({ symbol: m.symbol, kind: 'STOCK' })),
+      ...scan.etfs.map(m => ({ symbol: m.symbol, kind: 'ETF' })),
+    ]);
+    sectors = res.map;
+    console.log(`[govt] Sectors: ${res.map.size} resolved (${res.fetched} fetched, ${res.fromCache} cached)${res.error ? ` — ${res.error}` : ''}.`);
+  } catch (err) {
+    console.error(`[govt] Sector lookup failed (columns will show as unavailable): ${err.message}`);
+  }
+
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
-  const html = buildGovtPage({ ledger, scan, disc, contracts, marketOpen, ts });
+  const html = buildGovtPage({ ledger, scan, disc, contracts, sectors, marketOpen, ts });
 
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, html);
   console.log(`[govt] Wrote ${OUT_PATH}`);
 
-  return { ledger, scan, disc, contracts, marketOpen, html };
+  return { ledger, scan, disc, contracts, sectors, marketOpen, html };
 }
 
 module.exports = { runGovtScan, loadLedger };
