@@ -631,7 +631,35 @@ function buildVerdictBanner(v) {
   </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, ts, target }) {
+// Says plainly whether the numbers below are live or last-close. A report
+// generated outside market hours is still useful for planning, but every
+// price in it is a leftover from the previous session and the option quotes
+// especially go wide and stale overnight — acting on them as if they were
+// live is how you overpay. So it's stated once, loudly, at the very top.
+function buildMarketStatusBanner(marketOpen, ts) {
+  if (marketOpen) {
+    return `
+    <div style="margin:0 0 16px; background:#eef7ee; border-left:5px solid ${COLOR.target}; border-radius:4px; padding:12px 14px;">
+      <div style="font-size:15px; font-weight:700; color:${COLOR.target};">● Live — market is open</div>
+      <div style="font-size:14px; line-height:1.6; color:${COLOR.text}; margin-top:4px;">
+        Every price below is a real quote pulled just now (${ts} ET). These are tradable numbers.
+      </div>
+    </div>`;
+  }
+  return `
+    <div style="margin:0 0 16px; background:#fdf1e8; border-left:5px solid ${COLOR.stop}; border-radius:4px; padding:12px 14px;">
+      <div style="font-size:15px; font-weight:700; color:${COLOR.stop};">■ Market is CLOSED — these are last-close prices, not live</div>
+      <div style="font-size:14px; line-height:1.6; color:${COLOR.text}; margin-top:4px;">
+        This report was generated at ${ts} ET, while the market was shut. The scan is real and current, but every
+        price shown is left over from the last session. <b>Option quotes in particular go stale and wide overnight</b> —
+        the entry price you see here is not what you would pay at the open.
+        <br><br>
+        Use this to plan. Re-run it once the market is open (9:30am–4:00pm ET, weekdays) before placing anything.
+      </div>
+    </div>`;
+}
+
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, marketOpen = true, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const hotStocks = hot.filter(w => w.assetType === 'STOCK');
   const hotEtfs = hot.filter(w => w.assetType !== 'STOCK');
@@ -727,6 +755,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
       </tr>
     </table>
 
+    ${buildMarketStatusBanner(marketOpen, ts)}
     ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
     ${buildMacroBlock(macro)}
@@ -777,13 +806,21 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [], dipWatch = [] }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [], dipWatch = [], marketOpen = true, deliver = true }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, marketOpen, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);
+
+  // A closed-market session still regenerates the page (so the Run button
+  // always produces something current) but must not mail it — otherwise
+  // every off-hours refresh lands in the inbox.
+  if (!deliver) {
+    console.log('[notify] Report regenerated for the page; email skipped (market closed).');
+    return html;
+  }
 
   const realizedPnL = exits.reduce((s, e) => s + (e.pnl || 0), 0);
   const subjectPnL = realizedPnL !== 0 ? ` | P&L ${realizedPnL >= 0 ? '+' : ''}$${realizedPnL.toFixed(0)}` : '';

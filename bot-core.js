@@ -82,9 +82,17 @@ async function runSession() {
   console.log(`\n[${new Date().toISOString()}] ══ 4-Agent Council Session ══`);
 
   try {
-    if (!await isTradingOpen()) {
-      console.log('[bot] Market is closed — no fresh recommendations (live quotes wouldn\'t be current).');
-      return { marketClosed: true, newCampaigns: [], exits: [] };
+    // The scan runs whether or not the market is open. It used to return
+    // here, which meant pressing "Run a Fresh Session Now" outside market
+    // hours regenerated nothing at all — the page reloaded onto the same
+    // stale report with no indication why, which reads as a broken button.
+    // Now a session always produces a current report; when the market is
+    // shut the report says so at the top and every price is labelled as
+    // last-close rather than live. Email still only goes out on a live
+    // session, so closed-market runs don't fill the inbox.
+    const marketOpen = await isTradingOpen();
+    if (!marketOpen) {
+      console.log('[bot] Market is closed — scanning on last-close quotes; report will be labelled stale and no email sent.');
     }
 
     const { results, reconciliation, regime, watchlist, verdict, dipWatch } = await runCouncil();
@@ -110,12 +118,13 @@ async function runSession() {
 
     const html = await sendSessionReport({
       newCampaigns, exits, regime, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch,
+      marketOpen, deliver: marketOpen,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
     writeStaticReport(html);
 
-    return { newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
+    return { marketClosed: !marketOpen, newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
   } catch (err) {
     // A crashed session produces no report at all — that silence could be
     // mistaken for a normal "nothing new today" run. Alert distinctly

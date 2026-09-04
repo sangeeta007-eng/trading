@@ -198,4 +198,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runCouncil, MAX_STOCK_PICKS };
+module.exports = { runCouncil, classifyWatchlist, dailyVerdict, MAX_STOCK_PICKS };
