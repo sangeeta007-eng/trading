@@ -366,6 +366,71 @@ function buildMethodBlock() {
 
 // ── Page ────────────────────────────────────────────────────────────────────
 
+
+// ── Quick view ──────────────────────────────────────────────────────────────
+//
+// One table, everything in it, no prose. The detailed tables below carry the
+// reasoning, the stake terms, the contracts and the holdings; this exists so
+// the whole picture is legible in a single glance before any of that.
+// Sections for ETFs and STOCKS, and within each, the verdict groups in the
+// same order used everywhere else on the page.
+
+// Top two sectors as plain text. The stacked bar belongs in the detailed
+// table — at a glance, two names and two numbers read faster than a graphic.
+function quickSectors(d) {
+  if (!d) return '<span style="color:' + COLOR.muted + ';">—</span>';
+  if (d.type === 'STOCK') {
+    return d.industry || d.sector || '<span style="color:' + COLOR.muted + ';">—</span>';
+  }
+  if (!d.sectors || !d.sectors.length) return '<span style="color:' + COLOR.muted + ';">—</span>';
+  return d.sectors.slice(0, 2)
+    .map(x => x.name + ' <b>' + x.pct.toFixed(0) + '%</b>')
+    .join('<span style="color:' + COLOR.muted + ';"> · </span>');
+}
+
+function quickSectionRow(title, count) {
+  return '<tr><td colspan="6" style="padding:10px 12px; border:1px solid ' + COLOR.border + '; background:' + COLOR.headerBg + '; color:' + COLOR.headerText + '; font-size:13px; font-weight:700; letter-spacing:0.5px;">' +
+    title + ' <span style="font-weight:400; color:#c9c3b8;">— ' + count + '</span></td></tr>';
+}
+
+function buildQuickRows(rows, sectors, nameFor) {
+  let i = 0;
+  return groupByRating(rows).map(g =>
+    groupHeaderRow(g.rating, g.rows.length, 6) +
+    g.rows.map(m => {
+      const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
+      return '<tr style="background:' + bg + ';">' +
+        td('<b>' + m.symbol + '</b>') +
+        td(nameFor(m), 'font-size:12px;') +
+        td(quickSectors(sectors.get(m.symbol)), 'font-size:12px;') +
+        td(money(m.price)) +
+        pct(m.ret1m) +
+        td('<b style="color:' + (RATING_COLOR[m.rating] || COLOR.muted) + ';">' + m.rating + '</b>') +
+      '</tr>';
+    }).join('')
+  ).join('');
+}
+
+function buildQuickView(scan, ledger, sectors) {
+  const companyName = Object.fromEntries(ledger.positions.map(p => [p.symbol, p.company]));
+  const etfRated = scan.etfs.filter(m => m.rating);
+  const stockRated = scan.companies.filter(m => m && !m.error && m.rating);
+
+  const body =
+    quickSectionRow('🗂 ETFs', etfRated.length + ' funds') +
+    buildQuickRows(etfRated, sectors, m => m.name || '') +
+    quickSectionRow('🏢 STOCKS', stockRated.length + ' companies') +
+    buildQuickRows(stockRated, sectors, m => companyName[m.symbol] || '');
+
+  return scrollable(tableWrap(
+    '⚡ Quick view — everything at a glance',
+    COLOR.text, COLOR.headerBg,
+    ['Symbol', 'Name', 'Sectors held', 'Price', '1M', 'Verdict'],
+    body,
+    'Nothing scanned.'
+  ), 760);
+}
+
 function buildGovtPage({ ledger, scan, disc, contracts = new Map(), sectors = new Map(), marketOpen, ts }) {
   const generatedIso = new Date().toISOString();
 
@@ -495,6 +560,13 @@ function buildGovtPage({ ledger, scan, disc, contracts = new Map(), sectors = ne
     ${marketBanner}
     ${buildSummary(scan)}
     ${failedNote}
+    ${buildQuickView(scan, ledger, sectors)}
+
+    <div style="margin:32px 0 8px 0; padding-top:18px; border-top:2px solid ${COLOR.border};">
+      <div style="font-size:17px; font-weight:700; color:${COLOR.text};">Full detail</div>
+      <div style="font-size:13px; color:${COLOR.muted}; line-height:1.6; margin-top:4px;">Everything above, with the reasoning behind each verdict, the stake terms, the contract, the sector breakdown and what each fund holds.</div>
+    </div>
+
     ${companyTable}
     ${etfTable}
     ${buildDiscoveryBlock(disc)}
