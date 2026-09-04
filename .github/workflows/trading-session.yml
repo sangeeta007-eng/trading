@@ -1,15 +1,27 @@
 name: Trading Council Session
 
-# Cron times are UTC, calibrated for US Eastern Daylight Time (EDT, UTC-4):
-# 09:50 ET, 11:00 ET, 15:00 ET. During EST (UTC-5, roughly Nov-Mar) these
-# fire about an hour early ET — harmless, since bot-core.js checks
-# isTradingOpen() and no-ops with no side effects if the market isn't open
-# yet, rather than guessing at data that doesn't exist.
+# Cron times are UTC. IMPORTANT: these are request times, not run times.
+# GitHub queues scheduled workflows on shared runners and has been firing
+# this one 2.5-3.6 hours late, every day, consistently — measured across
+# every scheduled run since 2026-08-04:
+#     50 13 -> fires ~17:16-17:27 UTC (~1:20pm ET)
+#     0  15 -> fires ~18:16-18:29 UTC (~2:25pm ET)
+#     0  19 -> fires ~21:27-21:31 UTC (~5:30pm ET)  <- AFTER THE 4pm CLOSE
+# The third slot was therefore dead: bot-core.js correctly no-ops when
+# isTradingOpen() is false, so it burned a run and produced nothing every
+# single day. Moved to 16:00, which lands inside market hours (13:30-20:00
+# UTC) across the entire observed delay range — on time it is 12:00pm ET, at
+# the worst observed delay it is ~3:36pm ET, still before the close.
+#
+# Do not "correct" these back to the nominal ET times they look like they
+# should be. The delay is real and the schedule is calibrated around it.
+# During EST (UTC-5, roughly Nov-Mar) everything shifts an hour earlier ET,
+# which stays comfortably in-window.
 on:
   schedule:
     - cron: '50 13 * * 1-5'
     - cron: '0 15 * * 1-5'
-    - cron: '0 19 * * 1-5'
+    - cron: '0 16 * * 1-5'
   workflow_dispatch:
     inputs:
       bootstrap_placeholder:
