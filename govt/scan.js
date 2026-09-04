@@ -127,6 +127,31 @@ function rate(m, score) {
   return { rating: 'HOLD', why: 'Stage 2 but weak on trend strength and entry quality.' };
 }
 
+// The order verdicts are presented in, everywhere on the page: best first,
+// worst last. Defined once here because three files sort by it (the two
+// tables and the contract structuring queue) and three private copies would
+// eventually disagree about where AVOID sits.
+const RATING_ORDER = ['BUY', 'BUY ON DIP', 'HOLD', 'AVOID', 'SELL', 'NO DATA'];
+
+function ratingRank(rating) {
+  const i = RATING_ORDER.indexOf(rating);
+  return i === -1 ? RATING_ORDER.length : i;
+}
+
+// Group rows by verdict, best verdict first, and strongest score first
+// within each group. Returns [{ rating, rows }] with empty groups dropped,
+// so a table never renders a heading with nothing under it.
+function groupByRating(rows) {
+  return RATING_ORDER
+    .map(rating => ({
+      rating,
+      rows: rows
+        .filter(r => r.rating === rating)
+        .sort((a, b) => (b.score || 0) - (a.score || 0)),
+    }))
+    .filter(g => g.rows.length);
+}
+
 async function measure(symbol) {
   const bars = await getBars(symbol, '1Day', 260);
   if (!bars.length) return { symbol, error: 'no bars returned' };
@@ -194,4 +219,4 @@ async function scanUniverse(ledger) {
   return out;
 }
 
-module.exports = { scanUniverse, measure, weinsteinStage, scoreSymbol, rate };
+module.exports = { scanUniverse, measure, weinsteinStage, scoreSymbol, rate, RATING_ORDER, ratingRank, groupByRating };

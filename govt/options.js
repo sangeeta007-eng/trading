@@ -20,6 +20,7 @@ const {
   MIN_OPEN_INTEREST, MAX_PREMIUM_PER_CONTRACT, MIN_DTE_FOR_HOLD,
 } = require('../council/agent2_structurer');
 const { getOptionsChain, getOptionQuotes, calcDelta } = require('../marketdata');
+const { ratingRank } = require('./scan');
 
 // Midpoint of the council's 0.50-0.65 delta band — what a reference contract
 // aims at when no contract clears the full recommendation filters.
@@ -177,11 +178,10 @@ async function structureFor(m) {
  */
 async function structureAll(rows, { limit = 30 } = {}) {
   const tradable = rows.filter(r => biasFor(r.rating));
-  // Best first: BUY before SELL, then by score.
-  const ordered = [...tradable].sort((a, b) => {
-    const rank = r => (r.rating === 'BUY' ? 0 : r.rating === 'BUY ON DIP' ? 1 : 2);
-    return rank(a) - rank(b) || b.score - a.score;
-  });
+  // Best first, using the page's single shared verdict order rather than a
+  // private copy — when `limit` bites, the symbols that get structured must
+  // be the ones that appear at the top of the tables.
+  const ordered = [...tradable].sort((a, b) => ratingRank(a.rating) - ratingRank(b.rating) || b.score - a.score);
 
   const out = new Map();
   for (const m of ordered.slice(0, limit)) {

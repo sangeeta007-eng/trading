@@ -5,6 +5,7 @@
  * the daily council report look like one site rather than two.
  */
 const { COLOR, FONT_STACK, td, tableWrap } = require('../notify');
+const { groupByRating } = require('./scan');
 
 // The hub page that lists these tools. Deliberately NOT SITE_BASE_URL:
 // that one is where the pages are served from (GitHub Pages) and is fetched
@@ -32,6 +33,16 @@ function scrollable(tableHtml, minWidth) {
   return `<div style="overflow-x:auto; -webkit-overflow-scrolling:touch; margin:24px 0;">
     <div style="min-width:${minWidth}px;">${tableHtml}</div>
   </div>`;
+}
+
+// A banner row inside the table marking the start of each verdict group, so
+// the buys read as one block rather than as scattered rows the eye has to
+// collect. Tinted with the verdict's own colour and stating the count.
+function groupHeaderRow(rating, count, colspan) {
+  const color = RATING_COLOR[rating] || COLOR.muted;
+  return `<tr><td colspan="${colspan}" style="padding:9px 12px; border:1px solid ${COLOR.border}; background:${COLOR.bg}; font-size:13px; font-weight:700; letter-spacing:0.4px; color:${color};">
+    ${rating} <span style="font-weight:400; color:${COLOR.muted};">— ${count} ${count === 1 ? 'symbol' : 'symbols'}</span>
+  </td></tr>`;
 }
 
 function ratingCell(r) {
@@ -99,13 +110,20 @@ function contractBlock(c) {
 // ── Companies ───────────────────────────────────────────────────────────────
 
 function buildCompanyRows(scan, ledger, contracts) {
-  const byId = Object.fromEntries(scan.companies.map(c => [c.symbol, c]));
-  return ledger.positions.map((p, i) => {
-    const m = byId[p.symbol];
-    const bg = i % 2 === 0 ? COLOR.card : COLOR.zebra;
-    if (!m || m.error) {
-      return `<tr style="background:${bg};">${td(`<b>${p.symbol}</b>`)}${td(p.company)}${td(p.stake, 'font-size:13px;')}${td('no price data', `color:${COLOR.muted};`)}${td('—')}${td('—')}${td('—')}${td('—')}${td('—')}</tr>`;
-    }
+  const bySymbol = Object.fromEntries(ledger.positions.map(p => [p.symbol, p]));
+
+  // Ledger order is the order deals were announced, which is not how anyone
+  // reads a table of verdicts. Group by rating instead: all the buys, then
+  // avoids, then sells. Symbols the scan could not price have no rating, so
+  // they are appended at the end rather than silently dropped.
+  const rated = scan.companies.filter(m => m && !m.error && m.rating);
+  const groups = groupByRating(rated);
+  const unrated = ledger.positions.filter(p => !rated.some(m => m.symbol === p.symbol));
+
+  let i = 0;
+  const renderRow = (m) => {
+    const p = bySymbol[m.symbol];
+    const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
     const revShare = p.stakeType === 'REVENUE_SHARE';
     return `<tr style="background:${bg};">
       ${td(`<b>${p.symbol}</b><div style="font-size:11px; color:${COLOR.muted}; margin-top:3px;">${p.category}</div>`)}
@@ -124,14 +142,28 @@ function buildCompanyRows(scan, ledger, contracts) {
       <div style="margin-top:6px;"><b style="color:${COLOR.text};">ETFs holding it:</b> ${p.etfs.map(e => `${e.symbol} <span style="color:${COLOR.muted};">(${e.name})</span>`).join(' · ')}</div>
       ${contractBlock(contracts.get(p.symbol))}
     </td></tr>`;
+  };
+
+  const body = groups.map(g =>
+    groupHeaderRow(g.rating, g.rows.length, 9) + g.rows.map(renderRow).join('')
+  ).join('');
+
+  const missing = unrated.map(p => {
+    const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
+    return `<tr style="background:${bg};">${td(`<b>${p.symbol}</b>`)}${td(p.company, 'font-size:13px;')}${td(p.stake, 'font-size:13px;')}${td('no price data', `color:${COLOR.muted};`)}${td('—')}${td('—')}${td('—')}${td('—')}${td('—')}</tr>`;
   }).join('');
+
+  return body + (missing ? groupHeaderRow('NO DATA', unrated.length, 9) + missing : '');
 }
 
 // ── ETFs ────────────────────────────────────────────────────────────────────
 
 function buildEtfRows(scan, contracts) {
-  return scan.etfs.map((m, i) => {
-    const bg = i % 2 === 0 ? COLOR.card : COLOR.zebra;
+  // Same grouping as the companies table — alphabetical order told you
+  // nothing about what to do with any of them.
+  let i = 0;
+  const renderRow = (m) => {
+    const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
     return `<tr style="background:${bg};">
       ${td(`<b>${m.symbol}</b>`)}
       ${td(m.name || '—', 'font-size:13px;')}
@@ -147,7 +179,11 @@ function buildEtfRows(scan, contracts) {
       <b style="color:${COLOR.text};">Why ${m.rating}:</b> ${m.why} <span style="color:${COLOR.muted};">(${m.reasons.join('; ')})</span>
       ${contractBlock(contracts.get(m.symbol))}
     </td></tr>`;
-  }).join('');
+  };
+
+  return groupByRating(scan.etfs.filter(m => m.rating))
+    .map(g => groupHeaderRow(g.rating, g.rows.length, 9) + g.rows.map(renderRow).join(''))
+    .join('');
 }
 
 // ── Discovery ───────────────────────────────────────────────────────────────
