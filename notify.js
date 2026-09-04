@@ -255,7 +255,7 @@ const COLOR = {
   // also uses. A deep blue tells this page apart from the Government Stakes
   // page at a glance when both are open in tabs, without touching the warm
   // neutral palette the tables rely on for readability.
-  pageHeaderBg: '#1d3557', pageHeaderLink: '#b9cde4',
+  pageHeaderBg: '#0047ab', pageHeaderLink: '#cfe2fa',
   advisory: '#475569', advisoryBg: '#f1f4f8', advisoryBorder: '#dbe3ec',
 };
 
@@ -881,7 +881,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     <div id="report-ts" data-generated="${generatedIso}" data-ts-label="${ts} ET" style="font-size:13px; color:${COLOR.pageHeaderLink}; margin-top:6px;">Report generated: ${ts} ET</div>
     <div style="font-size:13px; margin-top:10px; line-height:1.9;">
       <a href="${HOME_URL}" style="color:${COLOR.pageHeaderLink}; text-decoration:underline;">🏠 All tools — igniteshakti.com →</a>
-      <span style="color:#6f8bab; padding:0 8px;">|</span>
+      <span style="color:#7ea8dd; padding:0 8px;">|</span>
       <a href="${govtPageUrl()}" style="color:${COLOR.pageHeaderLink}; text-decoration:underline;">🏛 Government Stakes — where Washington is putting money →</a>
     </div>
   </div>
