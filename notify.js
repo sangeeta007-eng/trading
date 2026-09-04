@@ -466,6 +466,113 @@ function buildMacroBlock(macro) {
 // important fact about the picks below: as of the last run, the rules do
 // not have a positive measured expectancy. Hiding that while presenting
 // "actionable" picks would be dishonest.
+// ── Quick view ──────────────────────────────────────────────────────────────
+//
+// One table, everything in it, no prose. Modelled directly on the Government
+// Stakes page's quick view so the two read the same way, and using the same
+// BUY / BUY ON DIP / HOLD / AVOID / SELL vocabulary from the same code.
+//
+// This exists because the report used to show only the handful of symbols
+// that cleared the narrow dip trigger — which on most days is none, leaving a
+// blank page that looks identical whether the market is calm or collapsing.
+// The reasoning, contracts, stops and sizing all stay in the detailed tables
+// below; this is purely the glance.
+const GLANCE_RATING_COLOR = {
+  'BUY': COLOR.target,
+  'BUY ON DIP': COLOR.hot,
+  'HOLD': COLOR.advisory,
+  'AVOID': COLOR.warm,
+  'SELL': COLOR.stop,
+  'NO DATA': COLOR.muted,
+};
+
+function glanceSectors(d) {
+  if (!d) return `<span style="color:${COLOR.muted};">—</span>`;
+  if (d.type === 'STOCK') return d.industry || d.sector || `<span style="color:${COLOR.muted};">—</span>`;
+  if (!d.sectors || !d.sectors.length) return `<span style="color:${COLOR.muted};">—</span>`;
+  return d.sectors.slice(0, 2)
+    .map(x => `${x.name} <b>${x.pct.toFixed(0)}%</b>`)
+    .join(`<span style="color:${COLOR.muted};"> · </span>`);
+}
+
+// ret1m arrives already expressed in percent — govt/scan.js's pctChange does
+// the x100 itself. Scaling again here turned a 10% month into "1007.7%".
+function glancePct(v) {
+  if (v == null || !isFinite(v)) return td('—', `color:${COLOR.muted};`);
+  const c = v >= 0 ? COLOR.target : COLOR.stop;
+  return td(`${v >= 0 ? '+' : ''}${v.toFixed(1)}%`, `color:${c}; font-weight:600;`);
+}
+
+function glanceSectionRow(title, count) {
+  return `<tr><td colspan="5" style="padding:10px 12px; border:1px solid ${COLOR.border}; background:${COLOR.headerBg || '#3b3833'}; color:#fff; font-size:13px; font-weight:700; letter-spacing:0.5px;">
+    ${title} <span style="font-weight:400; color:#c9c3b8;">— ${count}</span></td></tr>`;
+}
+
+function glanceGroupRow(rating, count) {
+  const color = GLANCE_RATING_COLOR[rating] || COLOR.muted;
+  return `<tr><td colspan="5" style="padding:9px 12px; border:1px solid ${COLOR.border}; background:${COLOR.bg || '#faf8f5'}; font-size:13px; font-weight:700; letter-spacing:0.4px; color:${color};">
+    ${rating} <span style="font-weight:400; color:${COLOR.muted};">— ${count} ${count === 1 ? 'symbol' : 'symbols'}</span></td></tr>`;
+}
+
+function glanceRows(rows, sectors) {
+  const { groupByRating } = require('./council/glance');
+  let i = 0;
+  return groupByRating(rows.filter(m => m.rating)).map(g =>
+    glanceGroupRow(g.rating, g.rows.length) +
+    g.rows.map(m => {
+      const bg = i++ % 2 === 0 ? COLOR.card : COLOR.zebra;
+      return `<tr style="background:${bg};">
+        ${td(`<b>${m.symbol}</b>`)}
+        ${td(glanceSectors(sectors.get ? sectors.get(m.symbol) : null), 'font-size:12px;')}
+        ${td(m.price != null ? '$' + m.price.toFixed(2) : '—')}
+        ${glancePct(m.ret1m)}
+        ${td(`<b style="color:${GLANCE_RATING_COLOR[m.rating] || COLOR.muted};">${m.rating}</b>`)}
+      </tr>`;
+    }).join('')
+  ).join('');
+}
+
+function buildQuickGlance(glance) {
+  if (!glance || (!glance.etfs?.length && !glance.stocks?.length)) return '';
+  const c = glance.counts || {};
+  const chip = (label, n) => n
+    ? `<span style="display:inline-block; margin:0 6px 6px 0; padding:4px 10px; border-radius:12px; font-size:13px; font-weight:700; color:#fff; background:${GLANCE_RATING_COLOR[label] || COLOR.muted};">${label} ${n}</span>`
+    : '';
+
+  const body =
+    glanceSectionRow('🗂 ETFs', `${glance.etfs.filter(m => m.rating).length} funds`) +
+    glanceRows(glance.etfs, glance.sectors) +
+    glanceSectionRow('🏢 STOCKS', `${glance.stocks.filter(m => m.rating).length} companies`) +
+    glanceRows(glance.stocks, glance.sectors);
+
+  return `
+  <div style="margin:0 0 22px;">
+    <div style="font-size:17px; font-weight:700; color:${COLOR.text}; margin-bottom:6px;">⚡ Quick view — everything at a glance</div>
+    <div style="font-size:14px; line-height:1.6; color:${COLOR.muted}; margin-bottom:10px;">
+      All ${glance.scanned} symbols, rated. No reasoning here on purpose — the why, the contracts, the stops and the sizing are all in the detailed tables below.
+    </div>
+    <div style="margin-bottom:10px;">${chip('BUY', c['BUY'])}${chip('BUY ON DIP', c['BUY ON DIP'])}${chip('HOLD', c['HOLD'])}${chip('AVOID', c['AVOID'])}${chip('SELL', c['SELL'])}</div>
+    <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; min-width:560px;">
+      <tr>${['Symbol', 'Sectors held', 'Price', '1M', 'Verdict'].map(h => `<th style="padding:9px 10px; border:1px solid ${COLOR.border}; background:${COLOR.headerBg || '#3b3833'}; color:#fff; font-size:12px; text-align:left; letter-spacing:0.4px;">${h}</th>`).join('')}</tr>
+      ${body}
+    </table>
+    </div>
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.muted}; margin-top:8px;">
+      <b>How to read the verdicts.</b>
+      <b style="color:${COLOR.target};">BUY</b> — in a confirmed uptrend and priced near a pullback rather than extended.
+      <b style="color:${COLOR.hot};">BUY ON DIP</b> — the trend qualifies but it has run too far; wait for it to pull back.
+      <b style="color:${COLOR.advisory};">HOLD</b> — no fresh entry, but nothing wrong with it.
+      <b style="color:${COLOR.warm};">AVOID</b> — below its 200-day line. Not necessarily falling, but no long entry here.
+      <b style="color:${COLOR.stop};">SELL</b> — confirmed downtrend below a falling 30-week average.
+      <br><br>
+      These are trend verdicts on the underlying, and they answer "is this healthy?". They are <i>not</i> the same question as
+      "is there an option worth buying today?" — that is the narrower dip trigger, and its answers are the HOT picks below.
+      A symbol can read BUY here and still produce no option pick, which simply means it is in good shape but not on sale.
+    </div>
+  </div>`;
+}
+
 // The headline expectancy is an 8-year average, and an average can hide a
 // signal that helps in some years and hurts in others. This one does: the
 // dip entry's edge over simply buying on a random day flips sign roughly
@@ -712,7 +819,7 @@ function buildMarketStatusBanner(marketOpen, ts) {
     </div>`;
 }
 
-function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, marketOpen = true, ts, target }) {
+function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, glance = null, marketOpen = true, ts, target }) {
   const hot = watchlist.filter(w => w.tier === 'HOT');
   const hotStocks = hot.filter(w => w.assetType === 'STOCK');
   const hotEtfs = hot.filter(w => w.assetType !== 'STOCK');
@@ -810,6 +917,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
     </table>
 
     ${buildMarketStatusBanner(marketOpen, ts)}
+    ${buildQuickGlance(glance)}
     ${buildEvidenceBanner()}
     ${buildVerdictBanner(verdict)}
     ${buildMacroBlock(macro)}
@@ -860,10 +968,10 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
 
 // ── Main session email ────────────────────────────────────────────────────────
 
-async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [], dipWatch = [], marketOpen = true, deliver = true }) {
+async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist = [], playbook = [], macro = null, verdict = null, marketNews = [], spreads = [], dipWatch = [], glance = null, marketOpen = true, deliver = true }) {
   const ts = new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
   const target = parseFloat(process.env.WEEKLY_TARGET) || 750;
-  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, marketOpen, ts, target };
+  const ctx = { newCampaigns, exits, regime, weeklyPnL, monthlyPnL, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch, glance, marketOpen, ts, target };
 
   const text = buildTextBody(ctx);
   const html = buildHtmlBody(ctx);

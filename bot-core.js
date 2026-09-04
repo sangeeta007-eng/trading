@@ -20,6 +20,7 @@ const { getMarketNews, getSymbolNews } = require('./news');
 const { structureSpread } = require('./council/spread_structurer');
 const { DEFAULT_UNIVERSE } = require('./council/agent1_analyst');
 const { getBars } = require('./marketdata');
+const { buildGlance } = require('./council/glance');
 
 // Defined-risk put credit spreads, scanned across the universe. This is the
 // only structure here with measured positive expectancy (+1.6%/trade over 8
@@ -111,6 +112,18 @@ async function runSession() {
     // Real, dated headlines — market/macro backdrop plus per-pick context.
     // Displayed for you to read; never scored or fed into a decision.
     const marketNews = await getMarketNews({ limit: 5, lookbackDays: 2 });
+
+    // Whole-universe trend verdicts for the quick-view table at the top of
+    // the report. Independent of the dip trigger below it: this says whether
+    // each symbol is healthy, not whether an option is worth buying today.
+    let glance = null;
+    try {
+      glance = await buildGlance();
+      console.log(`[bot] Quick view: ${Object.entries(glance.counts).map(([k, v]) => `${k} ${v}`).join(', ') || 'nothing rated'}`);
+    } catch (err) {
+      console.error(`[bot] Quick view failed (table will be omitted): ${err.message}`);
+    }
+
     const spreads = await scanSpreads(4);
     for (const w of watchlist.filter(x => x.tier === 'HOT')) {
       w.news = await getSymbolNews(w.symbol, { limit: 3, lookbackDays: 7 });
@@ -118,7 +131,7 @@ async function runSession() {
 
     const html = await sendSessionReport({
       newCampaigns, exits, regime, watchlist, playbook, macro, verdict, marketNews, spreads, dipWatch,
-      marketOpen, deliver: marketOpen,
+      glance, marketOpen, deliver: marketOpen,
       weeklyPnL: analytics.getWeeklyPnL(),
       monthlyPnL: analytics.getMonthlyPnL(),
     });
