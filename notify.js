@@ -254,6 +254,16 @@ const COLOR = {
   advisory: '#475569', advisoryBg: '#f1f4f8', advisoryBorder: '#dbe3ec',
 };
 
+// The same HTML is both emailed and published as a static page, so a bare
+// relative link would work on the site and be dead in the inbox. Set
+// SITE_BASE_URL (e.g. https://igniteshakti.com) and emails get a working
+// absolute link; leave it unset and the published page still links fine.
+function govtPageUrl() {
+  const base = process.env.SITE_BASE_URL;
+  if (!base) return './govt.html';
+  return `${base.replace(/\/+$/, '')}/govt.html`;
+}
+
 function td(content, style = '') {
   return `<td style="padding:11px 12px; border:1px solid ${COLOR.border}; font-size:15px; line-height:1.5; color:${COLOR.text}; ${style}">${content}</td>`;
 }
@@ -750,6 +760,7 @@ function buildHtmlBody({ newCampaigns, exits, regime, weeklyPnL, monthlyPnL, wat
   <div style="background:${COLOR.headerBg}; color:${COLOR.headerText}; padding:20px 24px; border-radius:8px 8px 0 0;">
     <div style="font-size:19px; font-weight:700; line-height:1.4;">4-Agent Trading Council — Daily Recommendations</div>
     <div id="report-ts" data-generated="${generatedIso}" data-ts-label="${ts} ET" style="font-size:13px; color:#c9c3b8; margin-top:6px;">Report generated: ${ts} ET</div>
+    <div style="font-size:13px; margin-top:8px;"><a href="${govtPageUrl()}" style="color:#c9c3b8;">🏛 Government Stakes — where Washington is putting money →</a></div>
   </div>
   <div style="background:${COLOR.card}; padding:20px 24px; border:1px solid ${COLOR.border}; border-top:none;">
     <div style="text-align:center; margin-bottom:16px;">
@@ -872,4 +883,7 @@ async function sendSessionReport({ newCampaigns, exits, regime, weeklyPnL, month
   return html;
 }
 
-module.exports = { sendSessionReport, sendFailureAlert, buildHtmlBody };
+// COLOR/FONT_STACK/td/th/tableWrap are exported so the Government Stakes
+// page (govt/report.js) renders in exactly this palette rather than keeping
+// a second copy that silently drifts out of step with this one.
+module.exports = { sendSessionReport, sendFailureAlert, buildHtmlBody, COLOR, FONT_STACK, td, th, tableWrap };

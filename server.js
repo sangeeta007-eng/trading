@@ -6,6 +6,8 @@
 
 require('dotenv').config();
 const express = require('express');
+const fs   = require('fs');
+const path = require('path');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
@@ -69,6 +71,44 @@ app.post('/api/run', async (req, res) => {
     running = false;
     broadcast({ type: 'done' });
   }
+});
+
+// ── Government Stakes page ────────────────────────────────────────────────────
+//
+// Separate from /api/run on purpose: this scan is read-only price work with
+// no options chain and no email, so it must not be blocked by (or block) a
+// council session that happens to be running.
+let govtRunning = false;
+
+app.post('/api/govt/refresh', async (req, res) => {
+  if (govtRunning) return res.status(409).json({ ok: false, error: 'A government-stakes refresh is already running' });
+  govtRunning = true;
+  try {
+    const { scan, disc } = await require('./govt/run').runGovtScan();
+    res.json({
+      ok: true,
+      companies: scan.companies.length,
+      etfs: scan.etfs.length,
+      failed: scan.failed.map(f => f.symbol),
+      newFilings: disc.newCandidates.length,
+    });
+  } catch (err) {
+    console.error('[server] Government stakes refresh failed:', err.message);
+    res.status(500).json({ ok: false, error: err.message });
+  } finally {
+    govtRunning = false;
+  }
+});
+
+// Serve the generated page. Regenerates on first visit if it has never been
+// built, so a fresh checkout does not 404 before the first scheduled run.
+app.get('/govt.html', async (req, res) => {
+  const file = path.join(__dirname, 'report', 'govt.html');
+  if (!fs.existsSync(file)) {
+    try { await require('./govt/run').runGovtScan(); }
+    catch (err) { return res.status(503).send(`Government Stakes page could not be generated: ${err.message}`); }
+  }
+  res.sendFile(file);
 });
 
 // ── Status endpoint: recommendations + regime ─────────────────────────────────

@@ -1,0 +1,122 @@
+name: Government Stakes Page
+
+# Keeps report/govt.html current without anything running on a local machine.
+#
+# The council workflow already regenerates this page as part of each weekday
+# session, but only while the market is open. This job covers the rest: it
+# needs nothing but daily bars and the Federal Register, so it runs fine
+# overnight and at weekends, and it gives a workflow_dispatch button that
+# refreshes the published page from any device (phone included) via the
+# GitHub app or website — which is what the Refresh button on the page links
+# to when it is being viewed as a static page rather than a local server.
+#
+# Cron times are UTC and, per the note in trading-session.yml, GitHub fires
+# scheduled jobs on this repo 2.5-3.6 hours LATE. These two slots are chosen
+# so that even at the worst observed delay they land nowhere near the
+# 17:00-21:30 UTC window the council sessions occupy, because both workflows
+# deploy to the same GitHub Pages site and must not race each other.
+#     02:00 -> fires ~04:30-05:40 UTC
+#     11:00 -> fires ~13:30-14:40 UTC
+on:
+  schedule:
+    - cron: '0 2 * * *'
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: govt-stakes-page
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - name: Regenerate the Government Stakes page
+        env:
+          MARKET_DATA_KEY: ${{ secrets.MARKET_DATA_KEY }}
+          MARKET_DATA_SECRET: ${{ secrets.MARKET_DATA_SECRET }}
+          MARKET_DATA_BASE_URL: ${{ secrets.MARKET_DATA_BASE_URL }}
+          MARKET_DATA_URL: ${{ secrets.MARKET_DATA_URL }}
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: node govt/run.js
+
+      # A Pages deployment replaces the WHOLE site, and this job only builds
+      # govt.html. Publishing without index.html would silently delete the
+      # daily council report from the live site. So pull the currently
+      # published index.html back down and ship it unchanged alongside.
+      # If it cannot be retrieved, the deploy is skipped entirely rather than
+      # risk publishing a site with the main page missing.
+      - name: Preserve the published council report
+        id: preserve
+        env:
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: |
+          # The GitHub Pages URL is where these pages are definitively SERVED,
+          # so it is tried FIRST. SITE_BASE_URL is only a fallback, because it
+          # can legitimately be set to something else — and if it is ever set
+          # to the hub page that merely links to these tools, fetching it
+          # would republish that hub page's HTML as the council report.
+          PAGES_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}"
+          BASE="${SITE_BASE_URL%/}"
+          preserved=false
+          for url in "$PAGES_URL/index.html" ${BASE:+"$BASE/index.html"}; do
+            if curl -fsSL --max-time 30 "$url" -o candidate.html && [ -s candidate.html ]; then
+              # Prove it is actually the council report before trusting it.
+              # Without this check any 200 response would do, and a wrong URL
+              # would silently overwrite the live report with someone else's
+              # page — the single most destructive thing this job could do.
+              if grep -q "4-Agent Trading Council" candidate.html; then
+                mv candidate.html report/index.html
+                echo "Preserved the published council report from $url ($(wc -c < report/index.html) bytes)."
+                preserved=true
+                break
+              fi
+              echo "$url returned 200 but is not the council report — ignoring it."
+            else
+              echo "Could not fetch $url"
+            fi
+          done
+          rm -f candidate.html
+          echo "preserved=$preserved" >> "$GITHUB_OUTPUT"
+          if [ "$preserved" = "false" ]; then
+            rm -f report/index.html
+            echo "::warning::Could not retrieve the published council report — skipping the Pages deploy so the live one is not wiped. govt.html was still regenerated and will publish on the next council session."
+          fi
+
+      - name: Persist the watch-feed state
+        run: |
+          git config user.name "trading-council-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add govt/candidates.json
+          git diff --staged --quiet || git commit -m "Government stakes watch feed update [skip ci]"
+          git pull --rebase --autostash || true
+          git push
+
+      - name: Configure Pages
+        if: steps.preserve.outputs.preserved == 'true'
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload report artifact
+        if: steps.preserve.outputs.preserved == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: report
+
+      - name: Deploy to GitHub Pages
+        if: steps.preserve.outputs.preserved == 'true'
+        uses: actions/deploy-pages@v4

@@ -124,6 +124,17 @@ async function runSession() {
     });
     writeStaticReport(html);
 
+    // Government Stakes page (report/govt.html) — regenerated alongside the
+    // council report so both pages on the site carry the same timestamp.
+    // Deliberately non-fatal: it is a separate page with a separate data
+    // source, and a Federal Register outage or one delisted microcap must
+    // not fail a session that has already produced a valid council report.
+    try {
+      await require('./govt/run').runGovtScan();
+    } catch (govtErr) {
+      console.error('[bot-core] Government stakes page failed to regenerate:', govtErr.message);
+    }
+
     return { marketClosed: !marketOpen, newCampaigns, exits, regime, watchlist, playbook, weeklyPnL: analytics.getWeeklyPnL() };
   } catch (err) {
     // A crashed session produces no report at all — that silence could be

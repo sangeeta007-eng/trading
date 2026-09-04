@@ -1,0 +1,90 @@
+{
+  "lastRun": "2026-09-04T17:29:37.447Z",
+  "lastError": null,
+  "seen": [
+    "2026-17183",
+    "2026-15003",
+    "2026-14509",
+    "2026-14333",
+    "2026-12559",
+    "2026-10817",
+    "2026-16078",
+    "2026-15859",
+    "2026-14461",
+    "2026-13486",
+    "2026-12286"
+  ],
+  "candidates": [
+    {
+      "documentNumber": "2026-16078",
+      "title": "DPAS Directive Allocation Order and Additional Requirements for Recoverable Critical Minerals and Materials",
+      "date": "2026-08-06",
+      "url": "https://www.federalregister.gov/documents/2026/08/06/2026-16078/dpas-directive-allocation-order-and-additional-requirements-for-recoverable-critical-minerals-and",
+      "type": "Rule",
+      "agencies": [
+        "Commerce Department",
+        "Industry and Security Bureau"
+      ],
+      "agencyCount": 2,
+      "matchedTerm": "\"Defense Production Act\" Title III",
+      "mentionsTracked": [],
+      "isNew": false
+    },
+    {
+      "documentNumber": "2026-15859",
+      "title": "Presidential Determination Pursuant to Section 101 of the Defense Production Act of 1950, as Amended, on Recoverable Critical Minerals and Materials",
+      "date": "2026-08-04",
+      "url": "https://www.federalregister.gov/documents/2026/08/04/2026-15859/presidential-determination-pursuant-to-section-101-of-the-defense-production-act-of-1950-as-amended",
+      "type": "Presidential Document",
+      "agencies": [
+        "Executive Office of the President"
+      ],
+      "agencyCount": 1,
+      "matchedTerm": "\"Presidential Determination\" Defense Production Act",
+      "mentionsTracked": [],
+      "isNew": false
+    },
+    {
+      "documentNumber": "2026-14461",
+      "title": "Implementing Voluntary Agreements Under the Defense Production Act",
+      "date": "2026-07-17",
+      "url": "https://www.federalregister.gov/documents/2026/07/17/2026-14461/implementing-voluntary-agreements-under-the-defense-production-act",
+      "type": "Rule",
+      "agencies": [
+        "Energy Department"
+      ],
+      "agencyCount": 1,
+      "matchedTerm": "\"Defense Production Act\" Title III",
+      "mentionsTracked": [],
+      "isNew": false
+    },
+    {
+      "documentNumber": "2026-13486",
+      "title": "Implementing Voluntary Agreements Under the Defense Production Act",
+      "date": "2026-07-06",
+      "url": "https://www.federalregister.gov/documents/2026/07/06/2026-13486/implementing-voluntary-agreements-under-the-defense-production-act",
+      "type": "Notice",
+      "agencies": [
+        "Energy Department"
+      ],
+      "agencyCount": 1,
+      "matchedTerm": "\"Defense Production Act\" Title III",
+      "mentionsTracked": [],
+      "isNew": false
+    },
+    {
+      "documentNumber": "2026-12286",
+      "title": "Presidential Determination and Delegation of Authority Under Section 708 of the Defense Production Act of 1950, as Amended",
+      "date": "2026-06-17",
+      "url": "https://www.federalregister.gov/documents/2026/06/17/2026-12286/presidential-determination-and-delegation-of-authority-under-section-708-of-the-defense-production",
+      "type": "Presidential Document",
+      "agencies": [
+        "Executive Office of the President"
+      ],
+      "agencyCount": 1,
+      "matchedTerm": "\"Presidential Determination\" Defense Production Act",
+      "mentionsTracked": [],
+      "isNew": false
+    }
+  ]
+}

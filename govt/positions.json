@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "lastReviewed": "2026-09-04",
+  "reviewNote": "Every entry below is a real, publicly reported U.S. government position, each carrying a source link. Nothing here is inferred or estimated, and the `stake` wording is copied from reporting rather than recomputed. When the discovery feed surfaces a new name it lands in candidates.json for review and is never auto-promoted into this file — a wrong entry here would put a fabricated government stake on a public page.",
+  "trackers": [
+    { "name": "CFR U.S. Government Deal Tracker", "url": "https://www.cfr.org/articles/washingtons-growing-portfolio-tracking-u-s-government-investments" },
+    { "name": "CSIS - Federal Equity Investments in Strategic Companies", "url": "https://www.csis.org/analysis/understanding-federal-equity-investments-strategic-companies" }
+  ],
+  "positions": [
+    {
+      "company": "Intel Corporation",
+      "symbol": "INTC",
+      "category": "Semiconductors",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$8.9B",
+      "stake": "9.9% common + 5% warrant",
+      "announced": "2025-08",
+      "addedOn": "2026-09-04",
+      "source": "https://newsroom.intel.com/corporate/intel-and-trump-administration-reach-historic-agreement",
+      "note": "CHIPS grants converted to equity at $20.47/share. No board seat; the government votes with the board on most matters.",
+      "etfs": [
+        { "symbol": "SOXX", "name": "iShares Semiconductor ETF" },
+        { "symbol": "SMH", "name": "VanEck Semiconductor ETF" },
+        { "symbol": "XLK", "name": "Technology Select Sector SPDR" }
+      ]
+    },
+    {
+      "company": "GlobalFoundries",
+      "symbol": "GFS",
+      "category": "Semiconductors / Quantum",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$675M",
+      "stake": "~1% equity",
+      "announced": "2026-05",
+      "addedOn": "2026-09-04",
+      "source": "https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion",
+      "note": "Two CHIPS letters of intent - $375M quantum foundry, $300M silicon photonics.",
+      "etfs": [
+        { "symbol": "SOXX", "name": "iShares Semiconductor ETF" },
+        { "symbol": "XSD", "name": "SPDR S&P Semiconductor ETF" },
+        { "symbol": "PSI", "name": "Invesco Semiconductors ETF" }
+      ]
+    },
+    {
+      "company": "L3Harris Technologies",
+      "symbol": "LHX",
+      "category": "Defense / Rocket Motors",
+      "stakeType": "EQUITY_SUBSIDIARY",
+      "agency": "Defense (Dept. of War)",
+      "amount": "$1B",
+      "stake": "Convertible preferred + warrants",
+      "announced": "2026-01",
+      "addedOn": "2026-09-04",
+      "source": "https://www.washingtontechnology.com/companies/2026/01/l3harris-spin-its-rocket-motor-business-pentagon-anchor-investor/410644/",
+      "note": "The stake is in the Missile Solutions spin-off, NOT in LHX common. It converts on that unit's IPO, expected 2H 2026. LHX is the parent proxy, not the position itself.",
+      "etfs": [
+        { "symbol": "ITA", "name": "iShares U.S. Aerospace & Defense ETF" },
+        { "symbol": "XAR", "name": "SPDR S&P Aerospace & Defense ETF" },
+        { "symbol": "PPA", "name": "Invesco Aerospace & Defense ETF" }
+      ]
+    },
+    {
+      "company": "MP Materials Corp.",
+      "symbol": "MP",
+      "category": "Critical Minerals / Rare Earths",
+      "stakeType": "EQUITY",
+      "agency": "Defense (Dept. of War)",
+      "amount": "$400M",
+      "stake": "~15% if converted - largest shareholder",
+      "announced": "2025-07",
+      "addedOn": "2026-09-04",
+      "source": "https://investors.mpmaterials.com/investor-news/news-details/2025/MP-Materials-Announces-Transformational-Public-Private-Partnership-with-the-Department-of-Defense-to-Accelerate-U-S--Rare-Earth-Magnet-Independence/default.aspx",
+      "note": "Convertible preferred at $30.03 plus warrants. Paired with a 10-year, 7,000 t/yr magnet offtake and a $150M loan - the offtake is arguably the bigger deal than the equity.",
+      "etfs": [
+        { "symbol": "REMX", "name": "VanEck Rare Earth/Strategic Metals ETF" },
+        { "symbol": "PICK", "name": "iShares MSCI Global Metals & Mining ETF" },
+        { "symbol": "LIT", "name": "Global X Lithium & Battery Tech ETF" }
+      ]
+    },
+    {
+      "company": "Lithium Americas Corp.",
+      "symbol": "LAC",
+      "category": "Critical Minerals / Lithium",
+      "stakeType": "WARRANTS",
+      "agency": "Energy",
+      "amount": "$184M",
+      "stake": "5% via warrants + 5% of the GM JV",
+      "announced": "2025-10",
+      "addedOn": "2026-09-04",
+      "source": "https://www.energy.gov/articles/department-energy-restructures-lithium-americas-deal-protect-taxpayers-and-onshore",
+      "note": "Warrants at $0.01 exercise - DOE holds the right to acquire, not shares outright, so the stake is contingent on Thacker Pass performing.",
+      "etfs": [
+        { "symbol": "LIT", "name": "Global X Lithium & Battery Tech ETF" },
+        { "symbol": "BATT", "name": "Amplify Lithium & Battery Technology ETF" },
+        { "symbol": "REMX", "name": "VanEck Rare Earth/Strategic Metals ETF" }
+      ]
+    },
+    {
+      "company": "Trilogy Metals Inc.",
+      "symbol": "TMQ",
+      "category": "Critical Minerals / Mining",
+      "stakeType": "EQUITY",
+      "agency": "Defense (Dept. of War)",
+      "amount": "$35.6M",
+      "stake": "10% + 7.5% warrant",
+      "announced": "2025-10",
+      "addedOn": "2026-09-04",
+      "source": "https://www.energypolicy.columbia.edu/qa-how-the-us-is-using-equity-stakes-to-support-domestic-critical-minerals-development/",
+      "note": "About 8.2M shares at $2.17 plus 10-year warrants. Microcap - treat position sizing and spreads with care.",
+      "etfs": [
+        { "symbol": "SIL", "name": "Global X Silver Miners ETF" },
+        { "symbol": "PICK", "name": "iShares MSCI Global Metals & Mining ETF" }
+      ]
+    },
+    {
+      "company": "D-Wave Quantum Inc.",
+      "symbol": "QBTS",
+      "category": "Quantum Computing",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$100M",
+      "stake": "Minority equity",
+      "announced": "2026-05",
+      "addedOn": "2026-09-04",
+      "source": "https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion",
+      "note": "Part of the $2B, nine-company quantum round. Letters of intent - final terms may add warrants, royalties or IP licences.",
+      "etfs": [
+        { "symbol": "QTUM", "name": "Defiance Quantum ETF" },
+        { "symbol": "KOMP", "name": "SPDR S&P Kensho New Economies ETF" }
+      ]
+    },
+    {
+      "company": "Rigetti Computing",
+      "symbol": "RGTI",
+      "category": "Quantum Computing",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$100M",
+      "stake": "Common stock at a ~15% discount",
+      "announced": "2026-05",
+      "addedOn": "2026-09-04",
+      "source": "https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion",
+      "note": "Part of the $2B, nine-company quantum round.",
+      "etfs": [
+        { "symbol": "QTUM", "name": "Defiance Quantum ETF" },
+        { "symbol": "ARKQ", "name": "ARK Autonomous Tech & Robotics ETF" }
+      ]
+    },
+    {
+      "company": "IBM",
+      "symbol": "IBM",
+      "category": "Quantum Computing",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$1B",
+      "stake": "Minority stake",
+      "announced": "2026-05",
+      "addedOn": "2026-09-04",
+      "source": "https://www.nist.gov/news-events/news/2026/05/department-commerce-announces-letters-intent-9-companies-2-billion",
+      "note": "Largest single award in the quantum round. IBM is a $200B+ company - a $1B stake moves the government's book far more than it moves IBM.",
+      "etfs": [
+        { "symbol": "XLK", "name": "Technology Select Sector SPDR" },
+        { "symbol": "QTUM", "name": "Defiance Quantum ETF" },
+        { "symbol": "KOMP", "name": "SPDR S&P Kensho New Economies ETF" }
+      ]
+    },
+    {
+      "company": "USA Rare Earth",
+      "symbol": "USAR",
+      "category": "Critical Minerals / Rare Earths",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$1.577B",
+      "stake": "Shares + warrants",
+      "announced": "2026-01",
+      "addedOn": "2026-09-04",
+      "source": "https://mishtalk.com/economics/government-takes-a-stake-in-6-more-companies-new-total-is-30-companies/",
+      "note": "One of the largest dollar commitments in the whole programme.",
+      "etfs": [
+        { "symbol": "REMX", "name": "VanEck Rare Earth/Strategic Metals ETF" }
+      ]
+    },
+    {
+      "company": "Aeluma",
+      "symbol": "ALMU",
+      "category": "Semiconductors / Photonics",
+      "stakeType": "EQUITY",
+      "agency": "Commerce",
+      "amount": "$30M",
+      "stake": "Equity equal to the award",
+      "announced": "2026-07",
+      "addedOn": "2026-09-04",
+      "source": "https://mishtalk.com/economics/government-takes-a-stake-in-6-more-companies-new-total-is-30-companies/",
+      "note": "Microcap. The award is large relative to the company, which cuts both ways.",
+      "etfs": [
+        { "symbol": "XSD", "name": "SPDR S&P Semiconductor ETF" }
+      ]
+    },
+    {
+      "company": "NVIDIA",
+      "symbol": "NVDA",
+      "category": "Semiconductors",
+      "stakeType": "REVENUE_SHARE",
+      "agency": "White House arrangement",
+      "amount": "n/a",
+      "stake": "15% of China chip-sale revenue",
+      "announced": "2025-08",
+      "addedOn": "2026-09-04",
+      "source": "https://www.washingtonexaminer.com/news/business/4673015/updated-list-trump-ownership-stakes-private-enterprises-equity-chip-production/",
+      "note": "Not an equity stake - a cut of China revenue in exchange for export licences. Included because it is government participation in the P&L, but it confers no ownership and behaves nothing like the equity deals.",
+      "etfs": [
+        { "symbol": "SOXX", "name": "iShares Semiconductor ETF" },
+        { "symbol": "SMH", "name": "VanEck Semiconductor ETF" },
+        { "symbol": "XLK", "name": "Technology Select Sector SPDR" }
+      ]
+    },
+    {
+      "company": "AMD",
+      "symbol": "AMD",
+      "category": "Semiconductors",
+      "stakeType": "REVENUE_SHARE",
+      "agency": "White House arrangement",
+      "amount": "n/a",
+      "stake": "15% of China chip-sale revenue",
+      "announced": "2025-08",
+      "addedOn": "2026-09-04",
+      "source": "https://www.washingtonexaminer.com/news/business/4673015/updated-list-trump-ownership-stakes-private-enterprises-equity-chip-production/",
+      "note": "Same arrangement as NVDA - revenue share, not ownership.",
+      "etfs": [
+        { "symbol": "SOXX", "name": "iShares Semiconductor ETF" },
+        { "symbol": "SMH", "name": "VanEck Semiconductor ETF" },
+        { "symbol": "XLK", "name": "Technology Select Sector SPDR" }
+      ]
+    }
+  ],
+  "privatePositions": [
+    { "company": "Westinghouse", "category": "Nuclear", "agency": "Commerce", "amount": "$80B facility commitment", "stake": "20% of profits above $17.5B; ~8% warrants on IPO", "announced": "2025-10" },
+    { "company": "PsiQuantum", "category": "Quantum", "agency": "Commerce", "amount": "$100M", "stake": "Minority equity", "announced": "2026-05" },
+    { "company": "Quantinuum", "category": "Quantum", "agency": "Commerce", "amount": "$100M", "stake": "Common at 15-20% discount", "announced": "2026-05" },
+    { "company": "Infleqtion", "category": "Quantum", "agency": "Commerce", "amount": "$100M", "stake": "Common at 15% discount", "announced": "2026-05" },
+    { "company": "Atom Computing", "category": "Quantum", "agency": "Commerce", "amount": "$100M", "stake": "Minority equity", "announced": "2026-05" },
+    { "company": "Diraq", "category": "Quantum", "agency": "Commerce", "amount": "$38M", "stake": "Minority equity", "announced": "2026-05" },
+    { "company": "SandboxAQ", "category": "AI / Quantum", "agency": "Commerce", "amount": "$500M", "stake": "Minority equity", "announced": "2026-06" },
+    { "company": "I-Pulse", "category": "Mining tech", "agency": "Commerce", "amount": "$250M", "stake": "Minority equity", "announced": "2026-06" },
+    { "company": "Kepler Computing", "category": "Semiconductors", "agency": "Commerce", "amount": "$245M", "stake": "Minority equity", "announced": "2026-07" },
+    { "company": "Multibeam Corporation", "category": "Semiconductors", "agency": "Commerce", "amount": "$140M", "stake": "Minority equity", "announced": "2026-07" },
+    { "company": "Extropic", "category": "Semiconductors", "agency": "Commerce", "amount": "$75M", "stake": "Minority equity", "announced": "2026-07" },
+    { "company": "Thintronics", "category": "Semiconductors", "agency": "Commerce", "amount": "$50M", "stake": "Minority equity", "announced": "2026-07" },
+    { "company": "OBSIDIA Semiconductors", "category": "Semiconductors", "agency": "Commerce", "amount": "$34M", "stake": "Minority equity", "announced": "2026-07" },
+    { "company": "xLight", "category": "Semiconductors", "agency": "Commerce", "amount": "$150M", "stake": "Equity stake", "announced": "2025-12" },
+    { "company": "Vulcan Elements", "category": "Critical Minerals", "agency": "Commerce/Defense", "amount": "$50M-$670M", "stake": "Equity + warrants", "announced": "2025-11" },
+    { "company": "ReElement Technologies", "category": "Critical Minerals", "agency": "Defense", "amount": "$80M", "stake": "Warrants", "announced": "2025-11" },
+    { "company": "Atlantic Alumina", "category": "Critical Minerals", "agency": "Defense", "amount": "$150M", "stake": "Preferred equity", "announced": "2026-01" },
+    { "company": "Korea Zinc / Crucible", "category": "Critical Minerals", "agency": "Commerce/Defense", "amount": "$360M-$1.4B", "stake": "Indirect / JV stakes", "announced": "2025-12" },
+    { "company": "U.S. Steel", "category": "Steel", "agency": "CFIUS/Treasury", "amount": "n/a", "stake": "Golden-share veto rights", "announced": "2025-06", "note": "No longer separately traded after the Nippon Steel merger - excluded from the signal table." }
+  ]
+}

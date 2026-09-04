@@ -7,7 +7,8 @@
     "start": "node bot.js",
     "web": "node server.js",
     "council": "node council/run.js",
-    "backtest": "node council/backtest-cli.js"
+    "backtest": "node council/backtest-cli.js",
+    "govt": "node govt/run.js"
   },
   "keywords": [],
   "author": "",

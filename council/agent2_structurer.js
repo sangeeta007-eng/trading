@@ -266,4 +266,11 @@ async function structureContract(symbol, bias, spotPrice) {
   };
 }
 
-module.exports = { structureContract, tickSize, roundToTick };
+// The filter thresholds are exported so govt/options.js can report WHICH of
+// them a contract fails, instead of keeping its own copy of the numbers and
+// drifting out of step with the values actually enforced here.
+module.exports = {
+  structureContract, tickSize, roundToTick,
+  MIN_OPEN_INTEREST, MAX_SPREAD_PCT, MAX_SPREAD_FLOOR, spreadCap,
+  MAX_PREMIUM_PER_CONTRACT, MIN_DTE_FOR_HOLD,
+};
