@@ -64,6 +64,17 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+          # Risk settings are deliberately literals here, not secrets: they
+          # are not sensitive, and the value that actually sizes the emailed
+          # recommendations should be readable in the repo rather than hidden
+          # in a settings page. These MUST match .env, or local runs and the
+          # scheduled runs that produce the real reports will size trades
+          # differently — which is exactly what happened before this was
+          # added: .env said 3%/$750 while CI silently used the 2%/$1000
+          # defaults, so every emailed report was sized against a budget
+          # nobody had chosen.
+          MAX_LOSS_PER_TRADE_PCT: '0.03'
+          MAX_PREMIUM_PER_CONTRACT: '750'
         run: node bot.js
 
       # One-time bootstrap: GitHub doesn't start domain verification / cert
