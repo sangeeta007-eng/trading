@@ -559,11 +559,15 @@ function buildQuickGlance(glance) {
 
   return `
   <div style="margin:0 0 22px;">
-    <div style="font-size:17px; font-weight:700; color:${COLOR.text}; margin-bottom:6px;">⚡ Quick view — everything at a glance</div>
+    <div style="font-size:17px; font-weight:700; color:${COLOR.text}; margin-bottom:6px;">⚡ Quick view — is each one healthy to own?</div>
     <div style="font-size:14px; line-height:1.6; color:${COLOR.muted}; margin-bottom:10px;">
-      All ${glance.scanned} symbols, rated. No reasoning here on purpose — the why, the contracts, the stops and the sizing are all in the detailed tables below.
+      All ${glance.scanned} symbols, rated on trend health. No reasoning here on purpose — the why, the contracts, the stops and the sizing are all in the detailed tables below.
     </div>
-    <div style="margin-bottom:10px;">${chip('BUY', c['BUY'])}${chip('BUY ON DIP', c['BUY ON DIP'])}${chip('HOLD', c['HOLD'])}${chip('AVOID', c['AVOID'])}${chip('SELL', c['SELL'])}</div>
+    <div style="margin-bottom:8px;">${chip('BUY', c['BUY'])}${chip('BUY ON DIP', c['BUY ON DIP'])}${chip('HOLD', c['HOLD'])}${chip('AVOID', c['AVOID'])}${chip('SELL', c['SELL'])}</div>
+    <div style="font-size:13px; line-height:1.6; color:${COLOR.text}; background:${COLOR.advisoryBg}; border-left:4px solid ${COLOR.advisory}; border-radius:4px; padding:9px 12px; margin-bottom:12px;">
+      <b>These are share verdicts, not option picks.</b> ${c['BUY'] ? `"BUY ${c['BUY']}" means ${c['BUY']} ${c['BUY'] === 1 ? 'symbol is' : 'symbols are'} in a healthy uptrend and fine to <i>own</i>` : 'A BUY here means the symbol is in a healthy uptrend and fine to <i>own</i>'} — it does <b>not</b> mean buy a call option on it today.
+      Options are only worth buying on a dip, so the option picks further down are a much shorter list, and are often empty even on a day when most of this table is green. Both can be true at once.
+    </div>
     <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; min-width:560px;">
       <tr>${['Symbol', 'Sectors held', 'Price', '1M', 'Verdict'].map(h => `<th style="padding:9px 10px; border:1px solid ${COLOR.border}; background:${COLOR.headerBg || '#3b3833'}; color:#fff; font-size:12px; text-align:left; letter-spacing:0.4px;">${h}</th>`).join('')}</tr>
@@ -792,7 +796,7 @@ function buildVerdictBanner(v) {
   if (!v) return '';
   const tone = v.call === 'GOOD DAY TO BUY'
     ? { bg: '#eef3ea', border: '#c9dcc0', fg: COLOR.target }
-    : v.call === 'SIT OUT'
+    : (v.call === 'SIT OUT' || v.call === 'NO OPTION TRADE TODAY')
     ? { bg: '#fdf1e8', border: COLOR.hot, fg: COLOR.hot }
     : { bg: '#fdf6e3', border: COLOR.warmBorder, fg: COLOR.warm };
   return `

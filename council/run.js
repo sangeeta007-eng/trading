@@ -82,10 +82,24 @@ function classifyWatchlist(results) {
 // stated from what the scan actually found rather than a mood reading.
 // "Sit out" here is advice, not a block — every qualifying pick is still
 // listed underneath it.
-function dailyVerdict({ results, hot, regime }) {
+// `glance` is the whole-universe trend read shown in the quick-view table.
+// It is passed in so this verdict can agree with it. Without it, the two
+// contradicted each other in the most visible way possible: the table said
+// BUY 19 and the banner directly underneath said "nothing worth buying
+// today" — because "tradable" here counts DIP TRIGGERS, not healthy trends,
+// and the old copy described that count as "in a clean trend". That was
+// simply wrong: 19 symbols were in clean trends, none was at a dip price.
+function dailyVerdict({ results, hot, regime, glance = null }) {
   const scanned = results.length;
-  const tradable = results.filter(r => r.bias && r.bias !== 'NEUTRAL').length;
-  const breadthPct = scanned ? Math.round((tradable / scanned) * 100) : 0;
+  const dipReady = results.filter(r => r.bias && r.bias !== 'NEUTRAL').length;
+  const tradable = dipReady;
+  const breadthPct = scanned ? Math.round((dipReady / scanned) * 100) : 0;
+  const healthy = glance ? (glance.counts?.['BUY'] || 0) + (glance.counts?.['BUY ON DIP'] || 0) : null;
+  // One sentence that makes the table above and this banner tell the same
+  // story, rather than leaving the reader to reconcile them.
+  const bridge = healthy != null
+    ? ` This is not a contradiction with the ${healthy} marked BUY in the table above: those are healthy to <i>own</i>, this is about whether a <i>call option</i> is worth buying today. A stock can be in great shape and still be a poor option buy, because you'd be paying full price rather than a dip price.`
+    : '';
   const macroSoon = calendar.getUpcomingEvents(1).filter(e => ['FOMC', 'CPI', 'NFP'].includes(e.type));
   const macroNote = macroSoon.length ? ` ${macroSoon[0].label} lands ${macroSoon[0].date}, which inflates premiums today and crushes them after.` : '';
 
@@ -102,9 +116,9 @@ function dailyVerdict({ results, hot, regime }) {
   }
   if (!hot.length) {
     return {
-      call: 'SIT OUT',
-      reason: `Nothing cleared the bar — ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) and none produced a contract worth the entry.${macroNote}`,
-      plain: `Nothing worth buying today. Out of ${scanned} funds checked, only ${tradable} are even in a clean trend, and none of those had an option at a sensible price. Some days there just isn't a good trade — that's normal, and forcing one is how people lose money.${macroPlain}`,
+      call: 'NO OPTION TRADE TODAY',
+      reason: `${dipReady} of ${scanned} symbols are at a dip entry (${breadthPct}% of the universe)${healthy != null ? `, though ${healthy} are in healthy uptrends` : ''} — ${dipReady ? 'none produced a contract worth the entry' : 'nothing is oversold enough to trigger'}.${macroNote}`,
+      plain: `No option worth buying today. The entry rule only fires when something in an uptrend has been knocked down short-term — buying the dip rather than paying full price — and nothing is at that price right now.${bridge}${macroPlain}`,
     };
   }
   if (macroSoon.length) {
@@ -117,18 +131,18 @@ function dailyVerdict({ results, hot, regime }) {
   if (breadthPct < 15) {
     return {
       call: 'SELECTIVE',
-      reason: `Only ${tradable} of ${scanned} ETFs are in a tradable stage (${breadthPct}% breadth) — thin participation, so treat the ${hot.length} pick${hot.length === 1 ? '' : 's'} below as the exception rather than a broad green light.`,
-      plain: `Only ${tradable} out of ${scanned} funds are in a clean trend right now, so the market isn't broadly healthy. The pick${hot.length === 1 ? '' : 's'} below ${hot.length === 1 ? 'is an exception' : 'are exceptions'} rather than a sign it's a good day generally. Smaller size than usual would be sensible.`,
+      reason: `Only ${dipReady} of ${scanned} symbols are at a dip entry (${breadthPct}% of the universe)${healthy != null ? `, against ${healthy} in healthy uptrends` : ''} — treat the ${hot.length} pick${hot.length === 1 ? '' : 's'} below as the exception rather than a broad green light.`,
+      plain: `Only ${dipReady} out of ${scanned} symbols are actually on sale right now, so there isn't a broad wave of opportunities. The pick${hot.length === 1 ? '' : 's'} below ${hot.length === 1 ? 'is an exception' : 'are exceptions'} rather than a sign it's a good day generally. Smaller size than usual would be sensible.`,
     };
   }
   return {
     call: 'GOOD DAY TO BUY',
-    reason: `${tradable} of ${scanned} ETFs in a tradable stage (${breadthPct}% breadth), ${regime?.name || 'regime'} conditions, and ${hot.length} pick${hot.length === 1 ? '' : 's'} cleared every gate.`,
-    plain: `A healthy day. ${tradable} of the ${scanned} funds checked are in clean trends, market conditions are calm, no big news due, and ${hot.length} setup${hot.length === 1 ? '' : 's'} passed every check.`,
+    reason: `${dipReady} of ${scanned} symbols at a dip entry (${breadthPct}% of the universe)${healthy != null ? `, ${healthy} in healthy uptrends` : ''}, ${regime?.name || 'regime'} conditions, and ${hot.length} pick${hot.length === 1 ? '' : 's'} cleared every gate.`,
+    plain: `A healthy day. ${dipReady} of the ${scanned} symbols checked have pulled back to a buyable price, market conditions are calm, no big news due, and ${hot.length} setup${hot.length === 1 ? '' : 's'} passed every check.`,
   };
 }
 
-async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE } = {}) {
+async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE, glance = null } = {}) {
   console.log('');
   console.log('='.repeat(80));
   console.log('  4-AGENT OPTIONS TRADING COUNCIL — Recommendation Engine');
@@ -185,7 +199,7 @@ async function runCouncil({ universe = agent1.DEFAULT_UNIVERSE } = {}) {
     .sort((a, b) => a.rsi2 - b.rsi2)
     .slice(0, 8);
 
-  const verdict = dailyVerdict({ results, hot, regime });
+  const verdict = dailyVerdict({ results, hot, regime, glance });
   console.log(`[council] Verdict: ${verdict.call} — ${verdict.reason}`);
 
   return { results, reconciliation, thresholds, regime, watchlist, verdict, dipWatch };

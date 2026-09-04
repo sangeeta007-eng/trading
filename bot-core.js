@@ -96,7 +96,20 @@ async function runSession() {
       console.log('[bot] Market is closed — scanning on last-close quotes; report will be labelled stale and no email sent.');
     }
 
-    const { results, reconciliation, regime, watchlist, verdict, dipWatch } = await runCouncil();
+    // Whole-universe trend verdicts for the quick-view table at the top of
+    // the report. Built BEFORE the council runs because the daily verdict
+    // needs it: without it the banner said "nothing worth buying" directly
+    // under a table saying BUY 19, which reads as the tool contradicting
+    // itself. They answer different questions and now say so.
+    let glance = null;
+    try {
+      glance = await buildGlance();
+      console.log(`[bot] Quick view: ${Object.entries(glance.counts).map(([k, v]) => `${k} ${v}`).join(', ') || 'nothing rated'}`);
+    } catch (err) {
+      console.error(`[bot] Quick view failed (table will be omitted): ${err.message}`);
+    }
+
+    const { results, reconciliation, regime, watchlist, verdict, dipWatch } = await runCouncil({ glance });
 
     const exits = reconciliation.closed.map(toOutcomeCard);
     const newCampaigns = results
@@ -112,17 +125,6 @@ async function runSession() {
     // Real, dated headlines — market/macro backdrop plus per-pick context.
     // Displayed for you to read; never scored or fed into a decision.
     const marketNews = await getMarketNews({ limit: 5, lookbackDays: 2 });
-
-    // Whole-universe trend verdicts for the quick-view table at the top of
-    // the report. Independent of the dip trigger below it: this says whether
-    // each symbol is healthy, not whether an option is worth buying today.
-    let glance = null;
-    try {
-      glance = await buildGlance();
-      console.log(`[bot] Quick view: ${Object.entries(glance.counts).map(([k, v]) => `${k} ${v}`).join(', ') || 'nothing rated'}`);
-    } catch (err) {
-      console.error(`[bot] Quick view failed (table will be omitted): ${err.message}`);
-    }
 
     const spreads = await scanSpreads(4);
     for (const w of watchlist.filter(x => x.tier === 'HOT')) {
