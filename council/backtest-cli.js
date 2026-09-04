@@ -27,6 +27,11 @@ const OUT = path.join(__dirname, '..', 'backtest_results.json');
   // Signal-only edge, exact from bars (no option approximation): does a
   // signal beat simply buying on a random day?
   const hold = 21, calls = [], puts = [], base = [];
+  // Also bucketed by calendar year. A single average over 8 years can hide a
+  // signal that works in some years and actively hurts in others, and this
+  // one does exactly that — so the per-year split gets measured and shown
+  // rather than being smoothed away into one comfortable-looking number.
+  const byYear = {};
   for (const sym of DEFAULT_UNIVERSE) {
     let bars;
     try { bars = await require('../marketdata').getBars(sym, '1Day', YEARS * 260); } catch { continue; }
@@ -35,12 +40,25 @@ const OUT = path.join(__dirname, '..', 'backtest_results.json');
       const j = Math.min(i + hold, bars.length - 1);
       const raw = (bars[j].c - bars[i].c) / bars[i].c;
       base.push(raw);
+      const y = bars[i].t.slice(0, 4);
+      byYear[y] = byYear[y] || { base: [], sig: [] };
+      byYear[y].base.push(raw);
       const s = bt.evaluateSignal(bars.slice(Math.max(0, i - 300), i + 1));
       if (!s) continue;
+      byYear[y].sig.push(raw);
       if (s.bias === 'CALL') calls.push(raw); else puts.push(-raw);
     }
   }
   const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+
+  const yearEdges = Object.keys(byYear).sort().map(y => ({
+    year: y,
+    n: byYear[y].sig.length,
+    baseline: avg(byYear[y].base),
+    signal: avg(byYear[y].sig),
+    edge: avg(byYear[y].sig) - avg(byYear[y].base),
+  })).filter(r => r.n >= 50);
+  const positiveYears = yearEdges.filter(r => r.edge > 0).length;
   const win = a => a.length ? a.filter(x => x > 0).length / a.length : 0;
 
   const out = {
@@ -56,6 +74,10 @@ const OUT = path.join(__dirname, '..', 'backtest_results.json');
       put: { n: puts.length, avgReturn: avg(puts), winRate: win(puts) },
       baselineLong: { n: base.length, avgReturn: avg(base), winRate: win(base) },
       callEdgeVsBaseline: avg(calls) - avg(base),
+      byYear: yearEdges,
+      positiveYears, totalYears: yearEdges.length,
+      worstYearEdge: yearEdges.length ? Math.min(...yearEdges.map(r => r.edge)) : null,
+      bestYearEdge: yearEdges.length ? Math.max(...yearEdges.map(r => r.edge)) : null,
     },
   };
   fs.writeFileSync(OUT, JSON.stringify(out, null, 2));

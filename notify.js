@@ -456,6 +456,48 @@ function buildMacroBlock(macro) {
 // important fact about the picks below: as of the last run, the rules do
 // not have a positive measured expectancy. Hiding that while presenting
 // "actionable" picks would be dishonest.
+// The headline expectancy is an 8-year average, and an average can hide a
+// signal that helps in some years and hurts in others. This one does: the
+// dip entry's edge over simply buying on a random day flips sign roughly
+// year to year. Saying "+3.3% per trade" without saying that would be
+// technically true and practically misleading, so the year-by-year split is
+// shown whenever it is unstable — not buried in a repo file.
+function buildEdgeStabilityNote(s) {
+  const yrs = s?.byYear;
+  if (!Array.isArray(yrs) || yrs.length < 3) return '';
+  const pos = s.positiveYears, tot = s.totalYears;
+  const stable = pos === tot || pos === 0;
+  const cells = yrs.map(r => {
+    const good = r.edge > 0;
+    return `<td style="padding:5px 7px; text-align:center; border:1px solid ${COLOR.border}; font-size:12px;">
+      <div style="color:${COLOR.muted};">${r.year}</div>
+      <div style="font-weight:700; color:${good ? COLOR.target : COLOR.stop};">${r.edge >= 0 ? '+' : ''}${(r.edge * 100).toFixed(2)}</div>
+    </td>`;
+  }).join('');
+
+  return `
+    <div style="margin:10px 0 4px; padding:12px 14px; background:${COLOR.card}; border:1px solid ${COLOR.advisoryBorder}; border-radius:5px;">
+      <div style="font-size:14px; font-weight:700; color:${stable ? COLOR.text : COLOR.advisory}; margin-bottom:6px;">
+        ${stable ? 'Edge is consistent across years' : `⚠ The edge is NOT consistent — it helped in ${pos} of ${tot} years and hurt in ${tot - pos}`}
+      </div>
+      <div style="font-size:14px; line-height:1.7; color:${COLOR.text}; margin-bottom:8px;">
+        This row is the honest one. It asks: after a buy signal, did the fund actually rise <i>more</i> over the next 21 days than
+        it would have on any random day? Positive means the timing added something; negative means you'd have done better
+        buying blind.
+        ${stable ? '' : ` It swings from <b style="color:${COLOR.stop};">${(s.worstYearEdge * 100).toFixed(2)}</b> in its worst year to
+        <b style="color:${COLOR.target};">+${(s.bestYearEdge * 100).toFixed(2)}</b> in its best.`}
+      </div>
+      <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-bottom:8px;"><tr>${cells}</tr></table>
+      <div style="font-size:13px; line-height:1.6; color:${COLOR.muted};">
+        <b>What this means in plain terms:</b> most of what this strategy earns comes from the market drifting upward over three weeks
+        (${(s.baselineLong.avgReturn * 100).toFixed(2)}% on average, for buying <i>anything</i> on <i>any</i> day) multiplied by the leverage an option gives you —
+        not from the dip timing being clever. The timing contributes about ${(s.callEdgeVsBaseline * 100).toFixed(2)} percentage points on average,
+        and that contribution is unreliable. Treat this as a disciplined way to take leveraged long exposure with defined size and defined exits,
+        <b>not</b> as a system that predicts which dips will bounce. In a year when the market falls, expect it to lose money.
+      </div>
+    </div>`;
+}
+
 function buildEvidenceBanner() {
   let bt;
   try { bt = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'backtest_results.json'), 'utf8')); }
@@ -477,6 +519,7 @@ function buildEvidenceBanner() {
         ? `Tested against ${bt.params.years} years of real prices, these exact rules produced <b>${o.trades.toLocaleString()} trades</b> and <b>lost an average of ${Math.abs(o.expectancy * 100).toFixed(1)}% per trade</b>. Only ${(o.winRate * 100).toFixed(0)}% were winners, against the ${(bt.params.breakeven * 100).toFixed(0)}% needed just to break even. Worse: after a buy signal the fund rose <b>${(s.call.avgReturn * 100).toFixed(2)}%</b> on average over ${s.signalEdge?.holdDays || s.holdDays} days, versus <b>${(s.baselineLong.avgReturn * 100).toFixed(2)}%</b> for simply buying on any random day — so the signal picked <i>worse</i> than chance. Treat everything below as research output, not advice to place money.`
         : `Tested over ${bt.params.years} years: ${o.trades.toLocaleString()} trades, ${(o.winRate * 100).toFixed(0)}% win rate, ${(o.expectancy * 100).toFixed(2)}% average per trade.`}
     </div>
+    ${buildEdgeStabilityNote(s)}
     <div style="font-size:13px; line-height:1.6; color:${COLOR.muted};">
       <b>In market terms:</b> ${o.trades.toLocaleString()} simulated trades, win rate ${(o.winRate * 100).toFixed(1)}% vs ${(bt.params.breakeven * 100).toFixed(1)}% breakeven, expectancy ${(o.expectancy * 100).toFixed(2)}%/trade, mean hold ${o.avgDays.toFixed(1)}d. Signal edge vs buy-and-hold baseline: ${(s.callEdgeVsBaseline * 100).toFixed(2)}%. Option leg is Black-Scholes-approximated (IV proxied at 1.15x realized, 2% spread each way); underlying moves are exact. Run <code>npm run backtest</code> to reproduce.
     </div>
