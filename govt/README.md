@@ -1,5 +1,8 @@
 # Government Stakes page
 
+**Live: <https://daily.igniteshakti.com/govt.html>**
+(the council report is at <https://daily.igniteshakti.com/>)
+
 Tracks the companies the U.S. government has taken an equity position in, the
 ETFs that hold them, and a BUY/SELL read on each — published as
 `report/govt.html` alongside the daily council report.
