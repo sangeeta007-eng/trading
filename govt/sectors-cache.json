@@ -4,79 +4,79 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-04T17:59:57.943Z"
+      "fetchedAt": "2026-09-11T18:18:00.033Z"
     },
     "GFS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-04T17:59:58.005Z"
+      "fetchedAt": "2026-09-11T18:18:00.127Z"
     },
     "LHX": {
       "type": "STOCK",
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
-      "fetchedAt": "2026-09-04T17:59:58.052Z"
+      "fetchedAt": "2026-09-11T18:18:00.208Z"
     },
     "MP": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-09-04T17:59:58.105Z"
+      "fetchedAt": "2026-09-11T18:18:00.300Z"
     },
     "LAC": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-09-04T17:59:58.148Z"
+      "fetchedAt": "2026-09-11T18:18:00.380Z"
     },
     "TMQ": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-09-04T17:59:58.202Z"
+      "fetchedAt": "2026-09-11T18:18:00.452Z"
     },
     "QBTS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-09-04T17:59:58.247Z"
+      "fetchedAt": "2026-09-11T18:18:00.594Z"
     },
     "RGTI": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-09-04T17:59:58.291Z"
+      "fetchedAt": "2026-09-11T18:18:00.672Z"
     },
     "IBM": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Information Technology Services",
-      "fetchedAt": "2026-09-04T17:59:58.343Z"
+      "fetchedAt": "2026-09-11T18:18:00.744Z"
     },
     "USAR": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-09-04T17:59:58.385Z"
+      "fetchedAt": "2026-09-11T18:18:00.833Z"
     },
     "ALMU": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-04T17:59:58.429Z"
+      "fetchedAt": "2026-09-11T18:18:00.916Z"
     },
     "NVDA": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-04T17:59:58.470Z"
+      "fetchedAt": "2026-09-11T18:17:32.752Z"
     },
     "AMD": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-04T17:59:58.524Z"
+      "fetchedAt": "2026-09-11T18:17:32.827Z"
     },
     "SOXX": {
       "type": "ETF",
@@ -139,7 +139,7 @@
           "pct": 4.1171397999999995
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.570Z"
+      "fetchedAt": "2026-09-11T18:17:32.974Z"
     },
     "SMH": {
       "type": "ETF",
@@ -177,6 +177,11 @@
           "pct": 5.36277
         },
         {
+          "symbol": "ASML",
+          "name": "ASML Holding NV ADR",
+          "pct": 5.09663
+        },
+        {
           "symbol": "LRCX",
           "name": "Lam Research Corp",
           "pct": 4.399
@@ -197,7 +202,7 @@
           "pct": 4.3012198
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.619Z"
+      "fetchedAt": "2026-09-11T18:17:33.045Z"
     },
     "XLK": {
       "type": "ETF",
@@ -260,7 +265,7 @@
           "pct": 2.47268
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.668Z"
+      "fetchedAt": "2026-09-11T18:17:32.903Z"
     },
     "XSD": {
       "type": "ETF",
@@ -328,7 +333,7 @@
           "pct": 2.62327
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.711Z"
+      "fetchedAt": "2026-09-11T18:18:02.157Z"
     },
     "PSI": {
       "type": "ETF",
@@ -391,7 +396,7 @@
           "pct": 3.1940000000000004
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.751Z"
+      "fetchedAt": "2026-09-11T18:18:01.739Z"
     },
     "ITA": {
       "type": "ETF",
@@ -454,7 +459,7 @@
           "pct": 3.40451
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.807Z"
+      "fetchedAt": "2026-09-11T18:18:01.233Z"
     },
     "XAR": {
       "type": "ETF",
@@ -507,12 +512,17 @@
           "pct": 3.00161
         },
         {
+          "symbol": "HEI",
+          "name": "Heico Corp",
+          "pct": 2.94082
+        },
+        {
           "symbol": "HXL",
           "name": "Hexcel Corp",
           "pct": 2.88385
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.851Z"
+      "fetchedAt": "2026-09-11T18:18:02.035Z"
     },
     "PPA": {
       "type": "ETF",
@@ -585,7 +595,7 @@
           "pct": 3.72618
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.901Z"
+      "fetchedAt": "2026-09-11T18:18:01.594Z"
     },
     "REMX": {
       "type": "ETF",
@@ -648,7 +658,7 @@
           "pct": 4.0615
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.945Z"
+      "fetchedAt": "2026-09-11T18:18:01.884Z"
     },
     "PICK": {
       "type": "ETF",
@@ -726,7 +736,7 @@
           "pct": 1.8342399999999999
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:58.986Z"
+      "fetchedAt": "2026-09-11T18:18:01.520Z"
     },
     "LIT": {
       "type": "ETF",
@@ -753,6 +763,11 @@
         }
       ],
       "holdings": [
+        {
+          "symbol": "RIO",
+          "name": "Rio Tinto PLC ADR",
+          "pct": 22.165858999999998
+        },
         {
           "symbol": "6752.T",
           "name": "Panasonic Holdings Corp",
@@ -799,7 +814,7 @@
           "pct": 3.40759
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.036Z"
+      "fetchedAt": "2026-09-11T18:18:01.445Z"
     },
     "BATT": {
       "type": "ETF",
@@ -847,6 +862,11 @@
           "pct": 6.0708698
         },
         {
+          "symbol": "01211",
+          "name": "BYD Co Ltd Class H",
+          "pct": 4.67537
+        },
+        {
           "symbol": "BE",
           "name": "Bloom Energy Corp Class A",
           "pct": 3.54655
@@ -872,7 +892,7 @@
           "pct": 2.4802798
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.081Z"
+      "fetchedAt": "2026-09-11T18:18:01.116Z"
     },
     "SIL": {
       "type": "ETF",
@@ -928,9 +948,14 @@
           "symbol": "OR.TO",
           "name": "OR Royalties Inc",
           "pct": 3.88658
+        },
+        {
+          "symbol": "BVN",
+          "name": "Compania De Minas Buenaventura SAA ADR",
+          "pct": 3.56198
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.129Z"
+      "fetchedAt": "2026-09-11T18:18:01.962Z"
     },
     "QTUM": {
       "type": "ETF",
@@ -1013,7 +1038,7 @@
           "pct": 1.54041005
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.177Z"
+      "fetchedAt": "2026-09-11T18:18:01.812Z"
     },
     "KOMP": {
       "type": "ETF",
@@ -1086,6 +1111,11 @@
           "pct": 1.06971
         },
         {
+          "symbol": "HIMX",
+          "name": "Himax Technologies Inc ADR",
+          "pct": 1.01368
+        },
+        {
           "symbol": "BRKR",
           "name": "Bruker Corp",
           "pct": 1.0023499999999999
@@ -1116,7 +1146,7 @@
           "pct": 0.79058
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.222Z"
+      "fetchedAt": "2026-09-11T18:18:01.371Z"
     },
     "ARKQ": {
       "type": "ETF",
@@ -1209,7 +1239,7 @@
           "pct": 3.48332
         }
       ],
-      "fetchedAt": "2026-09-04T17:59:59.272Z"
+      "fetchedAt": "2026-09-11T18:18:00.993Z"
     },
     "MU": {
       "type": "STOCK",
@@ -2408,5 +2438,5 @@
       "fetchedAt": "2026-09-04T19:09:22.828Z"
     }
   },
-  "lastRun": "2026-09-04T19:09:22.828Z"
+  "lastRun": "2026-09-11T18:18:02.157Z"
 }
