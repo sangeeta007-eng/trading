@@ -1245,73 +1245,73 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-14T18:53:02.818Z"
+      "fetchedAt": "2026-09-21T18:54:36.536Z"
     },
     "AVGO": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-14T18:53:02.974Z"
+      "fetchedAt": "2026-09-21T18:54:36.616Z"
     },
     "TSLA": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Auto Manufacturers",
-      "fetchedAt": "2026-09-14T18:53:03.071Z"
+      "fetchedAt": "2026-09-21T18:54:36.692Z"
     },
     "PLTR": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-09-14T18:53:03.151Z"
+      "fetchedAt": "2026-09-21T18:54:36.766Z"
     },
     "COIN": {
       "type": "STOCK",
       "sector": "Financial Services",
       "industry": "Financial Data & Stock Exchanges",
-      "fetchedAt": "2026-09-14T18:53:03.210Z"
+      "fetchedAt": "2026-09-21T18:54:36.852Z"
     },
     "GOOGL": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-09-14T18:53:03.275Z"
+      "fetchedAt": "2026-09-21T18:54:36.925Z"
     },
     "META": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-09-14T18:53:03.354Z"
+      "fetchedAt": "2026-09-21T18:54:37.004Z"
     },
     "AMZN": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Internet Retail",
-      "fetchedAt": "2026-09-14T18:53:03.414Z"
+      "fetchedAt": "2026-09-21T18:54:37.076Z"
     },
     "MSFT": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-09-14T18:53:03.480Z"
+      "fetchedAt": "2026-09-21T18:54:37.216Z"
     },
     "AAPL": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Consumer Electronics",
-      "fetchedAt": "2026-09-14T18:53:03.544Z"
+      "fetchedAt": "2026-09-21T18:54:37.323Z"
     },
     "NFLX": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Entertainment",
-      "fetchedAt": "2026-09-14T18:53:03.605Z"
+      "fetchedAt": "2026-09-21T18:54:37.396Z"
     },
     "XOM": {
       "type": "STOCK",
       "sector": "Energy",
       "industry": "Oil & Gas Integrated",
-      "fetchedAt": "2026-09-14T18:53:03.667Z"
+      "fetchedAt": "2026-09-21T18:54:37.470Z"
     },
     "SPY": {
       "type": "ETF",
@@ -1424,7 +1424,7 @@
           "pct": 1.5649199999999999
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:03.730Z"
+      "fetchedAt": "2026-09-21T18:54:37.543Z"
     },
     "QQQ": {
       "type": "ETF",
@@ -1532,7 +1532,7 @@
           "pct": 2.79556
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:03.791Z"
+      "fetchedAt": "2026-09-21T18:54:37.678Z"
     },
     "IWM": {
       "type": "ETF",
@@ -1645,7 +1645,7 @@
           "pct": 0.28974
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:03.876Z"
+      "fetchedAt": "2026-09-21T18:54:37.758Z"
     },
     "DIA": {
       "type": "ETF",
@@ -1748,7 +1748,7 @@
           "pct": 3.7823602999999997
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:03.979Z"
+      "fetchedAt": "2026-09-21T18:54:37.833Z"
     },
     "MDY": {
       "type": "ETF",
@@ -1756,112 +1756,112 @@
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 23.35
+          "pct": 22.219998999999998
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 15.689998999999998
+          "pct": 17.07
         },
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 14.000000000000002
-        },
-        {
-          "key": "consumer_cyclical",
-          "name": "Consumer Cyclical",
-          "pct": 10.92
+          "pct": 13.4
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 10.569999
+          "pct": 10.7700005
+        },
+        {
+          "key": "consumer_cyclical",
+          "name": "Consumer Cyclical",
+          "pct": 10.41
         },
         {
           "key": "realestate",
           "name": "Real Estate",
-          "pct": 7.6899999999999995
+          "pct": 7.7199996
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 5.2199997
+          "pct": 5.48
         },
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 4.71
+          "pct": 5.1599998000000005
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 3.35
+          "pct": 3.37
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 2.86
+          "pct": 2.7999999
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 1.6400000000000001
+          "pct": 1.6
         }
       ],
       "holdings": [
         {
-          "symbol": "ILMN",
-          "name": "Illumina Inc",
-          "pct": 0.8718699999999999
-        },
-        {
           "symbol": "TWLO",
           "name": "Twilio Inc Class A",
-          "pct": 0.84154
+          "pct": 1.00358995
+        },
+        {
+          "symbol": "ILMN",
+          "name": "Illumina Inc",
+          "pct": 0.90704
         },
         {
           "symbol": "FTI",
           "name": "TechnipFMC PLC",
-          "pct": 0.8027299999999999
-        },
-        {
-          "symbol": "CW",
-          "name": "Curtiss-Wright Corp",
-          "pct": 0.7514299999999999
-        },
-        {
-          "symbol": "CRS",
-          "name": "Carpenter Technology Corp",
-          "pct": 0.72544003
-        },
-        {
-          "symbol": "ATI",
-          "name": "ATI Inc",
-          "pct": 0.71869
-        },
-        {
-          "symbol": "NVT",
-          "name": "nVent Electric PLC",
-          "pct": 0.69896
+          "pct": 0.8743900000000001
         },
         {
           "symbol": "P",
           "name": "Everpure Inc Class A",
-          "pct": 0.68415
+          "pct": 0.8230700000000001
         },
         {
           "symbol": "OKTA",
           "name": "Okta Inc Class A",
-          "pct": 0.66857
+          "pct": 0.81414
         },
         {
-          "symbol": "XPO",
-          "name": "XPO Inc",
-          "pct": 0.66294996
+          "symbol": "ATI",
+          "name": "ATI Inc",
+          "pct": 0.7820199999999999
+        },
+        {
+          "symbol": "NVT",
+          "name": "nVent Electric PLC",
+          "pct": 0.68414
+        },
+        {
+          "symbol": "CRS",
+          "name": "Carpenter Technology Corp",
+          "pct": 0.66428
+        },
+        {
+          "symbol": "USFD",
+          "name": "US Foods Holding Corp",
+          "pct": 0.64791
+        },
+        {
+          "symbol": "THC",
+          "name": "Tenet Healthcare Corp",
+          "pct": 0.64275996
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.046Z"
+      "fetchedAt": "2026-09-21T18:54:37.906Z"
     },
     "XLF": {
       "type": "ETF",
@@ -1934,7 +1934,7 @@
           "pct": 2.1997400000000003
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.116Z"
+      "fetchedAt": "2026-09-21T18:54:37.981Z"
     },
     "XLE": {
       "type": "ETF",
@@ -1997,7 +1997,7 @@
           "pct": 3.64842
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.177Z"
+      "fetchedAt": "2026-09-21T18:54:38.052Z"
     },
     "XLV": {
       "type": "ETF",
@@ -2060,7 +2060,7 @@
           "pct": 2.6354698
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.239Z"
+      "fetchedAt": "2026-09-21T18:54:38.128Z"
     },
     "XLI": {
       "type": "ETF",
@@ -2138,7 +2138,7 @@
           "pct": 2.2441199
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.306Z"
+      "fetchedAt": "2026-09-21T18:54:38.200Z"
     },
     "XLU": {
       "type": "ETF",
@@ -2201,7 +2201,7 @@
           "pct": 3.39976
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.354Z"
+      "fetchedAt": "2026-09-21T18:54:38.336Z"
     },
     "XLP": {
       "type": "ETF",
@@ -2269,7 +2269,7 @@
           "pct": 4.2367
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.450Z"
+      "fetchedAt": "2026-09-21T18:54:38.480Z"
     },
     "XLY": {
       "type": "ETF",
@@ -2337,7 +2337,7 @@
           "pct": 1.9484499999999998
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.494Z"
+      "fetchedAt": "2026-09-21T18:54:38.552Z"
     },
     "XLB": {
       "type": "ETF",
@@ -2405,38 +2405,38 @@
           "pct": 4.0710999999999995
         }
       ],
-      "fetchedAt": "2026-09-14T18:53:04.558Z"
+      "fetchedAt": "2026-09-21T18:54:38.632Z"
     },
     "GLD": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-14T18:53:04.603Z"
+      "fetchedAt": "2026-09-21T18:54:38.705Z"
     },
     "TLT": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-14T18:53:04.644Z"
+      "fetchedAt": "2026-09-21T18:54:38.779Z"
     },
     "SLV": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-14T18:53:04.716Z"
+      "fetchedAt": "2026-09-21T18:54:38.877Z"
     },
     "USO": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-14T18:53:04.759Z"
+      "fetchedAt": "2026-09-21T18:54:39.012Z"
     },
     "UNG": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-14T18:53:04.802Z"
+      "fetchedAt": "2026-09-21T18:54:39.085Z"
     }
   },
-  "lastRun": "2026-09-18T18:50:15.376Z"
+  "lastRun": "2026-09-21T18:54:39.085Z"
 }
