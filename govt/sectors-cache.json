@@ -1245,73 +1245,73 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-28T20:14:35.204Z"
+      "fetchedAt": "2026-10-05T21:19:26.077Z"
     },
     "AVGO": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-09-28T20:14:35.236Z"
+      "fetchedAt": "2026-10-05T21:19:26.149Z"
     },
     "TSLA": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Auto Manufacturers",
-      "fetchedAt": "2026-09-28T20:14:35.270Z"
+      "fetchedAt": "2026-10-05T21:19:26.223Z"
     },
     "PLTR": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-09-28T20:14:35.303Z"
+      "fetchedAt": "2026-10-05T21:19:26.300Z"
     },
     "COIN": {
       "type": "STOCK",
       "sector": "Financial Services",
       "industry": "Financial Data & Stock Exchanges",
-      "fetchedAt": "2026-09-28T20:14:35.334Z"
+      "fetchedAt": "2026-10-05T21:19:26.383Z"
     },
     "GOOGL": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-09-28T20:14:35.368Z"
+      "fetchedAt": "2026-10-05T21:19:26.458Z"
     },
     "META": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-09-28T20:14:35.399Z"
+      "fetchedAt": "2026-10-05T21:19:26.562Z"
     },
     "AMZN": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Internet Retail",
-      "fetchedAt": "2026-09-28T20:14:35.431Z"
+      "fetchedAt": "2026-10-05T21:19:26.633Z"
     },
     "MSFT": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-09-28T20:14:35.465Z"
+      "fetchedAt": "2026-10-05T21:19:26.773Z"
     },
     "AAPL": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Consumer Electronics",
-      "fetchedAt": "2026-09-28T20:14:35.497Z"
+      "fetchedAt": "2026-10-05T21:19:26.999Z"
     },
     "NFLX": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Entertainment",
-      "fetchedAt": "2026-09-28T20:14:35.529Z"
+      "fetchedAt": "2026-10-05T21:19:27.070Z"
     },
     "XOM": {
       "type": "STOCK",
       "sector": "Energy",
       "industry": "Oil & Gas Integrated",
-      "fetchedAt": "2026-09-28T20:14:35.561Z"
+      "fetchedAt": "2026-10-05T21:19:27.143Z"
     },
     "SPY": {
       "type": "ETF",
@@ -1424,7 +1424,7 @@
           "pct": 1.5649199999999999
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.593Z"
+      "fetchedAt": "2026-10-05T21:19:27.214Z"
     },
     "QQQ": {
       "type": "ETF",
@@ -1532,7 +1532,7 @@
           "pct": 2.79556
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.625Z"
+      "fetchedAt": "2026-10-05T21:19:27.347Z"
     },
     "IWM": {
       "type": "ETF",
@@ -1645,7 +1645,7 @@
           "pct": 0.28974
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.657Z"
+      "fetchedAt": "2026-10-05T21:19:27.418Z"
     },
     "DIA": {
       "type": "ETF",
@@ -1748,7 +1748,7 @@
           "pct": 3.7823602999999997
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.693Z"
+      "fetchedAt": "2026-10-05T21:19:27.554Z"
     },
     "MDY": {
       "type": "ETF",
@@ -1861,7 +1861,7 @@
           "pct": 0.64275996
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.730Z"
+      "fetchedAt": "2026-10-05T21:19:27.626Z"
     },
     "XLF": {
       "type": "ETF",
@@ -1934,7 +1934,7 @@
           "pct": 2.1997400000000003
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.767Z"
+      "fetchedAt": "2026-10-05T21:19:27.752Z"
     },
     "XLE": {
       "type": "ETF",
@@ -1997,7 +1997,7 @@
           "pct": 3.64842
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.799Z"
+      "fetchedAt": "2026-10-05T21:19:27.884Z"
     },
     "XLV": {
       "type": "ETF",
@@ -2060,7 +2060,7 @@
           "pct": 2.6354698
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.831Z"
+      "fetchedAt": "2026-10-05T21:19:28.027Z"
     },
     "XLI": {
       "type": "ETF",
@@ -2138,7 +2138,7 @@
           "pct": 2.2441199
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.862Z"
+      "fetchedAt": "2026-10-05T21:19:28.101Z"
     },
     "XLU": {
       "type": "ETF",
@@ -2201,7 +2201,7 @@
           "pct": 3.39976
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.893Z"
+      "fetchedAt": "2026-10-05T21:19:28.172Z"
     },
     "XLP": {
       "type": "ETF",
@@ -2269,7 +2269,7 @@
           "pct": 4.2367
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.926Z"
+      "fetchedAt": "2026-10-05T21:19:28.243Z"
     },
     "XLY": {
       "type": "ETF",
@@ -2337,7 +2337,7 @@
           "pct": 1.9484499999999998
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.961Z"
+      "fetchedAt": "2026-10-05T21:19:28.383Z"
     },
     "XLB": {
       "type": "ETF",
@@ -2405,38 +2405,38 @@
           "pct": 4.0710999999999995
         }
       ],
-      "fetchedAt": "2026-09-28T20:14:35.993Z"
+      "fetchedAt": "2026-10-05T21:19:28.454Z"
     },
     "GLD": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-28T20:14:36.022Z"
+      "fetchedAt": "2026-10-05T21:19:28.589Z"
     },
     "TLT": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-28T20:14:36.052Z"
+      "fetchedAt": "2026-10-05T21:19:28.657Z"
     },
     "SLV": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-28T20:14:36.083Z"
+      "fetchedAt": "2026-10-05T21:19:28.754Z"
     },
     "USO": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-28T20:14:36.114Z"
+      "fetchedAt": "2026-10-05T21:19:28.829Z"
     },
     "UNG": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-09-28T20:14:36.145Z"
+      "fetchedAt": "2026-10-05T21:19:28.903Z"
     }
   },
-  "lastRun": "2026-10-02T19:49:58.738Z"
+  "lastRun": "2026-10-05T21:19:28.903Z"
 }
