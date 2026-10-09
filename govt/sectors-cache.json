@@ -4,79 +4,79 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-02T19:49:56.954Z"
+      "fetchedAt": "2026-10-09T20:02:22.309Z"
     },
     "GFS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-02T19:49:57.031Z"
+      "fetchedAt": "2026-10-09T20:02:22.356Z"
     },
     "LHX": {
       "type": "STOCK",
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
-      "fetchedAt": "2026-10-02T19:49:57.105Z"
+      "fetchedAt": "2026-10-09T20:02:22.401Z"
     },
     "MP": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-02T19:49:57.249Z"
+      "fetchedAt": "2026-10-09T20:02:22.445Z"
     },
     "LAC": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-02T19:49:57.321Z"
+      "fetchedAt": "2026-10-09T20:02:22.531Z"
     },
     "TMQ": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-02T19:49:57.389Z"
+      "fetchedAt": "2026-10-09T20:02:22.579Z"
     },
     "QBTS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-10-02T19:49:57.459Z"
+      "fetchedAt": "2026-10-09T20:02:22.716Z"
     },
     "RGTI": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-10-02T19:49:57.534Z"
+      "fetchedAt": "2026-10-09T20:02:22.830Z"
     },
     "IBM": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Information Technology Services",
-      "fetchedAt": "2026-10-02T19:49:57.607Z"
+      "fetchedAt": "2026-10-09T20:02:22.920Z"
     },
     "USAR": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-02T19:49:57.679Z"
+      "fetchedAt": "2026-10-09T20:02:22.970Z"
     },
     "ALMU": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-02T19:49:57.754Z"
+      "fetchedAt": "2026-10-09T20:02:23.025Z"
     },
     "NVDA": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-02T19:49:28.283Z"
+      "fetchedAt": "2026-10-09T20:02:14.698Z"
     },
     "AMD": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-02T19:49:28.354Z"
+      "fetchedAt": "2026-10-09T20:02:14.743Z"
     },
     "SOXX": {
       "type": "ETF",
@@ -89,57 +89,57 @@
       ],
       "holdings": [
         {
-          "symbol": "NVDA",
-          "name": "NVIDIA Corp",
-          "pct": 9.430820500000001
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 8.90507
+          "symbol": "INTC",
+          "name": "Intel Corp",
+          "pct": 9.591231
         },
         {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 8.22601
+          "pct": 9.280071
+        },
+        {
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 7.93287
+        },
+        {
+          "symbol": "NVDA",
+          "name": "NVIDIA Corp",
+          "pct": 7.38637
         },
         {
           "symbol": "AVGO",
           "name": "Broadcom Inc",
-          "pct": 7.47613
-        },
-        {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 5.092060200000001
+          "pct": 6.77134
         },
         {
           "symbol": "MRVL",
           "name": "Marvell Technology Inc",
-          "pct": 4.656020000000001
-        },
-        {
-          "symbol": "TSM",
-          "name": "Taiwan Semiconductor Manufacturing Co Ltd ADR",
-          "pct": 4.6525799999999995
+          "pct": 4.4567000000000005
         },
         {
           "symbol": "AMAT",
           "name": "Applied Materials Inc",
-          "pct": 4.59298
-        },
-        {
-          "symbol": "LRCX",
-          "name": "Lam Research Corp",
-          "pct": 4.27297
+          "pct": 3.9829999999999997
         },
         {
           "symbol": "KLAC",
           "name": "KLA Corp",
-          "pct": 4.1171397999999995
+          "pct": 3.9666901999999995
+        },
+        {
+          "symbol": "ADI",
+          "name": "Analog Devices Inc",
+          "pct": 3.9111
+        },
+        {
+          "symbol": "LRCX",
+          "name": "Lam Research Corp",
+          "pct": 3.89026
         }
       ],
-      "fetchedAt": "2026-10-02T19:49:28.517Z"
+      "fetchedAt": "2026-10-09T20:02:14.846Z"
     },
     "SMH": {
       "type": "ETF",
@@ -154,55 +154,55 @@
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 22.62537
+          "pct": 19.31036
         },
         {
           "symbol": "TSM",
           "name": "Taiwan Semiconductor Manufacturing Co Ltd ADR",
-          "pct": 9.6530505
-        },
-        {
-          "symbol": "AVGO",
-          "name": "Broadcom Inc",
-          "pct": 6.1076898
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 5.450369800000001
+          "pct": 9.27951
         },
         {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 5.36277
+          "pct": 5.54102
         },
         {
-          "symbol": "ASML",
-          "name": "ASML Holding NV ADR",
-          "pct": 5.09663
+          "symbol": "AVGO",
+          "name": "Broadcom Inc",
+          "pct": 5.26573
         },
         {
-          "symbol": "LRCX",
-          "name": "Lam Research Corp",
-          "pct": 4.399
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 4.92491
         },
         {
           "symbol": "AMAT",
           "name": "Applied Materials Inc",
-          "pct": 4.35639
+          "pct": 4.66008
         },
         {
-          "symbol": "ADI",
-          "name": "Analog Devices Inc",
-          "pct": 4.32092
+          "symbol": "INTC",
+          "name": "Intel Corp",
+          "pct": 4.6564597999999995
         },
         {
           "symbol": "TXN",
           "name": "Texas Instruments Inc",
-          "pct": 4.3012198
+          "pct": 4.595140000000001
+        },
+        {
+          "symbol": "KLAC",
+          "name": "KLA Corp",
+          "pct": 4.58501
+        },
+        {
+          "symbol": "ASML",
+          "name": "ASML Holding NV ADR",
+          "pct": 4.5364700000000004
         }
       ],
-      "fetchedAt": "2026-10-02T19:49:28.656Z"
+      "fetchedAt": "2026-10-09T20:02:14.890Z"
     },
     "XLK": {
       "type": "ETF",
@@ -217,55 +217,55 @@
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 14.363189000000002
+          "pct": 15.4659
         },
         {
           "symbol": "AAPL",
           "name": "Apple Inc",
-          "pct": 12.499839999999999
+          "pct": 13.6004
         },
         {
           "symbol": "MSFT",
           "name": "Microsoft Corp",
-          "pct": 10.121879999999999
-        },
-        {
-          "symbol": "AVGO",
-          "name": "Broadcom Inc",
-          "pct": 4.70974
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 3.99906
+          "pct": 10.657679
         },
         {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 3.92825
+          "pct": 5.0590202
+        },
+        {
+          "symbol": "AVGO",
+          "name": "Broadcom Inc",
+          "pct": 4.67552
+        },
+        {
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 4.46581
         },
         {
           "symbol": "INTC",
           "name": "Intel Corp",
-          "pct": 2.8994901
-        },
-        {
-          "symbol": "CSCO",
-          "name": "Cisco Systems Inc",
-          "pct": 2.86219
+          "pct": 3.3849400000000003
         },
         {
           "symbol": "PLTR",
           "name": "Palantir Technologies Inc Ordinary Shares - Class A",
-          "pct": 2.80656
+          "pct": 2.43834
+        },
+        {
+          "symbol": "CSCO",
+          "name": "Cisco Systems Inc",
+          "pct": 2.4036
         },
         {
           "symbol": "LRCX",
           "name": "Lam Research Corp",
-          "pct": 2.47268
+          "pct": 2.32913
         }
       ],
-      "fetchedAt": "2026-10-02T19:49:28.445Z"
+      "fetchedAt": "2026-10-09T20:02:14.800Z"
     },
     "XSD": {
       "type": "ETF",
@@ -2438,5 +2438,5 @@
       "fetchedAt": "2026-10-05T21:19:28.903Z"
     }
   },
-  "lastRun": "2026-10-05T21:19:28.903Z"
+  "lastRun": "2026-10-09T20:02:23.025Z"
 }
