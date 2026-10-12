@@ -1245,73 +1245,73 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-05T21:19:26.077Z"
+      "fetchedAt": "2026-10-12T21:52:31.730Z"
     },
     "AVGO": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-05T21:19:26.149Z"
+      "fetchedAt": "2026-10-12T21:52:31.778Z"
     },
     "TSLA": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Auto Manufacturers",
-      "fetchedAt": "2026-10-05T21:19:26.223Z"
+      "fetchedAt": "2026-10-12T21:52:31.856Z"
     },
     "PLTR": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-10-05T21:19:26.300Z"
+      "fetchedAt": "2026-10-12T21:52:31.902Z"
     },
     "COIN": {
       "type": "STOCK",
       "sector": "Financial Services",
       "industry": "Financial Data & Stock Exchanges",
-      "fetchedAt": "2026-10-05T21:19:26.383Z"
+      "fetchedAt": "2026-10-12T21:52:31.984Z"
     },
     "GOOGL": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-10-05T21:19:26.458Z"
+      "fetchedAt": "2026-10-12T21:52:32.076Z"
     },
     "META": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Internet Content & Information",
-      "fetchedAt": "2026-10-05T21:19:26.562Z"
+      "fetchedAt": "2026-10-12T21:52:32.124Z"
     },
     "AMZN": {
       "type": "STOCK",
       "sector": "Consumer Cyclical",
       "industry": "Internet Retail",
-      "fetchedAt": "2026-10-05T21:19:26.633Z"
+      "fetchedAt": "2026-10-12T21:52:32.173Z"
     },
     "MSFT": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Software - Infrastructure",
-      "fetchedAt": "2026-10-05T21:19:26.773Z"
+      "fetchedAt": "2026-10-12T21:52:32.218Z"
     },
     "AAPL": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Consumer Electronics",
-      "fetchedAt": "2026-10-05T21:19:26.999Z"
+      "fetchedAt": "2026-10-12T21:52:32.298Z"
     },
     "NFLX": {
       "type": "STOCK",
       "sector": "Communication Services",
       "industry": "Entertainment",
-      "fetchedAt": "2026-10-05T21:19:27.070Z"
+      "fetchedAt": "2026-10-12T21:52:32.352Z"
     },
     "XOM": {
       "type": "STOCK",
       "sector": "Energy",
       "industry": "Oil & Gas Integrated",
-      "fetchedAt": "2026-10-05T21:19:27.143Z"
+      "fetchedAt": "2026-10-12T21:52:32.401Z"
     },
     "SPY": {
       "type": "ETF",
@@ -1319,112 +1319,112 @@
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 38.689997999999996
+          "pct": 40.45
         },
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 12.060001
+          "pct": 11.1999996
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 9.5
-        },
-        {
-          "key": "consumer_cyclical",
-          "name": "Consumer Cyclical",
-          "pct": 9.3100004
+          "pct": 9.950000000000001
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 9.28
+          "pct": 9.26
+        },
+        {
+          "key": "consumer_cyclical",
+          "name": "Consumer Cyclical",
+          "pct": 8.74
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 7.75
+          "pct": 7.539999999999999
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 4.46
+          "pct": 4.33
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 3.4799999999999995
+          "pct": 3.4000000000000004
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 1.9800000000000002
+          "pct": 1.8800000000000001
         },
         {
           "key": "realestate",
           "name": "Real Estate",
-          "pct": 1.7999999999999998
+          "pct": 1.7000000000000002
         },
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 1.68
+          "pct": 1.5599999999999998
         }
       ],
       "holdings": [
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 8.078709
+          "pct": 8.36162
         },
         {
           "symbol": "AAPL",
           "name": "Apple Inc",
-          "pct": 7.03063
+          "pct": 7.35303
         },
         {
           "symbol": "MSFT",
           "name": "Microsoft Corp",
-          "pct": 5.6930700000000005
+          "pct": 5.76201
         },
         {
           "symbol": "AMZN",
           "name": "Amazon.com Inc",
-          "pct": 3.84188
+          "pct": 3.7000100000000002
         },
         {
           "symbol": "GOOGL",
           "name": "Alphabet Inc Class A",
-          "pct": 3.00627
+          "pct": 3.0545799
         },
         {
           "symbol": "AVGO",
           "name": "Broadcom Inc",
-          "pct": 2.6491001
+          "pct": 2.52788
         },
         {
           "symbol": "GOOG",
           "name": "Alphabet Inc Class C",
-          "pct": 2.39504
+          "pct": 2.4504
         },
         {
           "symbol": "META",
           "name": "Meta Platforms Inc Class A",
-          "pct": 1.8988600000000002
+          "pct": 2.4193800000000003
         },
         {
           "symbol": "MU",
           "name": "Micron Technology Inc",
-          "pct": 1.6333799999999998
+          "pct": 1.82
         },
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 1.5649199999999999
+          "pct": 1.51269
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.214Z"
+      "fetchedAt": "2026-10-12T21:52:32.483Z"
     },
     "QQQ": {
       "type": "ETF",
@@ -1432,107 +1432,107 @@
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 59.150004
+          "pct": 60.330003
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 12.7
+          "pct": 12.590000000000002
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 11.1099996
+          "pct": 10.07
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 6.239999999999999
-        },
-        {
-          "key": "healthcare",
-          "name": "Healthcare",
-          "pct": 4.02
+          "pct": 5.56
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 3.9100002000000003
+          "pct": 5.11
+        },
+        {
+          "key": "healthcare",
+          "name": "Healthcare",
+          "pct": 3.7900000000000005
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 1.1400000000000001
+          "pct": 1.01
         },
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 1
+          "pct": 0.9199999999999999
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 0.53
+          "pct": 0.44999999999999996
         },
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 0.21
+          "pct": 0.19
         }
       ],
       "holdings": [
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 8.50652
+          "pct": 8.32742
         },
         {
           "symbol": "AAPL",
           "name": "Apple Inc",
-          "pct": 7.40928
+          "pct": 7.3533504999999995
         },
         {
           "symbol": "MSFT",
           "name": "Microsoft Corp",
-          "pct": 5.9995297
+          "pct": 5.7623
         },
         {
           "symbol": "MU",
           "name": "Micron Technology Inc",
-          "pct": 4.7521602000000005
-        },
-        {
-          "symbol": "AMZN",
-          "name": "Amazon.com Inc",
-          "pct": 4.4489898
+          "pct": 5.0244797
         },
         {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 3.3736803
+          "pct": 4.17138
+        },
+        {
+          "symbol": "AMZN",
+          "name": "Amazon.com Inc",
+          "pct": 4.06602
+        },
+        {
+          "symbol": "META",
+          "name": "Meta Platforms Inc Class A",
+          "pct": 3.2625797999999997
         },
         {
           "symbol": "GOOGL",
           "name": "Alphabet Inc Class A",
-          "pct": 3.14663
-        },
-        {
-          "symbol": "TSLA",
-          "name": "Tesla Inc",
-          "pct": 2.9264601
+          "pct": 3.0548200000000003
         },
         {
           "symbol": "GOOG",
           "name": "Alphabet Inc Class C",
-          "pct": 2.9135698000000003
+          "pct": 2.84936
         },
         {
-          "symbol": "AVGO",
-          "name": "Broadcom Inc",
-          "pct": 2.79556
+          "symbol": "TSLA",
+          "name": "Tesla Inc",
+          "pct": 2.8200800000000004
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.347Z"
+      "fetchedAt": "2026-10-12T21:52:32.531Z"
     },
     "IWM": {
       "type": "ETF",
@@ -1540,112 +1540,112 @@
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 20.979999
+          "pct": 20.93
         },
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 18.059998999999998
+          "pct": 17.969999
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 13.79
+          "pct": 14.549999999999999
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 13.229999000000001
+          "pct": 13.29
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 8.870000000000001
+          "pct": 8.6
         },
         {
           "key": "realestate",
           "name": "Real Estate",
-          "pct": 6.5
+          "pct": 6.41
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 6.5
+          "pct": 6.36
         },
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 4.46
+          "pct": 4.279999999999999
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 2.7199999999999998
+          "pct": 2.7
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 2.6300002
+          "pct": 2.5700000000000003
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 2.27
+          "pct": 2.33
         }
       ],
       "holdings": [
         {
-          "symbol": "FROG",
-          "name": "JFrog Ltd Ordinary Shares",
-          "pct": 0.34870999999999996
+          "symbol": "XTSLA",
+          "name": "BlackRock Cash Funds Treasury SL Agency",
+          "pct": 0.4783
+        },
+        {
+          "symbol": "TWST",
+          "name": "Twist Bioscience Corp",
+          "pct": 0.42932
         },
         {
           "symbol": "MOG-A",
           "name": "Moog Inc Class A",
-          "pct": 0.33969
+          "pct": 0.36658002
         },
         {
-          "symbol": "XTSLA",
-          "name": "BlackRock Cash Funds Treasury SL Agency",
-          "pct": 0.33926002
+          "symbol": "FROG",
+          "name": "JFrog Ltd Ordinary Shares",
+          "pct": 0.35605001999999997
+        },
+        {
+          "symbol": "TXG",
+          "name": "10x Genomics Inc Ordinary Shares - Class A",
+          "pct": 0.35516
         },
         {
           "symbol": "UMBF",
           "name": "UMB Financial Corp",
-          "pct": 0.33773000000000003
-        },
-        {
-          "symbol": "GKOS",
-          "name": "Glaukos Corp",
-          "pct": 0.32978998
-        },
-        {
-          "symbol": "EAT",
-          "name": "Brinker International Inc",
-          "pct": 0.31637000000000004
+          "pct": 0.32458
         },
         {
           "symbol": "BTSG",
           "name": "BrightSpring Health Services Inc",
-          "pct": 0.30467
+          "pct": 0.32106999999999997
         },
         {
-          "symbol": "KRYS",
-          "name": "Krystal Biotech Inc",
-          "pct": 0.29865
+          "symbol": "GKOS",
+          "name": "Glaukos Corp",
+          "pct": 0.31835
         },
         {
-          "symbol": "CYTK",
-          "name": "Cytokinetics Inc",
-          "pct": 0.29846997999999997
+          "symbol": "VSAT",
+          "name": "Viasat Inc",
+          "pct": 0.30450001
         },
         {
-          "symbol": "ONB",
-          "name": "Old National Bancorp",
-          "pct": 0.28974
+          "symbol": "HUT",
+          "name": "Hut 8 Corp",
+          "pct": 0.29879
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.418Z"
+      "fetchedAt": "2026-10-12T21:52:32.576Z"
     },
     "DIA": {
       "type": "ETF",
@@ -1653,102 +1653,102 @@
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 27.46
+          "pct": 26.279999999999998
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 18.4
+          "pct": 19.049999
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 15.540000000000001
+          "pct": 16.02
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 13.780000000000001
+          "pct": 13.99
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 9.950000000000001
+          "pct": 9.34
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 4.99
-        },
-        {
-          "key": "basic_materials",
-          "name": "Materials",
-          "pct": 3.7900000000000005
+          "pct": 5.239999699999999
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 3.7800000000000002
+          "pct": 3.9100002000000003
+        },
+        {
+          "key": "basic_materials",
+          "name": "Materials",
+          "pct": 3.7699999999999996
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 2.3
+          "pct": 2.3800000000000003
         }
       ],
       "holdings": [
         {
           "symbol": "GS",
           "name": "The Goldman Sachs Group Inc",
-          "pct": 11.45279
+          "pct": 10.48086
         },
         {
           "symbol": "CAT",
           "name": "Caterpillar Inc",
-          "pct": 8.90268
+          "pct": 9.4382
         },
         {
           "symbol": "MSFT",
           "name": "Microsoft Corp",
-          "pct": 5.6632098
+          "pct": 5.97054
         },
         {
           "symbol": "AMGN",
           "name": "Amgen Inc",
-          "pct": 4.79903
+          "pct": 4.906689999999999
         },
         {
           "symbol": "UNH",
           "name": "UnitedHealth Group Inc",
-          "pct": 4.3472398000000005
+          "pct": 4.2730797
         },
         {
           "symbol": "V",
           "name": "Visa Inc Class A",
-          "pct": 4.23515
+          "pct": 4.18287
         },
         {
           "symbol": "TRV",
           "name": "The Travelers Companies Inc",
-          "pct": 4.08511
-        },
-        {
-          "symbol": "JPM",
-          "name": "JPMorgan Chase & Co",
-          "pct": 3.9744797999999997
+          "pct": 4.15004
         },
         {
           "symbol": "GOOGL",
           "name": "Alphabet Inc Class A",
-          "pct": 3.78838
+          "pct": 4.00535
         },
         {
-          "symbol": "SHW",
-          "name": "Sherwin-Williams Co",
-          "pct": 3.7823602999999997
+          "symbol": "AAPL",
+          "name": "Apple Inc",
+          "pct": 3.8766000000000003
+        },
+        {
+          "symbol": "JPM",
+          "name": "JPMorgan Chase & Co",
+          "pct": 3.85111
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.554Z"
+      "fetchedAt": "2026-10-12T21:52:32.618Z"
     },
     "MDY": {
       "type": "ETF",
@@ -1861,7 +1861,7 @@
           "pct": 0.64275996
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.626Z"
+      "fetchedAt": "2026-10-12T21:52:32.663Z"
     },
     "XLF": {
       "type": "ETF",
@@ -1869,72 +1869,72 @@
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 98.12000400000001
+          "pct": 98.21
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 1.6199999999999999
+          "pct": 1.55
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 0.26
+          "pct": 0.23999999000000002
         }
       ],
       "holdings": [
         {
-          "symbol": "JPM",
-          "name": "JPMorgan Chase & Co",
-          "pct": 11.68887
-        },
-        {
           "symbol": "BRK-B",
           "name": "Berkshire Hathaway Inc Class B",
-          "pct": 11.32288
+          "pct": 12.30021
+        },
+        {
+          "symbol": "JPM",
+          "name": "JPMorgan Chase & Co",
+          "pct": 11.6633795
         },
         {
           "symbol": "V",
           "name": "Visa Inc Class A",
-          "pct": 7.714790000000001
+          "pct": 8.12156
         },
         {
           "symbol": "MA",
           "name": "Mastercard Inc Class A",
-          "pct": 5.82669
+          "pct": 5.91425
         },
         {
           "symbol": "BAC",
           "name": "Bank of America Corp",
-          "pct": 4.9551
+          "pct": 4.69476
         },
         {
           "symbol": "GS",
           "name": "The Goldman Sachs Group Inc",
-          "pct": 3.70778
+          "pct": 3.47638
         },
         {
           "symbol": "WFC",
           "name": "Wells Fargo & Co",
-          "pct": 3.2392700000000003
+          "pct": 3.21059
         },
         {
           "symbol": "MS",
           "name": "Morgan Stanley",
-          "pct": 3.1334500000000003
+          "pct": 2.97763
         },
         {
           "symbol": "C",
           "name": "Citigroup Inc",
-          "pct": 2.7506000999999998
+          "pct": 2.8806701
         },
         {
-          "symbol": "SCHW",
-          "name": "Charles Schwab Corp",
-          "pct": 2.1997400000000003
+          "symbol": "AXP",
+          "name": "American Express Co",
+          "pct": 2.12442
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.752Z"
+      "fetchedAt": "2026-10-12T21:52:32.739Z"
     },
     "XLE": {
       "type": "ETF",
@@ -1949,55 +1949,55 @@
         {
           "symbol": "XOM",
           "name": "ExxonMobil Holdings Corp",
-          "pct": 19.859721
+          "pct": 24.030920000000002
         },
         {
           "symbol": "CVX",
           "name": "Chevron Corp",
-          "pct": 14.88949
+          "pct": 18.052319999999998
         },
         {
           "symbol": "COP",
           "name": "ConocoPhillips",
-          "pct": 6.22765
-        },
-        {
-          "symbol": "MPC",
-          "name": "Marathon Petroleum Corp",
-          "pct": 5.41954
-        },
-        {
-          "symbol": "PSX",
-          "name": "Phillips 66",
-          "pct": 5.33146
+          "pct": 6.726890000000001
         },
         {
           "symbol": "VLO",
           "name": "Valero Energy Corp",
-          "pct": 5.0717
+          "pct": 4.728149999999999
         },
         {
-          "symbol": "SLB",
-          "name": "SLB Ltd",
-          "pct": 4.87644
+          "symbol": "MPC",
+          "name": "Marathon Petroleum Corp",
+          "pct": 4.69679
         },
         {
-          "symbol": "EOG",
-          "name": "EOG Resources Inc",
-          "pct": 4.13483
+          "symbol": "PSX",
+          "name": "Phillips 66",
+          "pct": 4.64494
         },
         {
           "symbol": "WMB",
           "name": "Williams Companies Inc",
-          "pct": 3.7765899999999997
+          "pct": 4.2911600000000005
+        },
+        {
+          "symbol": "SLB",
+          "name": "SLB Ltd",
+          "pct": 3.85537
+        },
+        {
+          "symbol": "EOG",
+          "name": "EOG Resources Inc",
+          "pct": 3.8527699999999996
         },
         {
           "symbol": "KMI",
           "name": "Kinder Morgan Inc Class P",
-          "pct": 3.64842
+          "pct": 3.15017
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:27.884Z"
+      "fetchedAt": "2026-10-12T21:52:32.787Z"
     },
     "XLV": {
       "type": "ETF",
@@ -2012,55 +2012,55 @@
         {
           "symbol": "LLY",
           "name": "Eli Lilly and Co",
-          "pct": 14.867348999999999
+          "pct": 15.103911
         },
         {
           "symbol": "JNJ",
           "name": "Johnson & Johnson",
-          "pct": 10.39781
+          "pct": 10.408059999999999
         },
         {
           "symbol": "ABBV",
           "name": "AbbVie Inc",
-          "pct": 7.36088
+          "pct": 7.54117
         },
         {
           "symbol": "MRK",
           "name": "Merck & Co Inc",
-          "pct": 5.92945
+          "pct": 5.848529999999999
         },
         {
           "symbol": "UNH",
           "name": "UnitedHealth Group Inc",
-          "pct": 5.74581
-        },
-        {
-          "symbol": "AMGN",
-          "name": "Amgen Inc",
-          "pct": 3.76961
+          "pct": 5.3751603
         },
         {
           "symbol": "TMO",
           "name": "Thermo Fisher Scientific Inc",
-          "pct": 3.72603
+          "pct": 4.07183
         },
         {
-          "symbol": "ABT",
-          "name": "Abbott Laboratories",
-          "pct": 3.12324
+          "symbol": "AMGN",
+          "name": "Amgen Inc",
+          "pct": 3.7175800000000003
         },
         {
           "symbol": "GILD",
           "name": "Gilead Sciences Inc",
-          "pct": 2.95206
+          "pct": 3.01498
+        },
+        {
+          "symbol": "ABT",
+          "name": "Abbott Laboratories",
+          "pct": 2.78986
         },
         {
           "symbol": "PFE",
           "name": "Pfizer Inc",
-          "pct": 2.6354698
+          "pct": 2.65186
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.027Z"
+      "fetchedAt": "2026-10-12T21:52:32.830Z"
     },
     "XLI": {
       "type": "ETF",
@@ -2068,12 +2068,12 @@
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 92.81
+          "pct": 93.39
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 6.6599995
+          "pct": 6.1100002
         },
         {
           "key": "basic_materials",
@@ -2083,62 +2083,62 @@
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 0.19
+          "pct": 0.16999999999999998
         }
       ],
       "holdings": [
         {
           "symbol": "CAT",
           "name": "Caterpillar Inc",
-          "pct": 6.67426
+          "pct": 7.008050000000001
         },
         {
           "symbol": "GE",
           "name": "GE Aerospace",
-          "pct": 6.364459999999999
-        },
-        {
-          "symbol": "RTX",
-          "name": "RTX Corp",
-          "pct": 5.08326
+          "pct": 6.0927500000000006
         },
         {
           "symbol": "GEV",
           "name": "GE Vernova Inc",
-          "pct": 4.3874998
+          "pct": 4.76018
         },
         {
-          "symbol": "UNP",
-          "name": "Union Pacific Corp",
-          "pct": 3.24388
+          "symbol": "RTX",
+          "name": "RTX Corp",
+          "pct": 4.70502
         },
         {
           "symbol": "DE",
           "name": "Deere & Co",
-          "pct": 2.98953
-        },
-        {
-          "symbol": "BA",
-          "name": "Boeing Co",
-          "pct": 2.97642
+          "pct": 3.1696603
         },
         {
           "symbol": "ETN",
           "name": "Eaton Corp PLC",
-          "pct": 2.83576
+          "pct": 3.13853
+        },
+        {
+          "symbol": "UNP",
+          "name": "Union Pacific Corp",
+          "pct": 3.0395301
+        },
+        {
+          "symbol": "BA",
+          "name": "Boeing Co",
+          "pct": 2.76472
         },
         {
           "symbol": "UBER",
           "name": "Uber Technologies Inc",
-          "pct": 2.7983898
+          "pct": 2.63096
         },
         {
           "symbol": "PH",
           "name": "Parker Hannifin Corp",
-          "pct": 2.2441199
+          "pct": 2.26495
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.101Z"
+      "fetchedAt": "2026-10-12T21:52:32.879Z"
     },
     "XLU": {
       "type": "ETF",
@@ -2153,55 +2153,55 @@
         {
           "symbol": "NEE",
           "name": "NextEra Energy Inc",
-          "pct": 13.049420000000001
+          "pct": 12.71499
         },
         {
           "symbol": "SO",
           "name": "Southern Co",
-          "pct": 7.5392
+          "pct": 7.67391
         },
         {
           "symbol": "DUK",
           "name": "Duke Energy Corp",
-          "pct": 7.104439999999999
+          "pct": 7.15404
         },
         {
           "symbol": "CEG",
           "name": "Constellation Energy Corp",
-          "pct": 6.67553
+          "pct": 6.73604
         },
         {
           "symbol": "AEP",
           "name": "American Electric Power Co Inc",
-          "pct": 5.0626103
+          "pct": 5.1979598000000005
         },
         {
           "symbol": "D",
           "name": "Dominion Energy Inc",
-          "pct": 4.41191
+          "pct": 4.28375
         },
         {
           "symbol": "SRE",
           "name": "Sempra",
-          "pct": 4.0588196
+          "pct": 4.10261
         },
         {
           "symbol": "ETR",
           "name": "Entergy Corp",
-          "pct": 3.6994502
+          "pct": 3.72756
         },
         {
           "symbol": "XEL",
           "name": "Xcel Energy Inc",
-          "pct": 3.59098
+          "pct": 3.5430200000000003
         },
         {
-          "symbol": "EXC",
-          "name": "Exelon Corp",
-          "pct": 3.39976
+          "symbol": "VST",
+          "name": "Vistra Corp",
+          "pct": 3.5127297000000004
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.172Z"
+      "fetchedAt": "2026-10-12T21:52:32.924Z"
     },
     "XLP": {
       "type": "ETF",
@@ -2209,67 +2209,67 @@
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 98.22
+          "pct": 98.52
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 1.78
+          "pct": 1.48
         }
       ],
       "holdings": [
         {
           "symbol": "WMT",
           "name": "Walmart Inc",
-          "pct": 9.820639
+          "pct": 10.5412506
         },
         {
           "symbol": "COST",
           "name": "Costco Wholesale Corp",
-          "pct": 8.94496
-        },
-        {
-          "symbol": "KO",
-          "name": "Coca-Cola Co",
-          "pct": 7.33419
+          "pct": 9.1891296
         },
         {
           "symbol": "PG",
           "name": "Procter & Gamble Co",
-          "pct": 7.21831
+          "pct": 7.68635
+        },
+        {
+          "symbol": "KO",
+          "name": "Coca-Cola Co",
+          "pct": 7.58694
         },
         {
           "symbol": "PM",
           "name": "Philip Morris International Inc",
-          "pct": 6.23555
+          "pct": 6.76958
         },
         {
           "symbol": "TGT",
           "name": "Target Corp",
-          "pct": 4.656020000000001
-        },
-        {
-          "symbol": "CL",
-          "name": "Colgate-Palmolive Co",
-          "pct": 4.51784
-        },
-        {
-          "symbol": "PEP",
-          "name": "PepsiCo Inc",
-          "pct": 4.39961
-        },
-        {
-          "symbol": "MDLZ",
-          "name": "Mondelez International Inc Class A",
-          "pct": 4.37564
+          "pct": 4.5702
         },
         {
           "symbol": "MO",
           "name": "Altria Group Inc",
-          "pct": 4.2367
+          "pct": 4.55716
+        },
+        {
+          "symbol": "CL",
+          "name": "Colgate-Palmolive Co",
+          "pct": 4.4526502
+        },
+        {
+          "symbol": "PEP",
+          "name": "PepsiCo Inc",
+          "pct": 4.2593002
+        },
+        {
+          "symbol": "MDLZ",
+          "name": "Mondelez International Inc Class A",
+          "pct": 4.2558
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.243Z"
+      "fetchedAt": "2026-10-12T21:52:33.085Z"
     },
     "XLY": {
       "type": "ETF",
@@ -2277,67 +2277,67 @@
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 98.83
+          "pct": 98.67
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 1.17
+          "pct": 1.3300001000000001
         }
       ],
       "holdings": [
         {
           "symbol": "AMZN",
           "name": "Amazon.com Inc",
-          "pct": 24.367900000000002
+          "pct": 23.390430000000002
         },
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 17.28693
+          "pct": 17.6681
         },
         {
           "symbol": "HD",
           "name": "The Home Depot Inc",
-          "pct": 5.44912
+          "pct": 5.0122
         },
         {
           "symbol": "MCD",
           "name": "McDonald's Corp",
-          "pct": 4.074669999999999
-        },
-        {
-          "symbol": "BKNG",
-          "name": "Booking Holdings Inc",
-          "pct": 3.8619800000000004
+          "pct": 4.2238403
         },
         {
           "symbol": "TJX",
           "name": "TJX Companies Inc",
-          "pct": 3.4888299999999997
+          "pct": 4.07091
+        },
+        {
+          "symbol": "BKNG",
+          "name": "Booking Holdings Inc",
+          "pct": 3.40926
         },
         {
           "symbol": "SBUX",
           "name": "Starbucks Corp",
-          "pct": 3.03143
+          "pct": 2.98332
         },
         {
           "symbol": "LOW",
           "name": "Lowe's Companies Inc",
-          "pct": 2.8700098
+          "pct": 2.878
         },
         {
-          "symbol": "DASH",
-          "name": "DoorDash Inc Ordinary Shares - Class A",
-          "pct": 2.1954200999999998
+          "symbol": "MAR",
+          "name": "Marriott International Inc Class A",
+          "pct": 2.11818
         },
         {
-          "symbol": "GM",
-          "name": "General Motors Co",
-          "pct": 1.9484499999999998
+          "symbol": "ROST",
+          "name": "Ross Stores Inc",
+          "pct": 2.08527
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.383Z"
+      "fetchedAt": "2026-10-12T21:52:33.167Z"
     },
     "XLB": {
       "type": "ETF",
@@ -2345,98 +2345,98 @@
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 84.480006
+          "pct": 83.22
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 15.52
+          "pct": 16.780001
         }
       ],
       "holdings": [
         {
           "symbol": "LIN",
           "name": "Linde PLC",
-          "pct": 13.134870000000001
+          "pct": 12.23234
         },
         {
           "symbol": "NEM",
           "name": "Newmont Corp",
-          "pct": 7.8091099999999996
+          "pct": 6.79442
         },
         {
           "symbol": "FCX",
           "name": "Freeport-McMoRan Inc",
-          "pct": 6.31812
-        },
-        {
-          "symbol": "CTVA",
-          "name": "Corteva Inc",
-          "pct": 4.9064297
-        },
-        {
-          "symbol": "APD",
-          "name": "Air Products and Chemicals Inc",
-          "pct": 4.831240299999999
-        },
-        {
-          "symbol": "SHW",
-          "name": "Sherwin-Williams Co",
-          "pct": 4.81254
+          "pct": 5.61973
         },
         {
           "symbol": "ECL",
           "name": "Ecolab Inc",
-          "pct": 4.75711
+          "pct": 4.74993
         },
         {
-          "symbol": "NUE",
-          "name": "Nucor Corp",
-          "pct": 4.30225
+          "symbol": "SHW",
+          "name": "Sherwin-Williams Co",
+          "pct": 4.7476400000000005
         },
         {
           "symbol": "VMC",
           "name": "Vulcan Materials Co",
-          "pct": 4.26784
+          "pct": 4.6097600000000005
+        },
+        {
+          "symbol": "MLM",
+          "name": "Martin Marietta Materials Inc",
+          "pct": 4.45324
+        },
+        {
+          "symbol": "APD",
+          "name": "Air Products and Chemicals Inc",
+          "pct": 4.4376
         },
         {
           "symbol": "CRH",
           "name": "CRH PLC",
-          "pct": 4.0710999999999995
+          "pct": 4.36374
+        },
+        {
+          "symbol": "STLD",
+          "name": "Steel Dynamics Inc",
+          "pct": 4.33578
         }
       ],
-      "fetchedAt": "2026-10-05T21:19:28.454Z"
+      "fetchedAt": "2026-10-12T21:52:33.243Z"
     },
     "GLD": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-10-05T21:19:28.589Z"
+      "fetchedAt": "2026-10-12T21:52:33.297Z"
     },
     "TLT": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-10-05T21:19:28.657Z"
+      "fetchedAt": "2026-10-12T21:52:33.380Z"
     },
     "SLV": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-10-05T21:19:28.754Z"
+      "fetchedAt": "2026-10-12T21:52:33.425Z"
     },
     "USO": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-10-05T21:19:28.829Z"
+      "fetchedAt": "2026-10-12T21:52:33.466Z"
     },
     "UNG": {
       "type": "ETF",
       "sectors": [],
       "holdings": [],
-      "fetchedAt": "2026-10-05T21:19:28.903Z"
+      "fetchedAt": "2026-10-12T21:52:33.517Z"
     }
   },
-  "lastRun": "2026-10-09T20:30:39.891Z"
+  "lastRun": "2026-10-12T21:52:33.517Z"
 }
