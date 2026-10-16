@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-10-15T19:39:52.020Z",
+  "lastRun": "2026-10-16T06:35:39.582Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -69,20 +69,6 @@
       ],
       "agencyCount": 1,
       "matchedTerm": "\"Defense Production Act\" Title III",
-      "mentionsTracked": [],
-      "isNew": false
-    },
-    {
-      "documentNumber": "2026-12286",
-      "title": "Presidential Determination and Delegation of Authority Under Section 708 of the Defense Production Act of 1950, as Amended",
-      "date": "2026-06-17",
-      "url": "https://www.federalregister.gov/documents/2026/06/17/2026-12286/presidential-determination-and-delegation-of-authority-under-section-708-of-the-defense-production",
-      "type": "Presidential Document",
-      "agencies": [
-        "Executive Office of the President"
-      ],
-      "agencyCount": 1,
-      "matchedTerm": "\"Presidential Determination\" Defense Production Act",
       "mentionsTracked": [],
       "isNew": false
     }
