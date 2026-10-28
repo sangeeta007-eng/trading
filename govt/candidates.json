@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-10-28T07:45:07.388Z",
+  "lastRun": "2026-10-28T17:05:00.068Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -12,9 +12,24 @@
     "2026-15859",
     "2026-14461",
     "2026-13486",
-    "2026-12286"
+    "2026-12286",
+    "2026-22052"
   ],
   "candidates": [
+    {
+      "documentNumber": "2026-22052",
+      "title": "Presidential Determination Pursuant to Section 303 of the Defense Production Act of 1950, as Amended, on Domestic Petroleum Production, Refining, and Logistics Capacity",
+      "date": "2026-10-28",
+      "url": "https://www.federalregister.gov/documents/2026/10/28/2026-22052/presidential-determination-pursuant-to-section-303-of-the-defense-production-act-of-1950-as-amended",
+      "type": "Presidential Document",
+      "agencies": [
+        "Executive Office of the President"
+      ],
+      "agencyCount": 1,
+      "matchedTerm": "\"Presidential Determination\" Defense Production Act",
+      "mentionsTracked": [],
+      "isNew": true
+    },
     {
       "documentNumber": "2026-16078",
       "title": "DPAS Directive Allocation Order and Additional Requirements for Recoverable Critical Minerals and Materials",
