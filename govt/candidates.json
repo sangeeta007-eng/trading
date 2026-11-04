@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-11-03T21:27:47.417Z",
+  "lastRun": "2026-11-04T08:20:55.239Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -65,20 +65,6 @@
       "date": "2026-07-17",
       "url": "https://www.federalregister.gov/documents/2026/07/17/2026-14461/implementing-voluntary-agreements-under-the-defense-production-act",
       "type": "Rule",
-      "agencies": [
-        "Energy Department"
-      ],
-      "agencyCount": 1,
-      "matchedTerm": "\"Defense Production Act\" Title III",
-      "mentionsTracked": [],
-      "isNew": false
-    },
-    {
-      "documentNumber": "2026-13486",
-      "title": "Implementing Voluntary Agreements Under the Defense Production Act",
-      "date": "2026-07-06",
-      "url": "https://www.federalregister.gov/documents/2026/07/06/2026-13486/implementing-voluntary-agreements-under-the-defense-production-act",
-      "type": "Notice",
       "agencies": [
         "Energy Department"
       ],
