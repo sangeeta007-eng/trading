@@ -4,79 +4,79 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-31T07:47:37.033Z"
+      "fetchedAt": "2026-11-07T08:03:37.951Z"
     },
     "GFS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-31T07:47:37.082Z"
+      "fetchedAt": "2026-11-07T08:03:37.997Z"
     },
     "LHX": {
       "type": "STOCK",
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
-      "fetchedAt": "2026-10-31T07:47:37.131Z"
+      "fetchedAt": "2026-11-07T08:03:38.034Z"
     },
     "MP": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-31T07:47:37.182Z"
+      "fetchedAt": "2026-11-07T08:03:38.069Z"
     },
     "LAC": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-31T07:47:37.237Z"
+      "fetchedAt": "2026-11-07T08:03:38.104Z"
     },
     "TMQ": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-31T07:47:37.289Z"
+      "fetchedAt": "2026-11-07T08:03:38.138Z"
     },
     "QBTS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-10-31T07:47:37.339Z"
+      "fetchedAt": "2026-11-07T08:03:38.173Z"
     },
     "RGTI": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-10-31T07:47:37.389Z"
+      "fetchedAt": "2026-11-07T08:03:38.208Z"
     },
     "IBM": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Information Technology Services",
-      "fetchedAt": "2026-10-31T07:47:37.439Z"
+      "fetchedAt": "2026-11-07T08:03:38.244Z"
     },
     "USAR": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-10-31T07:47:37.489Z"
+      "fetchedAt": "2026-11-07T08:03:38.279Z"
     },
     "ALMU": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-31T07:47:37.540Z"
+      "fetchedAt": "2026-11-07T08:03:38.322Z"
     },
     "NVDA": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-31T07:47:37.591Z"
+      "fetchedAt": "2026-11-07T08:03:38.363Z"
     },
     "AMD": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-10-31T07:47:37.643Z"
+      "fetchedAt": "2026-11-07T08:03:38.406Z"
     },
     "SOXX": {
       "type": "ETF",
@@ -89,57 +89,57 @@
       ],
       "holdings": [
         {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 9.591231
-        },
-        {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 9.280071
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 7.93287
+          "pct": 9.235659
         },
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 7.38637
+          "pct": 7.982419999999999
+        },
+        {
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 7.9474
         },
         {
           "symbol": "AVGO",
           "name": "Broadcom Inc",
-          "pct": 6.77134
+          "pct": 7.58282
         },
         {
-          "symbol": "MRVL",
-          "name": "Marvell Technology Inc",
-          "pct": 4.4567000000000005
+          "symbol": "INTC",
+          "name": "Intel Corp",
+          "pct": 6.3269705
         },
         {
-          "symbol": "AMAT",
-          "name": "Applied Materials Inc",
-          "pct": 3.9829999999999997
-        },
-        {
-          "symbol": "KLAC",
-          "name": "KLA Corp",
-          "pct": 3.9666901999999995
+          "symbol": "TXN",
+          "name": "Texas Instruments Inc",
+          "pct": 4.96497
         },
         {
           "symbol": "ADI",
           "name": "Analog Devices Inc",
-          "pct": 3.9111
+          "pct": 4.95974
         },
         {
-          "symbol": "LRCX",
-          "name": "Lam Research Corp",
-          "pct": 3.89026
+          "symbol": "QCOM",
+          "name": "Qualcomm Inc",
+          "pct": 4.16226
+        },
+        {
+          "symbol": "MRVL",
+          "name": "Marvell Technology Inc",
+          "pct": 3.9956
+        },
+        {
+          "symbol": "KLAC",
+          "name": "KLA Corp",
+          "pct": 3.87556
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.294Z"
+      "fetchedAt": "2026-11-07T08:03:38.894Z"
     },
     "SMH": {
       "type": "ETF",
@@ -154,55 +154,55 @@
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 19.31036
+          "pct": 20.19254
         },
         {
           "symbol": "TSM",
           "name": "Taiwan Semiconductor Manufacturing Co Ltd ADR",
-          "pct": 9.27951
-        },
-        {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 5.54102
-        },
-        {
-          "symbol": "AVGO",
-          "name": "Broadcom Inc",
-          "pct": 5.26573
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 4.92491
-        },
-        {
-          "symbol": "AMAT",
-          "name": "Applied Materials Inc",
-          "pct": 4.66008
-        },
-        {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 4.6564597999999995
+          "pct": 9.57566
         },
         {
           "symbol": "TXN",
           "name": "Texas Instruments Inc",
-          "pct": 4.595140000000001
+          "pct": 5.6981303
         },
         {
-          "symbol": "KLAC",
-          "name": "KLA Corp",
-          "pct": 4.58501
+          "symbol": "AVGO",
+          "name": "Broadcom Inc",
+          "pct": 5.6143798
+        },
+        {
+          "symbol": "AMD",
+          "name": "Advanced Micro Devices Inc",
+          "pct": 5.34505
+        },
+        {
+          "symbol": "ADI",
+          "name": "Analog Devices Inc",
+          "pct": 4.955560299999999
+        },
+        {
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 4.7497
         },
         {
           "symbol": "ASML",
           "name": "ASML Holding NV ADR",
-          "pct": 4.5364700000000004
+          "pct": 4.4960096
+        },
+        {
+          "symbol": "KLAC",
+          "name": "KLA Corp",
+          "pct": 4.2775
+        },
+        {
+          "symbol": "SKHY",
+          "name": "SK hynix Inc ADR",
+          "pct": 4.1447703
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.245Z"
+      "fetchedAt": "2026-11-07T08:03:38.852Z"
     },
     "XLK": {
       "type": "ETF",
@@ -215,57 +215,57 @@
       ],
       "holdings": [
         {
-          "symbol": "NVDA",
-          "name": "NVIDIA Corp",
-          "pct": 15.4659
-        },
-        {
           "symbol": "AAPL",
           "name": "Apple Inc",
-          "pct": 13.6004
+          "pct": 15.312270999999999
+        },
+        {
+          "symbol": "NVDA",
+          "name": "NVIDIA Corp",
+          "pct": 15.076919
         },
         {
           "symbol": "MSFT",
           "name": "Microsoft Corp",
-          "pct": 10.657679
-        },
-        {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 5.0590202
+          "pct": 11.798599999999999
         },
         {
           "symbol": "AVGO",
           "name": "Broadcom Inc",
-          "pct": 4.67552
+          "pct": 4.722980000000001
+        },
+        {
+          "symbol": "AMD",
+          "name": "Advanced Micro Devices Inc",
+          "pct": 4.5416098
         },
         {
           "symbol": "MU",
           "name": "Micron Technology Inc",
-          "pct": 4.46581
-        },
-        {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 3.3849400000000003
+          "pct": 4.03578
         },
         {
           "symbol": "PLTR",
           "name": "Palantir Technologies Inc Ordinary Shares - Class A",
-          "pct": 2.43834
+          "pct": 2.6110700000000002
         },
         {
           "symbol": "CSCO",
           "name": "Cisco Systems Inc",
-          "pct": 2.4036
+          "pct": 2.53917
         },
         {
-          "symbol": "LRCX",
-          "name": "Lam Research Corp",
-          "pct": 2.32913
+          "symbol": "INTC",
+          "name": "Intel Corp",
+          "pct": 2.01421
+        },
+        {
+          "symbol": "AMAT",
+          "name": "Applied Materials Inc",
+          "pct": 1.9091700999999999
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.397Z"
+      "fetchedAt": "2026-11-07T08:03:39.004Z"
     },
     "XSD": {
       "type": "ETF",
@@ -273,67 +273,67 @@
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 99.36
+          "pct": 99.46000000000001
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 0.64
+          "pct": 0.54
         }
       ],
       "holdings": [
         {
-          "symbol": "MXL",
-          "name": "MaxLinear Inc",
-          "pct": 2.91734
+          "symbol": "SYNA",
+          "name": "Synaptics Inc",
+          "pct": 3.48009
         },
         {
-          "symbol": "RMBS",
-          "name": "Rambus Inc",
-          "pct": 2.8136
+          "symbol": "NXPI",
+          "name": "NXP Semiconductors NV",
+          "pct": 3.22422
         },
         {
-          "symbol": "ALAB",
-          "name": "Astera Labs Inc",
-          "pct": 2.7359199
-        },
-        {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 2.71203
-        },
-        {
-          "symbol": "CRDO",
-          "name": "Credo Technology Group Holding Ltd",
-          "pct": 2.67963
-        },
-        {
-          "symbol": "IONQ",
-          "name": "IonQ Inc",
-          "pct": 2.65646
-        },
-        {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 2.61414
-        },
-        {
-          "symbol": "MRVL",
-          "name": "Marvell Technology Inc",
-          "pct": 2.5972399999999998
-        },
-        {
-          "symbol": "MPWR",
-          "name": "Monolithic Power Systems Inc",
-          "pct": 2.58539
+          "symbol": "TXN",
+          "name": "Texas Instruments Inc",
+          "pct": 3.1899900000000003
         },
         {
           "symbol": "SWKS",
           "name": "Skyworks Solutions Inc",
-          "pct": 2.57977
+          "pct": 3.1736100000000005
+        },
+        {
+          "symbol": "ADI",
+          "name": "Analog Devices Inc",
+          "pct": 3.16853
+        },
+        {
+          "symbol": "PI",
+          "name": "Impinj Inc",
+          "pct": 3.0256000000000003
+        },
+        {
+          "symbol": "MCHP",
+          "name": "Microchip Technology Inc",
+          "pct": 2.9380300000000004
+        },
+        {
+          "symbol": "OLED",
+          "name": "Universal Display Corp",
+          "pct": 2.91261
+        },
+        {
+          "symbol": "SLAB",
+          "name": "Silicon Laboratories Inc",
+          "pct": 2.8065199
+        },
+        {
+          "symbol": "ON",
+          "name": "ON Semiconductor Corp",
+          "pct": 2.8004501
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.446Z"
+      "fetchedAt": "2026-11-07T08:03:39.040Z"
     },
     "PSI": {
       "type": "ETF",
@@ -346,57 +346,57 @@
       ],
       "holdings": [
         {
-          "symbol": "INTC",
-          "name": "Intel Corp",
-          "pct": 6.12357
-        },
-        {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 5.68843
-        },
-        {
-          "symbol": "MU",
-          "name": "Micron Technology Inc",
-          "pct": 5.08679
-        },
-        {
           "symbol": "TXN",
           "name": "Texas Instruments Inc",
-          "pct": 4.79878
-        },
-        {
-          "symbol": "AMAT",
-          "name": "Applied Materials Inc",
-          "pct": 4.7466103
-        },
-        {
-          "symbol": "KLAC",
-          "name": "KLA Corp",
-          "pct": 4.7372498
+          "pct": 6.619940000000001
         },
         {
           "symbol": "ADI",
           "name": "Analog Devices Inc",
-          "pct": 4.73046
+          "pct": 6.386940000000001
+        },
+        {
+          "symbol": "AMD",
+          "name": "Advanced Micro Devices Inc",
+          "pct": 6.0272697
+        },
+        {
+          "symbol": "MU",
+          "name": "Micron Technology Inc",
+          "pct": 5.42523
+        },
+        {
+          "symbol": "KLAC",
+          "name": "KLA Corp",
+          "pct": 4.92885
+        },
+        {
+          "symbol": "AMAT",
+          "name": "Applied Materials Inc",
+          "pct": 4.651000000000001
         },
         {
           "symbol": "LRCX",
           "name": "Lam Research Corp",
-          "pct": 4.65167
+          "pct": 4.3480203
         },
         {
-          "symbol": "SMTC",
-          "name": "Semtech Corp",
-          "pct": 3.3990600000000004
+          "symbol": "INTC",
+          "name": "Intel Corp",
+          "pct": 4.30155
         },
         {
-          "symbol": "FORM",
-          "name": "FormFactor Inc",
-          "pct": 3.3685997000000003
+          "symbol": "ENTG",
+          "name": "Entegris Inc",
+          "pct": 3.4701000000000004
+        },
+        {
+          "symbol": "MCHP",
+          "name": "Microchip Technology Inc",
+          "pct": 3.28423
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.048Z"
+      "fetchedAt": "2026-11-07T08:03:38.712Z"
     },
     "ITA": {
       "type": "ETF",
@@ -411,55 +411,55 @@
         {
           "symbol": "GE",
           "name": "GE Aerospace",
-          "pct": 20.971821
+          "pct": 20.02375
         },
         {
           "symbol": "RTX",
           "name": "RTX Corp",
-          "pct": 16.19488
+          "pct": 17.21944
         },
         {
           "symbol": "BA",
           "name": "Boeing Co",
-          "pct": 7.48927
-        },
-        {
-          "symbol": "HWM",
-          "name": "Howmet Aerospace Inc",
-          "pct": 4.6097297
+          "pct": 6.825039500000001
         },
         {
           "symbol": "LMT",
           "name": "Lockheed Martin Corp",
-          "pct": 4.6026804
-        },
-        {
-          "symbol": "TDG",
-          "name": "TransDigm Group Inc",
-          "pct": 4.55961
-        },
-        {
-          "symbol": "GD",
-          "name": "General Dynamics Corp",
-          "pct": 4.45964
+          "pct": 5.68729
         },
         {
           "symbol": "NOC",
           "name": "Northrop Grumman Corp",
-          "pct": 4.4456802
+          "pct": 5.0640896
         },
         {
-          "symbol": "HONA",
-          "name": "Honeywell Aerospace Inc",
-          "pct": 3.8183401999999997
+          "symbol": "GD",
+          "name": "General Dynamics Corp",
+          "pct": 4.94738
+        },
+        {
+          "symbol": "TDG",
+          "name": "TransDigm Group Inc",
+          "pct": 4.77077
+        },
+        {
+          "symbol": "HWM",
+          "name": "Howmet Aerospace Inc",
+          "pct": 4.0105
         },
         {
           "symbol": "LHX",
           "name": "L3Harris Technologies Inc",
-          "pct": 3.4270898
+          "pct": 3.9697700000000005
+        },
+        {
+          "symbol": "HONA",
+          "name": "Honeywell Aerospace Inc",
+          "pct": 3.7519299999999998
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.795Z"
+      "fetchedAt": "2026-11-07T08:03:38.532Z"
     },
     "XAR": {
       "type": "ETF",
@@ -472,57 +472,57 @@
       ],
       "holdings": [
         {
-          "symbol": "RKLB",
-          "name": "Rocket Lab Corp",
-          "pct": 3.3314098
-        },
-        {
-          "symbol": "MOG-A",
-          "name": "Moog Inc Class A",
-          "pct": 3.1299300000000003
-        },
-        {
-          "symbol": "HONA",
-          "name": "Honeywell Aerospace Inc",
-          "pct": 3.08282
-        },
-        {
-          "symbol": "AVAV",
-          "name": "AeroVironment Inc",
-          "pct": 2.9926
-        },
-        {
-          "symbol": "WWD",
-          "name": "Woodward Inc",
-          "pct": 2.9343901
-        },
-        {
-          "symbol": "HWM",
-          "name": "Howmet Aerospace Inc",
-          "pct": 2.9319100000000002
-        },
-        {
           "symbol": "LMT",
           "name": "Lockheed Martin Corp",
-          "pct": 2.92792
+          "pct": 3.7185999999999995
+        },
+        {
+          "symbol": "HII",
+          "name": "Huntington Ingalls Industries Inc",
+          "pct": 3.45467
+        },
+        {
+          "symbol": "LHX",
+          "name": "L3Harris Technologies Inc",
+          "pct": 3.39429
+        },
+        {
+          "symbol": "NOC",
+          "name": "Northrop Grumman Corp",
+          "pct": 3.3109800000000003
+        },
+        {
+          "symbol": "TXT",
+          "name": "Textron Inc",
+          "pct": 3.2844100000000003
+        },
+        {
+          "symbol": "GD",
+          "name": "General Dynamics Corp",
+          "pct": 3.23472
         },
         {
           "symbol": "HEI",
           "name": "Heico Corp",
-          "pct": 2.9271499999999997
+          "pct": 3.1503502
         },
         {
-          "symbol": "CW",
-          "name": "Curtiss-Wright Corp",
-          "pct": 2.9005999
+          "symbol": "KRMN",
+          "name": "Karman Holdings Inc",
+          "pct": 3.14111
         },
         {
           "symbol": "TDG",
           "name": "TransDigm Group Inc",
-          "pct": 2.9000102
+          "pct": 3.11899
+        },
+        {
+          "symbol": "HONA",
+          "name": "Honeywell Aerospace Inc",
+          "pct": 3.11374
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.343Z"
+      "fetchedAt": "2026-11-07T08:03:38.936Z"
     },
     "PPA": {
       "type": "ETF",
@@ -530,72 +530,72 @@
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 90.36
+          "pct": 90.580004
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 9.47
+          "pct": 9.2700005
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 0.16999999999999998
+          "pct": 0.15
         }
       ],
       "holdings": [
         {
-          "symbol": "GE",
-          "name": "GE Aerospace",
-          "pct": 9.10182
+          "symbol": "LMT",
+          "name": "Lockheed Martin Corp",
+          "pct": 9.7586095
         },
         {
           "symbol": "RTX",
           "name": "RTX Corp",
-          "pct": 9.0436496
+          "pct": 9.4648704
+        },
+        {
+          "symbol": "GE",
+          "name": "GE Aerospace",
+          "pct": 8.55377
         },
         {
           "symbol": "BA",
           "name": "Boeing Co",
-          "pct": 8.754570000000001
-        },
-        {
-          "symbol": "LMT",
-          "name": "Lockheed Martin Corp",
-          "pct": 8.02298
+          "pct": 7.850029999999999
         },
         {
           "symbol": "GD",
           "name": "General Dynamics Corp",
-          "pct": 5.2129503
+          "pct": 5.6917902
         },
         {
           "symbol": "NOC",
           "name": "Northrop Grumman Corp",
-          "pct": 4.7251
-        },
-        {
-          "symbol": "HWM",
-          "name": "Howmet Aerospace Inc",
-          "pct": 4.14992
-        },
-        {
-          "symbol": "HONA",
-          "name": "Honeywell Aerospace Inc",
-          "pct": 3.8297999999999996
+          "pct": 5.298719999999999
         },
         {
           "symbol": "LHX",
           "name": "L3Harris Technologies Inc",
-          "pct": 3.78043
+          "pct": 4.3104700000000005
         },
         {
-          "symbol": "PH",
-          "name": "Parker Hannifin Corp",
-          "pct": 3.6886
+          "symbol": "HONA",
+          "name": "Honeywell Aerospace Inc",
+          "pct": 3.7044898
+        },
+        {
+          "symbol": "HWM",
+          "name": "Howmet Aerospace Inc",
+          "pct": 3.55465
+        },
+        {
+          "symbol": "TDG",
+          "name": "TransDigm Group Inc",
+          "pct": 3.4832302000000004
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.999Z"
+      "fetchedAt": "2026-11-07T08:03:38.674Z"
     },
     "REMX": {
       "type": "ETF",
@@ -610,55 +610,55 @@
         {
           "symbol": "SQM",
           "name": "Sociedad Quimica Y Minera De Chile SA ADR",
-          "pct": 8.23967
+          "pct": 8.68694
         },
         {
           "symbol": "ALB",
           "name": "Albemarle Corp",
-          "pct": 8.0424696
-        },
-        {
-          "symbol": "MP",
-          "name": "MP Materials Corp Ordinary Shares - Class A",
-          "pct": 6.396209999999999
-        },
-        {
-          "symbol": "PLS.AX",
-          "name": "PLS Group Ltd",
-          "pct": 6.12292
-        },
-        {
-          "symbol": "LYC.AX",
-          "name": "Lynas Rare Earths Ltd",
-          "pct": 5.99442
+          "pct": 8.66914
         },
         {
           "symbol": "600111.SS",
           "name": "China Northern Rare Earth (Group) High-Tech Co Ltd Class A",
-          "pct": 5.8480904
+          "pct": 7.24353
+        },
+        {
+          "symbol": "MP",
+          "name": "MP Materials Corp Ordinary Shares - Class A",
+          "pct": 7.102079999999999
+        },
+        {
+          "symbol": "LYC.AX",
+          "name": "Lynas Rare Earths Ltd",
+          "pct": 6.804830000000001
+        },
+        {
+          "symbol": "PLS.AX",
+          "name": "PLS Group Ltd",
+          "pct": 5.369470300000001
         },
         {
           "symbol": "601958.SS",
           "name": "Jinduicheng Molybdenum Co Ltd Class A",
-          "pct": 4.723999999999999
+          "pct": 4.95019
+        },
+        {
+          "symbol": "ILU.AX",
+          "name": "Iluka Resources Ltd",
+          "pct": 4.47024
         },
         {
           "symbol": "600549.SS",
           "name": "Xiamen Tungsten Co Ltd Class A",
-          "pct": 4.52533
+          "pct": 4.397950300000001
         },
         {
           "symbol": "7610.TW",
           "name": "Lianyou Metals Co Ltd",
-          "pct": 4.4746898
-        },
-        {
-          "symbol": "ALM",
-          "name": "Almonty Industries Inc",
-          "pct": 4.231739999999999
+          "pct": 3.87182
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.145Z"
+      "fetchedAt": "2026-11-07T08:03:38.782Z"
     },
     "PICK": {
       "type": "ETF",
@@ -666,17 +666,17 @@
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 96.419996
+          "pct": 97.019994
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 2.6099999
+          "pct": 2.1
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 0.88
+          "pct": 0.7900001
         },
         {
           "key": "financial_services",
@@ -688,55 +688,55 @@
         {
           "symbol": "BHP.AX",
           "name": "BHP Group Ltd",
-          "pct": 13.55222
+          "pct": 14.24838
         },
         {
           "symbol": "FCX",
           "name": "Freeport-McMoRan Inc",
-          "pct": 6.342830500000001
+          "pct": 6.2186398
         },
         {
           "symbol": "RIO.L",
           "name": "Rio Tinto PLC Ordinary Shares",
-          "pct": 6.341330000000001
+          "pct": 6.03075
         },
         {
           "symbol": "GLEN.L",
           "name": "Glencore PLC",
-          "pct": 4.36553
-        },
-        {
-          "symbol": "AAL.L",
-          "name": "Anglo American PLC",
-          "pct": 3.6019799999999997
+          "pct": 4.52541
         },
         {
           "symbol": "NUE",
           "name": "Nucor Corp",
-          "pct": 3.27158
+          "pct": 4.21108
+        },
+        {
+          "symbol": "AAL.L",
+          "name": "Anglo American PLC",
+          "pct": 3.64306
         },
         {
           "symbol": "VALE3.SA",
           "name": "Vale SA",
-          "pct": 3.1196
+          "pct": 2.8982602
         },
         {
           "symbol": "RIO.AX",
           "name": "Rio Tinto Ltd",
-          "pct": 2.72176
+          "pct": 2.6682799999999998
         },
         {
           "symbol": "GMEXICOB.MX",
           "name": "Grupo Mexico SAB de CV Class B",
-          "pct": 2.32699
+          "pct": 2.42427
         },
         {
           "symbol": "STLD",
           "name": "Steel Dynamics Inc",
-          "pct": 1.9141199000000002
+          "pct": 2.37938
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.949Z"
+      "fetchedAt": "2026-11-07T08:03:38.639Z"
     },
     "LIT": {
       "type": "ETF",
@@ -744,77 +744,77 @@
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 47.8
+          "pct": 46.37
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 24.73
+          "pct": 26.419999999999998
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 19.540001
+          "pct": 17.989999
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 7.9
+          "pct": 9.22
         }
       ],
       "holdings": [
         {
           "symbol": "RIO",
           "name": "Rio Tinto PLC ADR",
-          "pct": 22.739731
-        },
-        {
-          "symbol": "6752.T",
-          "name": "Panasonic Holdings Corp",
-          "pct": 7.31467
-        },
-        {
-          "symbol": "002371.SZ",
-          "name": "NAURA Technology Group Co Ltd Class A",
-          "pct": 6.37026
-        },
-        {
-          "symbol": "6762.T",
-          "name": "TDK Corp",
-          "pct": 5.728219999999999
+          "pct": 22.91435
         },
         {
           "symbol": "006400.KQ",
           "name": "Samsung SDI Co Ltd",
-          "pct": 5.64534
+          "pct": 6.99977
+        },
+        {
+          "symbol": "6752.T",
+          "name": "Panasonic Holdings Corp",
+          "pct": 6.68305
+        },
+        {
+          "symbol": "002371.SZ",
+          "name": "NAURA Technology Group Co Ltd Class A",
+          "pct": 5.74698
         },
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 4.39328
+          "pct": 5.7333796999999995
+        },
+        {
+          "symbol": "6762.T",
+          "name": "TDK Corp",
+          "pct": 5.714409799999999
         },
         {
           "symbol": "373220.KQ",
           "name": "LG Energy Solution Ltd",
-          "pct": 4.1666098
+          "pct": 4.93166
         },
         {
           "symbol": "ALB",
           "name": "Albemarle Corp",
-          "pct": 4.1644704
+          "pct": 4.1514903
         },
         {
           "symbol": "300014.SZ",
           "name": "EVE Energy Co Ltd Class A",
-          "pct": 3.33269
+          "pct": 3.65372
         },
         {
           "symbol": "01211",
           "name": "BYD Co Ltd Class H",
-          "pct": 3.2072700000000003
+          "pct": 3.3515200000000003
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.897Z"
+      "fetchedAt": "2026-11-07T08:03:38.603Z"
     },
     "BATT": {
       "type": "ETF",
@@ -822,77 +822,77 @@
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 56.47
-        },
-        {
-          "key": "industrials",
-          "name": "Industrials",
-          "pct": 21.86
+          "pct": 54.55
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 18.790000000000003
+          "pct": 21.38
+        },
+        {
+          "key": "industrials",
+          "name": "Industrials",
+          "pct": 21.270001
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 2.8800000999999997
+          "pct": 2.7999999
         }
       ],
       "holdings": [
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 7.7818700000000005
+          "pct": 9.839839999999999
         },
         {
           "symbol": "BHP.AX",
           "name": "BHP Group Ltd",
-          "pct": 6.951690500000001
+          "pct": 7.477340000000001
         },
         {
           "symbol": "FCX",
           "name": "Freeport-McMoRan Inc",
-          "pct": 6.3668000000000005
+          "pct": 6.3759595000000004
         },
         {
           "symbol": "300750.SZ",
           "name": "Contemporary Amperex Technology Co Ltd Class A",
-          "pct": 5.41239
-        },
-        {
-          "symbol": "BE",
-          "name": "Bloom Energy Corp Class A",
-          "pct": 5.290920000000001
+          "pct": 4.8959
         },
         {
           "symbol": "01211",
           "name": "BYD Co Ltd Class H",
-          "pct": 4.49863
+          "pct": 4.6272602
+        },
+        {
+          "symbol": "BE",
+          "name": "Bloom Energy Corp Class A",
+          "pct": 4.37267
         },
         {
           "symbol": "GMEXICOB.MX",
           "name": "Grupo Mexico SAB de CV Class B",
-          "pct": 3.06607
-        },
-        {
-          "symbol": "6762.T",
-          "name": "TDK Corp",
-          "pct": 2.88088
-        },
-        {
-          "symbol": "TECK-B.TO",
-          "name": "Teck Resources Ltd Class B (Sub Voting)",
-          "pct": 2.66144
+          "pct": 3.3107100000000003
         },
         {
           "symbol": "006400.KQ",
           "name": "Samsung SDI Co Ltd",
-          "pct": 2.4911301
+          "pct": 3.0067898
+        },
+        {
+          "symbol": "6762.T",
+          "name": "TDK Corp",
+          "pct": 2.7938599
+        },
+        {
+          "symbol": "TECK-B.TO",
+          "name": "Teck Resources Ltd Class B (Sub Voting)",
+          "pct": 2.76297
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.741Z"
+      "fetchedAt": "2026-11-07T08:03:38.491Z"
     },
     "SIL": {
       "type": "ETF",
@@ -900,62 +900,62 @@
         {
           "key": "basic_materials",
           "name": "Materials",
-          "pct": 99.86
+          "pct": 99.85000000000001
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 0.13999999999999999
+          "pct": 0.15
         }
       ],
       "holdings": [
         {
           "symbol": "WPM.TO",
           "name": "Wheaton Precious Metals Corp",
-          "pct": 23.468821000000002
+          "pct": 24.784032
         },
         {
           "symbol": "PAAS.TO",
           "name": "Pan American Silver Corp",
-          "pct": 11.32334
+          "pct": 11.4466
         },
         {
           "symbol": "CDE",
           "name": "Coeur Mining Inc",
-          "pct": 10.6881
-        },
-        {
-          "symbol": "HL",
-          "name": "Hecla Mining Co",
-          "pct": 4.77841
+          "pct": 9.63634
         },
         {
           "symbol": "PE&OLES.MX",
           "name": "Industrias Penoles SAB de CV",
-          "pct": 4.68916
-        },
-        {
-          "symbol": "SSRM.TO",
-          "name": "SSR Mining Inc",
-          "pct": 4.28392
+          "pct": 4.75918
         },
         {
           "symbol": "OR.TO",
           "name": "OR Royalties Inc",
-          "pct": 4.11268
+          "pct": 4.6111699999999995
+        },
+        {
+          "symbol": "HL",
+          "name": "Hecla Mining Co",
+          "pct": 4.5985397
+        },
+        {
+          "symbol": "SSRM.TO",
+          "name": "SSR Mining Inc",
+          "pct": 4.12389
         },
         {
           "symbol": "FRES.L",
           "name": "Fresnillo PLC",
-          "pct": 4.000859999999999
+          "pct": 4.003950199999999
         },
         {
           "symbol": "BVN",
           "name": "Compania De Minas Buenaventura SAA ADR",
-          "pct": 3.7279602
+          "pct": 3.7778600000000004
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.193Z"
+      "fetchedAt": "2026-11-07T08:03:38.816Z"
     },
     "QTUM": {
       "type": "ETF",
@@ -963,82 +963,82 @@
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 80.67
+          "pct": 78.419995
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 9.1800004
+          "pct": 10.75
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 6.4899996
+          "pct": 6.7
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 2.29
+          "pct": 2.4600001
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 1.37
+          "pct": 1.67
         }
       ],
       "holdings": [
         {
           "symbol": "3443.TW",
           "name": "Global Unichip Corp",
-          "pct": 2.2888100000000002
-        },
-        {
-          "symbol": "ARQQ",
-          "name": "Arqit Quantum Inc",
-          "pct": 2.1242099
-        },
-        {
-          "symbol": "NET",
-          "name": "Cloudflare Inc",
-          "pct": 1.82701
+          "pct": 2.41818
         },
         {
           "symbol": "ESTC",
           "name": "Elastic NV",
-          "pct": 1.7436099999999999
-        },
-        {
-          "symbol": "HQ",
-          "name": "Horizon Quantum Holdings Ltd Class A",
-          "pct": 1.7156399999999998
+          "pct": 2.0903598999999997
         },
         {
           "symbol": "PLTR",
           "name": "Palantir Technologies Inc Ordinary Shares - Class A",
-          "pct": 1.66016
+          "pct": 1.8466799999999999
+        },
+        {
+          "symbol": "HQ",
+          "name": "Horizon Quantum Holdings Ltd Class A",
+          "pct": 1.8318500000000002
         },
         {
           "symbol": "NTNX",
           "name": "Nutanix Inc Class A",
-          "pct": 1.63858
+          "pct": 1.7676001000000001
+        },
+        {
+          "symbol": "MSFT",
+          "name": "Microsoft Corp",
+          "pct": 1.7154200000000002
+        },
+        {
+          "symbol": "NET",
+          "name": "Cloudflare Inc",
+          "pct": 1.66891
         },
         {
           "symbol": "SNOW",
           "name": "Snowflake Inc Ordinary Shares",
-          "pct": 1.63575
+          "pct": 1.6663299999999999
         },
         {
-          "symbol": "HPE",
-          "name": "Hewlett Packard Enterprise Co",
-          "pct": 1.6231499999999999
+          "symbol": "REY.MI",
+          "name": "Reply SpA",
+          "pct": 1.66565
         },
         {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 1.56274
+          "symbol": "RDNT",
+          "name": "RadNet Inc",
+          "pct": 1.6503
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:38.097Z"
+      "fetchedAt": "2026-11-07T08:03:38.748Z"
     },
     "KOMP": {
       "type": "ETF",
@@ -1046,107 +1046,107 @@
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 39.46
+          "pct": 39.060003
         },
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 22.91
+          "pct": 23.1
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 15.21
+          "pct": 15.9
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 5.47
+          "pct": 5.5
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 4.58
+          "pct": 4.5
         },
         {
           "key": "financial_services",
           "name": "Financials",
-          "pct": 4.19
-        },
-        {
-          "key": "basic_materials",
-          "name": "Materials",
-          "pct": 3.05
+          "pct": 3.45
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 3.01
+          "pct": 3.18
+        },
+        {
+          "key": "basic_materials",
+          "name": "Materials",
+          "pct": 3.0299999
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 1.53
+          "pct": 1.68
         },
         {
           "key": "consumer_defensive",
           "name": "Consumer Staples",
-          "pct": 0.58
+          "pct": 0.58999998
         }
       ],
       "holdings": [
         {
           "symbol": "TWST",
           "name": "Twist Bioscience Corp",
-          "pct": 2.0499
-        },
-        {
-          "symbol": "DDD",
-          "name": "3D Systems Corp",
-          "pct": 1.41014
-        },
-        {
-          "symbol": "BRKR",
-          "name": "Bruker Corp",
-          "pct": 1.1323400000000001
-        },
-        {
-          "symbol": "HIMX",
-          "name": "Himax Technologies Inc ADR",
-          "pct": 1.0562399
-        },
-        {
-          "symbol": "U",
-          "name": "Unity Software Inc Ordinary Shares",
-          "pct": 0.98876
+          "pct": 1.72771
         },
         {
           "symbol": "PTC",
           "name": "PTC Inc",
-          "pct": 0.97912
+          "pct": 1.45056
         },
         {
-          "symbol": "OUST",
-          "name": "Ouster Inc Ordinary Shares - Class A",
-          "pct": 0.93513
-        },
-        {
-          "symbol": "AMBA",
-          "name": "Ambarella Inc",
-          "pct": 0.91727
+          "symbol": "DDD",
+          "name": "3D Systems Corp",
+          "pct": 1.15754
         },
         {
           "symbol": "ESLT.TA",
           "name": "Elbit Systems Ltd",
-          "pct": 0.90189
+          "pct": 1.0961
+        },
+        {
+          "symbol": "BRKR",
+          "name": "Bruker Corp",
+          "pct": 1.0641299
+        },
+        {
+          "symbol": "U",
+          "name": "Unity Software Inc Ordinary Shares",
+          "pct": 0.9681000000000001
+        },
+        {
+          "symbol": "AMBA",
+          "name": "Ambarella Inc",
+          "pct": 0.88541005
+        },
+        {
+          "symbol": "HIMX",
+          "name": "Himax Technologies Inc ADR",
+          "pct": 0.8674200999999999
+        },
+        {
+          "symbol": "TSLA",
+          "name": "Tesla Inc",
+          "pct": 0.8357801
         },
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 0.83091
+          "pct": 0.7914300000000001
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.847Z"
+      "fetchedAt": "2026-11-07T08:03:38.568Z"
     },
     "ARKQ": {
       "type": "ETF",
@@ -1154,92 +1154,92 @@
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 39.490002000000004
+          "pct": 42.41
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 33.46
+          "pct": 28.78
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 17.78
+          "pct": 19.690001
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 5.53
-        },
-        {
-          "key": "energy",
-          "name": "Energy",
-          "pct": 1.46
+          "pct": 4.9099997
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 1.4099999
+          "pct": 1.79
+        },
+        {
+          "key": "energy",
+          "name": "Energy",
+          "pct": 1.47
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 0.8699999999999999
+          "pct": 0.9400000000000001
         }
       ],
       "holdings": [
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 10.54684
+          "pct": 12.56087
         },
         {
           "symbol": "SPCX",
           "name": "Space Exploration Technologies Corp Class A",
-          "pct": 8.4475495
-        },
-        {
-          "symbol": "TER",
-          "name": "Teradyne Inc",
-          "pct": 6.8670599999999995
+          "pct": 8.44216
         },
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 5.91305
+          "pct": 5.79618
         },
         {
           "symbol": "KTOS",
           "name": "Kratos Defense & Security Solutions Inc",
-          "pct": 5.04474
+          "pct": 5.71374
         },
         {
           "symbol": "PLTR",
           "name": "Palantir Technologies Inc Ordinary Shares - Class A",
-          "pct": 4.89183
+          "pct": 5.1702097
         },
         {
           "symbol": "GOOG",
           "name": "Alphabet Inc Class C",
-          "pct": 4.66779
-        },
-        {
-          "symbol": "AMD",
-          "name": "Advanced Micro Devices Inc",
-          "pct": 4.2726897
+          "pct": 4.05224
         },
         {
           "symbol": "RKLB",
           "name": "Rocket Lab Corp",
-          "pct": 4.2280695999999995
+          "pct": 4.00252
         },
         {
-          "symbol": "TSM",
-          "name": "Taiwan Semiconductor Manufacturing Co Ltd ADR",
-          "pct": 3.86874
+          "symbol": "TER",
+          "name": "Teradyne Inc",
+          "pct": 3.81675
+        },
+        {
+          "symbol": "AVAV",
+          "name": "AeroVironment Inc",
+          "pct": 3.5576299999999996
+        },
+        {
+          "symbol": "AMZN",
+          "name": "Amazon.com Inc",
+          "pct": 3.5086899999999996
         }
       ],
-      "fetchedAt": "2026-10-31T07:47:37.692Z"
+      "fetchedAt": "2026-11-07T08:03:38.454Z"
     },
     "MU": {
       "type": "STOCK",
@@ -2438,5 +2438,5 @@
       "fetchedAt": "2026-11-03T20:17:28.486Z"
     }
   },
-  "lastRun": "2026-11-03T20:17:28.486Z"
+  "lastRun": "2026-11-07T08:03:39.040Z"
 }
