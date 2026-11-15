@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-11-14T16:56:34.983Z",
+  "lastRun": "2026-11-15T08:39:13.648Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -56,20 +56,6 @@
       ],
       "agencyCount": 1,
       "matchedTerm": "\"Presidential Determination\" Defense Production Act",
-      "mentionsTracked": [],
-      "isNew": false
-    },
-    {
-      "documentNumber": "2026-14461",
-      "title": "Implementing Voluntary Agreements Under the Defense Production Act",
-      "date": "2026-07-17",
-      "url": "https://www.federalregister.gov/documents/2026/07/17/2026-14461/implementing-voluntary-agreements-under-the-defense-production-act",
-      "type": "Rule",
-      "agencies": [
-        "Energy Department"
-      ],
-      "agencyCount": 1,
-      "matchedTerm": "\"Defense Production Act\" Title III",
       "mentionsTracked": [],
       "isNew": false
     }
