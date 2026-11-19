@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-11-19T09:40:44.091Z",
+  "lastRun": "2026-11-19T19:26:44.754Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -13,9 +13,25 @@
     "2026-14461",
     "2026-13486",
     "2026-12286",
-    "2026-22052"
+    "2026-22052",
+    "2026-23529"
   ],
   "candidates": [
+    {
+      "documentNumber": "2026-23529",
+      "title": "Addressing Remote Access to Advanced Semiconductors",
+      "date": "2026-11-19",
+      "url": "https://www.federalregister.gov/documents/2026/11/19/2026-23529/addressing-remote-access-to-advanced-semiconductors",
+      "type": "Rule",
+      "agencies": [
+        "Commerce Department",
+        "Industry and Security Bureau"
+      ],
+      "agencyCount": 2,
+      "matchedTerm": "\"Presidential Determination\" Defense Production Act",
+      "mentionsTracked": [],
+      "isNew": true
+    },
     {
       "documentNumber": "2026-22052",
       "title": "Presidential Determination Pursuant to Section 303 of the Defense Production Act of 1950, as Amended, on Domestic Petroleum Production, Refining, and Logistics Capacity",
