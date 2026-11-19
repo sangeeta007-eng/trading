@@ -1,5 +1,5 @@
 {
-  "lastRun": "2026-11-19T19:26:44.754Z",
+  "lastRun": "2026-11-19T21:50:12.285Z",
   "lastError": null,
   "seen": [
     "2026-17183",
@@ -30,7 +30,7 @@
       "agencyCount": 2,
       "matchedTerm": "\"Presidential Determination\" Defense Production Act",
       "mentionsTracked": [],
-      "isNew": true
+      "isNew": false
     },
     {
       "documentNumber": "2026-22052",
