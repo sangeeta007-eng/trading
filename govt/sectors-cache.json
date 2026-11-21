@@ -4,79 +4,79 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-14T08:20:55.046Z"
+      "fetchedAt": "2026-11-21T08:59:20.538Z"
     },
     "GFS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-14T08:20:55.079Z"
+      "fetchedAt": "2026-11-21T08:59:20.612Z"
     },
     "LHX": {
       "type": "STOCK",
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
-      "fetchedAt": "2026-11-14T08:20:55.116Z"
+      "fetchedAt": "2026-11-21T08:59:20.683Z"
     },
     "MP": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-14T08:20:55.160Z"
+      "fetchedAt": "2026-11-21T08:59:20.753Z"
     },
     "LAC": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-14T08:20:55.194Z"
+      "fetchedAt": "2026-11-21T08:59:20.824Z"
     },
     "TMQ": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-14T08:20:55.258Z"
+      "fetchedAt": "2026-11-21T08:59:20.896Z"
     },
     "QBTS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-11-14T08:20:55.291Z"
+      "fetchedAt": "2026-11-21T08:59:20.968Z"
     },
     "RGTI": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-11-14T08:20:55.324Z"
+      "fetchedAt": "2026-11-21T08:59:21.039Z"
     },
     "IBM": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Information Technology Services",
-      "fetchedAt": "2026-11-14T08:20:55.358Z"
+      "fetchedAt": "2026-11-21T08:59:21.110Z"
     },
     "USAR": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-14T08:20:55.392Z"
+      "fetchedAt": "2026-11-21T08:59:21.183Z"
     },
     "ALMU": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-14T08:20:55.426Z"
+      "fetchedAt": "2026-11-21T08:59:21.255Z"
     },
     "NVDA": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-14T08:20:55.459Z"
+      "fetchedAt": "2026-11-21T08:59:21.326Z"
     },
     "AMD": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-14T08:20:55.493Z"
+      "fetchedAt": "2026-11-21T08:59:21.397Z"
     },
     "SOXX": {
       "type": "ETF",
@@ -139,7 +139,7 @@
           "pct": 3.87556
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.912Z"
+      "fetchedAt": "2026-11-21T08:59:22.326Z"
     },
     "SMH": {
       "type": "ETF",
@@ -202,7 +202,7 @@
           "pct": 4.1447703
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.880Z"
+      "fetchedAt": "2026-11-21T08:59:22.256Z"
     },
     "XLK": {
       "type": "ETF",
@@ -265,7 +265,7 @@
           "pct": 1.9091700999999999
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.982Z"
+      "fetchedAt": "2026-11-21T08:59:22.466Z"
     },
     "XSD": {
       "type": "ETF",
@@ -333,7 +333,7 @@
           "pct": 2.8004501
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:56.014Z"
+      "fetchedAt": "2026-11-21T08:59:22.538Z"
     },
     "PSI": {
       "type": "ETF",
@@ -348,22 +348,22 @@
         {
           "symbol": "TXN",
           "name": "Texas Instruments Inc",
-          "pct": 6.619940000000001
+          "pct": 6.61992
         },
         {
           "symbol": "ADI",
           "name": "Analog Devices Inc",
-          "pct": 6.386940000000001
+          "pct": 6.386839599999999
         },
         {
           "symbol": "AMD",
           "name": "Advanced Micro Devices Inc",
-          "pct": 6.0272697
+          "pct": 6.0271602
         },
         {
           "symbol": "MU",
           "name": "Micron Technology Inc",
-          "pct": 5.42523
+          "pct": 5.4251000000000005
         },
         {
           "symbol": "KLAC",
@@ -373,30 +373,30 @@
         {
           "symbol": "AMAT",
           "name": "Applied Materials Inc",
-          "pct": 4.651000000000001
+          "pct": 4.65106
         },
         {
           "symbol": "LRCX",
           "name": "Lam Research Corp",
-          "pct": 4.3480203
+          "pct": 4.34797
         },
         {
           "symbol": "INTC",
           "name": "Intel Corp",
-          "pct": 4.30155
+          "pct": 4.3015298
         },
         {
           "symbol": "ENTG",
           "name": "Entegris Inc",
-          "pct": 3.4701000000000004
+          "pct": 3.4701299999999997
         },
         {
           "symbol": "MCHP",
           "name": "Microchip Technology Inc",
-          "pct": 3.28423
+          "pct": 3.28424
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.752Z"
+      "fetchedAt": "2026-11-21T08:59:21.969Z"
     },
     "ITA": {
       "type": "ETF",
@@ -459,7 +459,7 @@
           "pct": 3.7519299999999998
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.589Z"
+      "fetchedAt": "2026-11-21T08:59:21.613Z"
     },
     "XAR": {
       "type": "ETF",
@@ -522,7 +522,7 @@
           "pct": 3.11397
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.948Z"
+      "fetchedAt": "2026-11-21T08:59:22.396Z"
     },
     "PPA": {
       "type": "ETF",
@@ -595,7 +595,7 @@
           "pct": 3.4832302000000004
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.719Z"
+      "fetchedAt": "2026-11-21T08:59:21.899Z"
     },
     "REMX": {
       "type": "ETF",
@@ -658,7 +658,7 @@
           "pct": 3.87182
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.816Z"
+      "fetchedAt": "2026-11-21T08:59:22.112Z"
     },
     "PICK": {
       "type": "ETF",
@@ -736,7 +736,7 @@
           "pct": 2.37938
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.688Z"
+      "fetchedAt": "2026-11-21T08:59:21.828Z"
     },
     "LIT": {
       "type": "ETF",
@@ -814,7 +814,7 @@
           "pct": 3.3515200000000003
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.656Z"
+      "fetchedAt": "2026-11-21T08:59:21.755Z"
     },
     "BATT": {
       "type": "ETF",
@@ -892,7 +892,7 @@
           "pct": 2.76297
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.558Z"
+      "fetchedAt": "2026-11-21T08:59:21.542Z"
     },
     "SIL": {
       "type": "ETF",
@@ -955,7 +955,7 @@
           "pct": 3.7778600000000004
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.849Z"
+      "fetchedAt": "2026-11-21T08:59:22.185Z"
     },
     "QTUM": {
       "type": "ETF",
@@ -1038,7 +1038,7 @@
           "pct": 1.6503
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.784Z"
+      "fetchedAt": "2026-11-21T08:59:22.041Z"
     },
     "KOMP": {
       "type": "ETF",
@@ -1146,7 +1146,7 @@
           "pct": 0.7914300000000001
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.623Z"
+      "fetchedAt": "2026-11-21T08:59:21.683Z"
     },
     "ARKQ": {
       "type": "ETF",
@@ -1154,92 +1154,92 @@
         {
           "key": "industrials",
           "name": "Industrials",
-          "pct": 42.41
+          "pct": 42.279997
         },
         {
           "key": "technology",
           "name": "Technology",
-          "pct": 28.78
+          "pct": 28.24
         },
         {
           "key": "consumer_cyclical",
           "name": "Consumer Cyclical",
-          "pct": 19.690001
+          "pct": 20.330000000000002
         },
         {
           "key": "communication_services",
           "name": "Communications",
-          "pct": 4.9099997
+          "pct": 5.0200000000000005
         },
         {
           "key": "healthcare",
           "name": "Healthcare",
-          "pct": 1.79
+          "pct": 1.7999999999999998
         },
         {
           "key": "energy",
           "name": "Energy",
-          "pct": 1.47
+          "pct": 1.4099999
         },
         {
           "key": "utilities",
           "name": "Utilities",
-          "pct": 0.9400000000000001
+          "pct": 0.9299999999999999
         }
       ],
       "holdings": [
         {
           "symbol": "TSLA",
           "name": "Tesla Inc",
-          "pct": 12.56087
+          "pct": 12.96677
         },
         {
           "symbol": "SPCX",
           "name": "Space Exploration Technologies Corp Class A",
-          "pct": 8.44216
+          "pct": 8.2307905
         },
         {
           "symbol": "NVDA",
           "name": "NVIDIA Corp",
-          "pct": 5.79618
+          "pct": 5.78091
         },
         {
           "symbol": "KTOS",
           "name": "Kratos Defense & Security Solutions Inc",
-          "pct": 5.71374
+          "pct": 5.60863
         },
         {
           "symbol": "PLTR",
           "name": "Palantir Technologies Inc Ordinary Shares - Class A",
-          "pct": 5.1702097
+          "pct": 5.04646
         },
         {
           "symbol": "GOOG",
           "name": "Alphabet Inc Class C",
-          "pct": 4.05224
+          "pct": 4.1584200000000004
         },
         {
           "symbol": "RKLB",
           "name": "Rocket Lab Corp",
-          "pct": 4.00252
+          "pct": 3.8597399999999995
         },
         {
           "symbol": "TER",
           "name": "Teradyne Inc",
-          "pct": 3.81675
-        },
-        {
-          "symbol": "AVAV",
-          "name": "AeroVironment Inc",
-          "pct": 3.5576299999999996
+          "pct": 3.68119
         },
         {
           "symbol": "AMZN",
           "name": "Amazon.com Inc",
-          "pct": 3.5086899999999996
+          "pct": 3.6021400000000003
+        },
+        {
+          "symbol": "AVAV",
+          "name": "AeroVironment Inc",
+          "pct": 3.4637797999999997
         }
       ],
-      "fetchedAt": "2026-11-14T08:20:55.526Z"
+      "fetchedAt": "2026-11-21T08:59:21.470Z"
     },
     "MU": {
       "type": "STOCK",
@@ -2443,5 +2443,5 @@
       "fetchedAt": "2026-11-17T21:54:48.288Z"
     }
   },
-  "lastRun": "2026-11-17T21:54:48.288Z"
+  "lastRun": "2026-11-21T08:59:22.538Z"
 }
