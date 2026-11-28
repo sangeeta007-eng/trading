@@ -4,79 +4,79 @@
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-21T08:59:20.538Z"
+      "fetchedAt": "2026-11-28T09:38:27.868Z"
     },
     "GFS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-21T08:59:20.612Z"
+      "fetchedAt": "2026-11-28T09:38:27.921Z"
     },
     "LHX": {
       "type": "STOCK",
       "sector": "Industrials",
       "industry": "Aerospace & Defense",
-      "fetchedAt": "2026-11-21T08:59:20.683Z"
+      "fetchedAt": "2026-11-28T09:38:27.983Z"
     },
     "MP": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-21T08:59:20.753Z"
+      "fetchedAt": "2026-11-28T09:38:28.059Z"
     },
     "LAC": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-21T08:59:20.824Z"
+      "fetchedAt": "2026-11-28T09:38:28.111Z"
     },
     "TMQ": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-21T08:59:20.896Z"
+      "fetchedAt": "2026-11-28T09:38:28.180Z"
     },
     "QBTS": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-11-21T08:59:20.968Z"
+      "fetchedAt": "2026-11-28T09:38:28.230Z"
     },
     "RGTI": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Computer Hardware",
-      "fetchedAt": "2026-11-21T08:59:21.039Z"
+      "fetchedAt": "2026-11-28T09:38:28.278Z"
     },
     "IBM": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Information Technology Services",
-      "fetchedAt": "2026-11-21T08:59:21.110Z"
+      "fetchedAt": "2026-11-28T09:38:28.327Z"
     },
     "USAR": {
       "type": "STOCK",
       "sector": "Basic Materials",
       "industry": "Other Industrial Metals & Mining",
-      "fetchedAt": "2026-11-21T08:59:21.183Z"
+      "fetchedAt": "2026-11-28T09:38:28.431Z"
     },
     "ALMU": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-21T08:59:21.255Z"
+      "fetchedAt": "2026-11-28T09:38:28.479Z"
     },
     "NVDA": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-21T08:59:21.326Z"
+      "fetchedAt": "2026-11-28T09:38:28.537Z"
     },
     "AMD": {
       "type": "STOCK",
       "sector": "Technology",
       "industry": "Semiconductors",
-      "fetchedAt": "2026-11-21T08:59:21.397Z"
+      "fetchedAt": "2026-11-28T09:38:28.597Z"
     },
     "SOXX": {
       "type": "ETF",
@@ -139,7 +139,7 @@
           "pct": 3.87556
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.326Z"
+      "fetchedAt": "2026-11-28T09:38:29.288Z"
     },
     "SMH": {
       "type": "ETF",
@@ -202,7 +202,7 @@
           "pct": 4.1447703
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.256Z"
+      "fetchedAt": "2026-11-28T09:38:29.240Z"
     },
     "XLK": {
       "type": "ETF",
@@ -265,7 +265,7 @@
           "pct": 1.9091700999999999
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.466Z"
+      "fetchedAt": "2026-11-28T09:38:29.384Z"
     },
     "XSD": {
       "type": "ETF",
@@ -333,7 +333,7 @@
           "pct": 2.8004501
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.538Z"
+      "fetchedAt": "2026-11-28T09:38:29.433Z"
     },
     "PSI": {
       "type": "ETF",
@@ -396,7 +396,7 @@
           "pct": 3.28424
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.969Z"
+      "fetchedAt": "2026-11-28T09:38:29.047Z"
     },
     "ITA": {
       "type": "ETF",
@@ -459,7 +459,7 @@
           "pct": 3.7519299999999998
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.613Z"
+      "fetchedAt": "2026-11-28T09:38:28.803Z"
     },
     "XAR": {
       "type": "ETF",
@@ -522,7 +522,7 @@
           "pct": 3.11397
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.396Z"
+      "fetchedAt": "2026-11-28T09:38:29.336Z"
     },
     "PPA": {
       "type": "ETF",
@@ -595,7 +595,7 @@
           "pct": 3.4832302000000004
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.899Z"
+      "fetchedAt": "2026-11-28T09:38:28.998Z"
     },
     "REMX": {
       "type": "ETF",
@@ -658,7 +658,7 @@
           "pct": 3.87182
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.112Z"
+      "fetchedAt": "2026-11-28T09:38:29.144Z"
     },
     "PICK": {
       "type": "ETF",
@@ -736,7 +736,7 @@
           "pct": 2.37938
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.828Z"
+      "fetchedAt": "2026-11-28T09:38:28.951Z"
     },
     "LIT": {
       "type": "ETF",
@@ -814,7 +814,7 @@
           "pct": 3.3515200000000003
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.755Z"
+      "fetchedAt": "2026-11-28T09:38:28.903Z"
     },
     "BATT": {
       "type": "ETF",
@@ -892,7 +892,7 @@
           "pct": 2.76297
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.542Z"
+      "fetchedAt": "2026-11-28T09:38:28.755Z"
     },
     "SIL": {
       "type": "ETF",
@@ -955,7 +955,7 @@
           "pct": 3.7778600000000004
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.185Z"
+      "fetchedAt": "2026-11-28T09:38:29.193Z"
     },
     "QTUM": {
       "type": "ETF",
@@ -1038,7 +1038,7 @@
           "pct": 1.6503
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:22.041Z"
+      "fetchedAt": "2026-11-28T09:38:29.096Z"
     },
     "KOMP": {
       "type": "ETF",
@@ -1146,7 +1146,7 @@
           "pct": 0.7914300000000001
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.683Z"
+      "fetchedAt": "2026-11-28T09:38:28.856Z"
     },
     "ARKQ": {
       "type": "ETF",
@@ -1239,7 +1239,7 @@
           "pct": 3.4637797999999997
         }
       ],
-      "fetchedAt": "2026-11-21T08:59:21.470Z"
+      "fetchedAt": "2026-11-28T09:38:28.703Z"
     },
     "MU": {
       "type": "STOCK",
@@ -2443,5 +2443,5 @@
       "fetchedAt": "2026-11-24T23:16:34.602Z"
     }
   },
-  "lastRun": "2026-11-24T23:16:34.602Z"
+  "lastRun": "2026-11-28T09:38:29.433Z"
 }
